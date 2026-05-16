@@ -17,9 +17,17 @@ struct Sidebar: View {
         @Bindable var comfyBrowserVM = comfyBrowserVM
 
         if comfyBrowserVM.sidebarState == .open {
-            SidebarContent(tabs: $browserVM.tabs) { tab in
-                browserVM.select(tab: tab)
-            }
+            SidebarContent(
+                faviconService: browserVM.faviconService,
+                tabs: $browserVM.tabs,
+                clickedTab: { tab in
+                    browserVM.select(id: tab.id)
+                },
+                closeTab: { tab in
+                    browserVM.closeTab(id: tab.id)
+                }
+            )
+//        )
         }
     }
 }
@@ -27,8 +35,10 @@ struct Sidebar: View {
 /// This is a temp I want this to be AppKit
 struct SidebarContent: View {
 
+    @Bindable var faviconService: FaviconService
     @Binding var tabs : [Tab]
     var clickedTab: (Tab) -> Void
+    var closeTab: (Tab) -> Void
 
     let distanceFromTop: CGFloat = 40
 
@@ -47,15 +57,32 @@ struct SidebarContent: View {
                     print("clicked tab")
                     clickedTab(tab)
                 } label: {
-                    Text(tab.title)
-                        .lineLimit(1)
-                        .padding(6)
-                        .frame(maxWidth: .infinity)
-                        .background {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(.white.opacity(0.3))
+                    HStack {
+                        if let icon = faviconService.favicon(for: tab.url) {
+                            Image(nsImage: icon)
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
                         }
-                        .padding(.horizontal, 4)
+                        Text(tab.title)
+                        
+                        Spacer()
+                        
+                        Button {
+                            closeTab(tab)
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                        .buttonStyle(SidebarRowMinusButtonStyle())
+                    }
+                    .lineLimit(1)
+                    .padding(6)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(.white.opacity(0.3))
+                    }
+                    .padding(.horizontal, 4)
                 }
                 .buttonStyle(SidebarRowButtonStyle())
             }
@@ -76,10 +103,28 @@ struct SidebarRowButtonStyle: ButtonStyle {
     }
 }
 
+struct SidebarRowMinusButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(2)
+            .background {
+                if configuration.isPressed {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(.white.opacity(0.2))
+                } else {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(.white.opacity(0.4))
+                }
+            }
+            .animation(.snappy, value: configuration.isPressed)
+    }
+}
+
 
 #Preview {
     VStack {
         SidebarContent(
+            faviconService: FaviconService(),
             tabs: .constant([
                 .init(
                     title: "DuckDuckGo",
@@ -97,8 +142,7 @@ struct SidebarRowButtonStyle: ButtonStyle {
                     isActive: false
                 )
             ])
-        ) { tab in
-        }
+        ) { tab in } closeTab: { tab in }
         .padding()
     }
     .frame(height: 510)

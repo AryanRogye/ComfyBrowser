@@ -14,7 +14,6 @@ struct WebView: View {
     var body: some View {
         @Bindable var browserVM = browserVM
         WebViewContainer(
-            currentRequest: $browserVM.currentRequest,
             webView: browserVM.webView,
             onURLOrTitleChange: { url, title in
                 if let url, let title {
@@ -27,12 +26,12 @@ struct WebView: View {
                 }
             }
         )
+        .id(ObjectIdentifier(browserVM.webView))
     }
 }
 
 struct WebViewContainer: NSViewRepresentable {
 
-    @Binding var currentRequest: URLRequest?
     var webView: WKWebView
     var onURLOrTitleChange: (URL?, String?) -> Void
 
@@ -44,23 +43,16 @@ struct WebViewContainer: NSViewRepresentable {
         
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
+        context.coordinator.startObservingURL(of: webView)
         
         /// Configurations
         webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         webView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
 
-        if let request = currentRequest {
-            webView.load(request)
-        }
         return webView
     }
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
-        if let request = currentRequest {
-            if nsView.url?.absoluteString != request.url?.absoluteString {
-                nsView.load(request)
-            }
-        }
     }
 }
 

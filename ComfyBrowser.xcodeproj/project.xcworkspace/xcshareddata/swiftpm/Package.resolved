@@ -1,6 +1,15 @@
 {
-  "originHash" : "19ee6a02a653d8797c3654ab3f13254f1c1c42bab55b02037e83d1b6093d1cfb",
+  "originHash" : "397c2dfb503d47f173c3824a5f417550665217f2b49f0025fb1d79dcb309b18a",
   "pins" : [
+    {
+      "identity" : "faviconfinder?utm_source=chatgpt.com",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/will-lumley/FaviconFinder?utm_source=chatgpt.com",
+      "state" : {
+        "revision" : "11c2b27fbdc5fdfe0bf3addac01d27c40299a819",
+        "version" : "5.1.5"
+      }
+    },
     {
       "identity" : "localshortcuts",
       "kind" : "remoteSourceControl",
@@ -8,6 +17,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "0058505e2d6773d30a3556553f07468ead35f039"
+      }
+    },
+    {
+      "identity" : "swiftsoup",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scinfu/SwiftSoup.git",
+      "state" : {
+        "revision" : "49dcadd93161f4a44b4994d3a3e8de9f085aface",
+        "version" : "2.13.5"
       }
     }
   ],

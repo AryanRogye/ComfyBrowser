@@ -17,11 +17,12 @@ final class BrowserViewModel {
 
     var tabs : [Tab] = []
     var selectedTab : Tab?
-    var currentRequest : URLRequest?
     var searchEngine: SearchEngine = .duckDuckGo
+    
+    let faviconService = FaviconService()
 
     var webView: WKWebView
-    var cancellables : Set<AnyCancellable> = []
+    
 
     init() {
         webView = Self.getDefaultWebkitView()
@@ -38,7 +39,7 @@ final class BrowserViewModel {
 
     public func createTab(_ value: String? = nil) {
         /// Get default webView
-        self.webView = Self.getDefaultWebkitView()
+        let newWebView = Self.getDefaultWebkitView()
 
         var newTab: Tab?
         if let value {
@@ -47,14 +48,16 @@ final class BrowserViewModel {
             /// Create a new Tab
             newTab = createTempTab()
         }
-        guard let newTab else { return }
+        guard var newTab else { return }
 
+        newWebView.load(URLRequest(url: newTab.url))
+        newTab.retainedWebView = newWebView
+        
         /// Append to tabs array
         tabs.append(newTab)
         selectedTab = newTab
-        let req = URLRequest(url: newTab.url)
-        currentRequest = req
-
+        webView = newWebView
+        
         print("Current Tab Count: \(tabs.count)")
     }
 
@@ -100,13 +103,85 @@ final class BrowserViewModel {
     }
 }
 
+// MARK: - Tab Mutation
+extension BrowserViewModel {
+    public func updateURL(at index: Int, url: URL) {
+        guard tabs.indices.contains(index) else { return }
+        tabs[index].url = url
+    }
+    public func updateTitle(at index: Int, title: String) {
+        guard tabs.indices.contains(index) else { return }
+        tabs[index].title = title
+    }
+    public func saveRetainedWebView(for tab: Tab, webview: WKWebView) {
+        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
+        guard tabs.indices.contains(index) else { return }
+        tabs[index].retainedWebView = webview
+    }
+
+}
+
 // MARK: - Tab Management
 extension BrowserViewModel {
-    public func select(tab: Tab) {
-        self.selectedTab = tab
-        let request = URLRequest(url: tab.url)
-        self.currentRequest = request
-        self.webView.load(request)
+    
+    public func updateURLAndTitle(_ url: URL?, _ title: String?) {
+        if let url, let title {
+            /// find the browser tab in the tabs array
+            guard let selectedTab = selectedTab else { return }
+            guard let index = tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
+            
+            updateURL(at: index, url: url)
+            updateTitle(at: index, title: title)
+        }
+    }
+    
+    internal func saveCurrentTab() {
+        if let currentTab = self.selectedTab {
+            self.saveRetainedWebView(for: currentTab, webview: webView)
+        }
+    }
+    
+    public func closeTab(id: UUID) {
+        guard let index = tabs.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+        
+        let closingSelected = selectedTab?.id == id
+        
+        tabs.remove(at: index)
+        
+        guard !tabs.isEmpty else {
+            selectedTab = nil
+            webView.stopLoading()
+            webView = Self.getDefaultWebkitView()
+            webView.load(URLRequest(url: createTempTab().url))
+            return
+        }
+        
+        if closingSelected {
+            let newIndex = min(index, tabs.count - 1)
+            select(id: tabs[newIndex].id)
+        }
+    }
+
+    public func select(id: UUID) {
+        
+        saveCurrentTab()
+        
+        guard let index = tabs.firstIndex(where: { $0.id == id }) else { return }
+        let storedTab = tabs[index]
+        
+        self.selectedTab = storedTab
+
+        if let webview = storedTab.retainedWebView {
+            self.webView = webview
+        } else {
+            let newWebView = Self.getDefaultWebkitView()
+            newWebView.load(URLRequest(url: storedTab.url))
+            
+            tabs[index].retainedWebView = newWebView
+            self.webView = newWebView
+        }
     }
 }
 
@@ -129,17 +204,20 @@ extension BrowserViewModel {
 
 // MARK: - Helpers
 extension BrowserViewModel {
-    internal static func getDefaultWebkitView() -> WKWebView {
+    
+    internal static func makeConfig() -> WKWebViewConfiguration {
         let config = WKWebViewConfiguration()
-        
         config.websiteDataStore = dataStore
         config.defaultWebpagePreferences.preferredContentMode = .desktop
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
-        
         config.preferences.isElementFullscreenEnabled = true
         
-        let webView = WKWebView(frame: .zero, configuration: config)
+        return config
+    }
+    
+    internal static func getDefaultWebkitView() -> WKWebView {
+        let webView = WKWebView(frame: .zero, configuration: Self.makeConfig())
         
         webView.autoresizingMask = [.width, .height]
         

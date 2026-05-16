@@ -6,6 +6,13 @@
 //
 
 import Foundation
+import WebKit
+
+struct NavigationEntry: Hashable, Codable {
+    var url: URL
+    var title: String?
+    var visitedAt: Date
+}
 
 struct Tab: Hashable, Identifiable, Equatable {
 
@@ -13,6 +20,11 @@ struct Tab: Hashable, Identifiable, Equatable {
     var title: String
     var url: URL
     var isActive: Bool
+    
+    var history: [NavigationEntry] = []
+    var historyIndex: Int = 0
+    
+    var retainedWebView: WKWebView?
 
     init(
         title: String,
