@@ -8,13 +8,6 @@
 import LocalShortcuts
 import Foundation
 
-extension LocalShortcuts.Name {
-    static let toggleSidebar = LocalShortcuts.Name("ToggleSidebar", .init(
-        modifier: [.command],
-        keys: [.s]
-    ))
-}
-
 @Observable @MainActor
 class Shortcuts {
     

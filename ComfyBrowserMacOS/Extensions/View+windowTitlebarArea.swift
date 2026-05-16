@@ -1,8 +1,8 @@
 //
-//  WindowTitlebarAreaView.swift
+//  View+windowTitlebarArea.swift
 //  ComfyBrowser
 //
-//  Created by Aryan Rogye on 12/19/25.
+//  Created by Aryan Rogye on 5/15/26.
 //
 
 import AppKit
@@ -75,7 +75,7 @@ private class WindowTitlebarAreaView: NSView {
     
     private var originalOrigins: [NSWindow.ButtonType: NSPoint] = [:]
     private var lastMode: String = ""
-
+    
     private func currentMode(for window: NSWindow) -> String {
         // treat fullscreen vs not fullscreen as different baseline layouts
         window.styleMask.contains(.fullScreen) ? "fs" : "win"
@@ -93,7 +93,7 @@ private class WindowTitlebarAreaView: NSView {
     required init?(coder: NSCoder) {
         fatalError("Not Implemented")
     }
-
+    
     /// When view loads, adjust traffic lights, and show titlebar buttons
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
@@ -192,7 +192,7 @@ private class WindowTitlebarAreaView: NSView {
             moveTrafficLights(in: window)
         }
     }
-
+    
     /// Adjust Traffic Light Positions, based on constant values and NSWindow
     private func moveTrafficLights(in window: NSWindow, animated: Bool = true, completion: (() -> Void)? = nil) {
         func move(_ type: NSWindow.ButtonType) {

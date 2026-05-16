@@ -13,26 +13,20 @@ struct WebView: View {
 
     var body: some View {
         @Bindable var browserVM = browserVM
-
-        if let selectedTab = browserVM.selectedTab,
-            let webView = browserVM.webViews[selectedTab.id]
-        {
-            WebViewContainer(
-                currentRequest: $browserVM.currentRequest,
-                webView: webView,
-                onURLOrTitleChange: { url, title in
-                    if let url, let title {
-                        print("URL: \(url.absoluteString) | Title: \(title)")
-                    }
+        WebViewContainer(
+            currentRequest: $browserVM.currentRequest,
+            webView: browserVM.webView,
+            onURLOrTitleChange: { url, title in
+                if let url, let title {
+                    /// find the browser tab in the tabs array
+                    guard let selectedTab = browserVM.selectedTab else { return }
+                    guard let index = browserVM.tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
+                    
+                    browserVM.tabs[index].url = url
+                    browserVM.tabs[index].title = title
                 }
-            )
-        } else {
-            VStack {
-
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.white.opacity(0.3))
-        }
+        )
     }
 }
 

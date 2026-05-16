@@ -13,42 +13,19 @@ import Combine
 @MainActor
 final class BrowserViewModel {
 
-    let dataStore: WKWebsiteDataStore = .default()
+    static let dataStore: WKWebsiteDataStore = .default()
 
     var tabs : [Tab] = []
-    var webViews : [UUID: WKWebView] = [:]
     var selectedTab : Tab?
     var currentRequest : URLRequest?
     var searchEngine: SearchEngine = .duckDuckGo
 
-    var webView: WKWebView?
+    var webView: WKWebView
     var cancellables : Set<AnyCancellable> = []
 
     init() {
+        webView = Self.getDefaultWebkitView()
         observeTabs()
-        webView = getDefaultWebkitView()
-
-        guard let webView, let selectedTab else { return }
-
-        // Create the request first
-        let request = URLRequest(url: selectedTab.url)
-        self.currentRequest = request
-
-
-        // Then load it
-        webView.load(request)
-    }
-
-    func observeTabs() {
-        withObservationTracking {
-            _ = tabs
-        } onChange: { [weak self] in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-                print("Tabs Changed:\n" + self.tabs.map { "• \($0.title)" }.joined(separator: "\n"))
-                self.observeTabs()
-            }
-        }
     }
 
     func updateNameAtIndex(_ index: Int, to newName: String) {
@@ -59,10 +36,9 @@ final class BrowserViewModel {
         print("Updated Tab At Index: \(index) With Name: \(newName)")
     }
 
-    @discardableResult
-    public func createTab(_ value: String? = nil) -> (Tab, WKWebView)? {
+    public func createTab(_ value: String? = nil) {
         /// Get default webView
-        let webView = getDefaultWebkitView()
+        self.webView = Self.getDefaultWebkitView()
 
         var newTab: Tab?
         if let value {
@@ -71,10 +47,8 @@ final class BrowserViewModel {
             /// Create a new Tab
             newTab = createTempTab()
         }
-        guard let newTab else { return nil }
+        guard let newTab else { return }
 
-        /// Add to webViews dictionary
-        webViews[newTab.id] = webView
         /// Append to tabs array
         tabs.append(newTab)
         selectedTab = newTab
@@ -82,8 +56,6 @@ final class BrowserViewModel {
         currentRequest = req
 
         print("Current Tab Count: \(tabs.count)")
-
-        return (newTab, webView)
     }
 
     private func createTabWith(_ value: String) -> Tab? {
@@ -121,27 +93,56 @@ final class BrowserViewModel {
     private func createTempTab() -> Tab {
         let newTab = Tab(
             title: "New Tab",
-            url: searchEngine.search(for: "about:blank")!,
+            url: URL(string: "about:blank")!,
             isActive: true
         )
         return newTab
     }
+}
 
+// MARK: - Tab Management
+extension BrowserViewModel {
+    public func select(tab: Tab) {
+        self.selectedTab = tab
+        let request = URLRequest(url: tab.url)
+        self.currentRequest = request
+        self.webView.load(request)
+    }
+}
 
-    private func getDefaultWebkitView() -> WKWebView {
+// MARK: - Observations
+extension BrowserViewModel {
+    
+    /// Function Observes all tabs (for no reason right now)
+    func observeTabs() {
+        withObservationTracking {
+            _ = tabs
+        } onChange: { [weak self] in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                print("Tabs Changed:\n" + self.tabs.map { "• \($0.title)" }.joined(separator: "\n"))
+                self.observeTabs()
+            }
+        }
+    }
+}
+
+// MARK: - Helpers
+extension BrowserViewModel {
+    internal static func getDefaultWebkitView() -> WKWebView {
         let config = WKWebViewConfiguration()
-
+        
         config.websiteDataStore = dataStore
         config.defaultWebpagePreferences.preferredContentMode = .desktop
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
-
+        
         config.preferences.isElementFullscreenEnabled = true
-
+        
         let webView = WKWebView(frame: .zero, configuration: config)
-
+        
         webView.autoresizingMask = [.width, .height]
-
+        
         webView.customUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"
         return webView

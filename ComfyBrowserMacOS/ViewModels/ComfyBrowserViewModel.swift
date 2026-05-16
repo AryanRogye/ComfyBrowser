@@ -29,17 +29,18 @@ final class ComfyBrowserViewModel {
         )
         observeHoveringOverSidebar()
     }
+    
     func observeHoveringOverSidebar() {
         withObservationTracking {
             _ = isHoveringOverSidebarSide
-        } onChange: {
-            DispatchQueue.main.async { [weak self] in
+        } onChange: { [weak self] in
+            DispatchQueue.main.async {
                 guard let self else { return }
-                print("IsHovering: \(isHoveringOverSidebarSide)")
-                if isHoveringOverSidebarSide && sidebarState == .closed {
-                    sidebarState = .floating
+                print("IsHovering: \(self.isHoveringOverSidebarSide)")
+                if self.isHoveringOverSidebarSide && self.sidebarState == .closed {
+                    self.sidebarState = .floating
                 } else {
-                    sidebarState = .closed
+                    self.sidebarState = .closed
                 }
                 self.observeHoveringOverSidebar()
             }
