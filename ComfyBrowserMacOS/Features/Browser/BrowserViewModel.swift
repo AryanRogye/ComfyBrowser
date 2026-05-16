@@ -219,7 +219,7 @@ extension BrowserViewModel {
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
         config.preferences.isElementFullscreenEnabled = true
-        config.preferences.inactiveSchedulingPolicy = .suspend
+        config.preferences.inactiveSchedulingPolicy = .none
         
         return config
     }

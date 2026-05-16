@@ -15,6 +15,7 @@ final class FaviconService {
     var favicons: [String: NSImage] = [:]
     
     private var inFlight: Set<String> = []
+    private var failedDomains: Set<String> = []
     
     func favicon(for url: URL?) -> NSImage? {
         guard let domain = normalizedDomain(from: url) else {
@@ -23,6 +24,9 @@ final class FaviconService {
         
         if let cached = favicons[domain] {
             return cached
+        }
+        if failedDomains.contains(domain) {
+            return nil
         }
         
         fetch(for: domain)
@@ -52,6 +56,9 @@ final class FaviconService {
                     .largest()
                 
                 guard let image = favicon.image?.image else {
+                    await MainActor.run {
+                        _ = self.failedDomains.insert(domain)
+                    }
                     return
                 }
                 
@@ -60,7 +67,9 @@ final class FaviconService {
                 }
                 
             } catch {
-                
+                await MainActor.run {
+                    _ = self.failedDomains.insert(domain)
+                }
             }
         }
     }

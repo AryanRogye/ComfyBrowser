@@ -1,10 +1,10 @@
 {
-  "originHash" : "397c2dfb503d47f173c3824a5f417550665217f2b49f0025fb1d79dcb309b18a",
+  "originHash" : "1ae8800352d9f6f4c10a9e6eef2874bd1440aa35901077e7314cbdae8b8cd6b9",
   "pins" : [
     {
-      "identity" : "faviconfinder?utm_source=chatgpt.com",
+      "identity" : "faviconfinder",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/will-lumley/FaviconFinder?utm_source=chatgpt.com",
+      "location" : "https://github.com/will-lumley/FaviconFinder",
       "state" : {
         "revision" : "11c2b27fbdc5fdfe0bf3addac01d27c40299a819",
         "version" : "5.1.5"

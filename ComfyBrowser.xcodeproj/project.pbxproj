@@ -795,7 +795,7 @@
 		};
 		9B1A52BA2FB82790009138E1 /* XCRemoteSwiftPackageReference "FaviconFinder" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/will-lumley/FaviconFinder?utm_source=chatgpt.com";
+			repositoryURL = "https://github.com/will-lumley/FaviconFinder";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.1.5;
