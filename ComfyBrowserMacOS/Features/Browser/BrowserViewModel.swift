@@ -148,6 +148,10 @@ extension BrowserViewModel {
         
         let closingSelected = selectedTab?.id == id
         
+        /// release the WebView before removing (Stops Leak)
+        tabs[index].retainedWebView?.stopLoading()
+        tabs[index].retainedWebView = nil
+        
         tabs.remove(at: index)
         
         guard !tabs.isEmpty else {
@@ -195,7 +199,10 @@ extension BrowserViewModel {
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                print("Tabs Changed:\n" + self.tabs.map { "• \($0.title)" }.joined(separator: "\n"))
+                print("""
+                Tabs Changed:
+                \(self.tabs.map { "• \($0.title)" }.joined(separator: "\n") )
+                """)
                 self.observeTabs()
             }
         }
@@ -212,6 +219,7 @@ extension BrowserViewModel {
         config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsAirPlayForMediaPlayback = true
         config.preferences.isElementFullscreenEnabled = true
+        config.preferences.inactiveSchedulingPolicy = .suspend
         
         return config
     }
