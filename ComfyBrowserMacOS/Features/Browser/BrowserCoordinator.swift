@@ -32,6 +32,8 @@ final class BrowserCoordinator {
 
 // MARK: - Search
 extension BrowserCoordinator {
+    
+    /// Search "String"
     public func search(_ value: String) {
         switch searchCoordinator.resolve(value, with: searchEngine) {
         case .empty:
@@ -49,6 +51,19 @@ extension BrowserCoordinator {
         }
     }
     
+    /// While Searching we can call this to get a list
+    /// of searchSuggestions (uses users history)
+    public func searching(
+        _ value: String
+    ) -> [SearchSuggestion] {
+        searchCoordinator.suggestions(
+            for: value,
+            with: searchEngine,
+            tabs: tabs
+        )
+    }
+    
+    /// Clicking a Suggestion
     public func openSuggestion(
         _ suggestion: SearchSuggestion
     ) {
@@ -62,7 +77,12 @@ extension BrowserCoordinator {
         }
     }
     
-    public func createTab(url: URL, title: String) {
+    /// Internal Function Creates a tab and adds it to the
+    /// tabs array
+    internal func createTab(
+        url: URL,
+        title: String
+    ) {
         /// Get default webView
         let newWebView = Self.getDefaultWebkitView()
 
@@ -77,72 +97,7 @@ extension BrowserCoordinator {
         
         searchCoordinator.recordHistoryVisit(url: url, title: title)
     }
-    
-    public func searching(_ value: String) -> [SearchSuggestion] {
-        searchCoordinator.suggestions(
-            for: value,
-            with: searchEngine,
-            tabs: tabs
-        )
-    }
 
-//    /// TODO: TODO: replace createTabWith parsing using SearchInputResolver
-//    public func search(_ value: String? = nil) {
-//        /// Get default webView
-//        let newWebView = Self.getDefaultWebkitView()
-//        
-//        var newTab: Tab?
-//        if let value {
-//            newTab = createTabWith(value)
-//        } else {
-//            /// Create a new Tab
-//            newTab = createTempTab()
-//        }
-//        guard var newTab else { return }
-//        
-//        newWebView.load(URLRequest(url: newTab.url))
-//        newTab.retainedWebView = newWebView
-//        
-//        /// Append to tabs array
-//        tabs.append(newTab)
-//        selectedTab = newTab
-//        webView = newWebView
-//        
-//        print("Current Tab Count: \(tabs.count)")
-//    }
-    
-    private func createTabWith(_ value: String) -> Tab? {
-        // Normalize input into a loadable URL
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-        
-        // Decide if input is likely a URL or a search query
-        let hasScheme = trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://")
-        let looksLikeDomain = trimmed.contains(".") && !trimmed.contains(" ")
-        
-        var finalURL: URL?
-        if hasScheme {
-            finalURL = URL(string: trimmed)
-        } else if looksLikeDomain {
-            // Prepend https:// for bare domains
-            finalURL = URL(string: "https://\(trimmed)")
-        } else {
-            // Treat as a search query
-            finalURL = searchEngine.search(for: trimmed)
-        }
-        
-        guard let url = finalURL else { return nil }
-        
-        let title = trimmed
-        
-        let newTab = Tab(
-            title: title,
-            url: url,
-            isActive: true
-        )
-        return newTab
-    }
-    
     private func createTempTab() -> Tab {
         let newTab = Tab(
             title: "New Tab",
