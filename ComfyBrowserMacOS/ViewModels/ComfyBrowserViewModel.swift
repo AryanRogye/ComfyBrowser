@@ -25,7 +25,8 @@ final class ComfyBrowserViewModel {
     
     init() {
         shortcuts.register(
-            onToggleSidebar: toggleSidebarOpenClose
+            onToggleSidebar: toggleSidebarOpenClose,
+            onSearch: onSearch
         )
         observeHoveringOverSidebar()
     }
@@ -45,6 +46,10 @@ final class ComfyBrowserViewModel {
                 self.observeHoveringOverSidebar()
             }
         }
+    }
+    
+    func onSearch() {
+        
     }
     
     func toggleSidebarOpenClose() {

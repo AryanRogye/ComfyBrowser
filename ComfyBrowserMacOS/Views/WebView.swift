@@ -9,24 +9,24 @@ import SwiftUI
 import WebKit
 
 struct WebView: View {
-    @Environment(BrowserViewModel.self) var browserVM
+    @Environment(BrowserCoordinator.self) var browserController
 
     var body: some View {
-        @Bindable var browserVM = browserVM
+        @Bindable var browserController = browserController
         WebViewContainer(
-            webView: browserVM.webView,
+            webView: browserController.webView,
             onURLOrTitleChange: { url, title in
                 if let url, let title {
                     /// find the browser tab in the tabs array
-                    guard let selectedTab = browserVM.selectedTab else { return }
-                    guard let index = browserVM.tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
+                    guard let selectedTab = browserController.selectedTab else { return }
+                    guard let index = browserController.tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
                     
-                    browserVM.tabs[index].url = url
-                    browserVM.tabs[index].title = title
+                    browserController.tabs[index].url = url
+                    browserController.tabs[index].title = title
                 }
             }
         )
-        .id(ObjectIdentifier(browserVM.webView))
+        .id(ObjectIdentifier(browserController.webView))
     }
 }
 

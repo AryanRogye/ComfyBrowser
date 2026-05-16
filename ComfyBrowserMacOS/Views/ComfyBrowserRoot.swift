@@ -11,7 +11,7 @@ import SwiftUI
 struct ComfyBrowserRoot: View {
     
     @Environment(ComfyBrowserViewModel.self) var comfyBrowserViewModel
-    @Environment(BrowserViewModel.self) var browserViewModel
+    @Environment(BrowserCoordinator.self) var browserController
 
     var backgroundColor: some ShapeStyle {
             LinearGradient(
@@ -50,7 +50,7 @@ struct ComfyBrowserRoot: View {
             /// Main Content
             HStack(spacing: 6) {
                 Sidebar(
-                    browserVM: browserViewModel
+                    browserController: browserController
                 )
                 
                 VStack(spacing: 0) {
@@ -87,11 +87,11 @@ struct ComfyBrowserRoot: View {
 }
 
 #Preview {
-    @Previewable @State  var comfyBrowserVM = BrowserViewModel()
+    @Previewable @State  var browserController = BrowserCoordinator()
     @Previewable @State  var comfyBrowserState = ComfyBrowserViewModel()
 
     ComfyBrowserRoot()
-        .environment(comfyBrowserVM)
+        .environment(browserController)
         .environment(comfyBrowserState)
         .padding()
         .frame(width: 600, height: 600)

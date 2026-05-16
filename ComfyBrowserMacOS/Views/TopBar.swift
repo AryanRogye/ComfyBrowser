@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TopBar<SidebarIcon: View>: View {
     
-    @Environment(BrowserViewModel.self) var browserVM
+    @Environment(BrowserCoordinator.self) var browserController
     @Binding var shouldShowSidebarIcon: Bool
     @ViewBuilder var sidebarIcon: SidebarIcon
     @State private var search: String = ""
@@ -23,7 +23,7 @@ struct TopBar<SidebarIcon: View>: View {
                 .textFieldStyle(.plain)
                 .onSubmit {
                     if search.isEmpty { return }
-                    browserVM.createTab(search)
+                    browserController.createTab(search)
                 }
             
             Spacer()

@@ -1,5 +1,5 @@
 //
-//  BrowserViewModel.swift
+//  BrowserCoordinator.swift
 //  ComfyBrowser
 //
 //  Created by Aryan Rogye on 12/19/25.
@@ -11,7 +11,7 @@ import Combine
 
 @Observable
 @MainActor
-final class BrowserViewModel {
+final class BrowserCoordinator {
 
     static let dataStore: WKWebsiteDataStore = .default()
 
@@ -104,7 +104,7 @@ final class BrowserViewModel {
 }
 
 // MARK: - Tab Mutation
-extension BrowserViewModel {
+extension BrowserCoordinator {
     public func updateURL(at index: Int, url: URL) {
         guard tabs.indices.contains(index) else { return }
         tabs[index].url = url
@@ -122,7 +122,7 @@ extension BrowserViewModel {
 }
 
 // MARK: - Tab Management
-extension BrowserViewModel {
+extension BrowserCoordinator {
     
     public func updateURLAndTitle(_ url: URL?, _ title: String?) {
         if let url, let title {
@@ -190,7 +190,7 @@ extension BrowserViewModel {
 }
 
 // MARK: - Observations
-extension BrowserViewModel {
+extension BrowserCoordinator {
     
     /// Function Observes all tabs (for no reason right now)
     func observeTabs() {
@@ -210,7 +210,7 @@ extension BrowserViewModel {
 }
 
 // MARK: - Helpers
-extension BrowserViewModel {
+extension BrowserCoordinator {
     
     internal static func makeConfig() -> WKWebViewConfiguration {
         let config = WKWebViewConfiguration()
