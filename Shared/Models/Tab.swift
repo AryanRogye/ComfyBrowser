@@ -21,7 +21,7 @@ struct Tab: Hashable, Identifiable, Equatable {
     var url: URL
     var isActive: Bool
     
-    var history: [NavigationEntry] = []
+    var history: [NavigationEntry]
     var historyIndex: Int = 0
     
     var retainedWebView: WKWebView?
@@ -35,6 +35,9 @@ struct Tab: Hashable, Identifiable, Equatable {
         self.title = title
         self.url = url
         self.isActive = isActive
+        self.history = [
+            .init(url: url, title: title, visitedAt: .now)
+        ]
     }
     static func == (lhs: Tab, rhs: Tab) -> Bool {
         lhs.id == rhs.id

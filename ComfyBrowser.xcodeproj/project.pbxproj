@@ -206,10 +206,10 @@
 		9B1A53502FB85C2D009138E1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9B4B6DFE2FB8F39B00CED910 /* TopBar */,
 				9B1A534B2FB85C2D009138E1 /* Sidebar */,
 				9B1A534C2FB85C2D009138E1 /* ComfyBrowserRoot.swift */,
 				9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */,
-				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
 				9B1A534F2FB85C2D009138E1 /* WebView.swift */,
 			);
 			path = Views;
@@ -256,6 +256,14 @@
 				9BD47DB32ECD2B710081FD2F /* ComfyBrowserMacOSUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9B4B6DFE2FB8F39B00CED910 /* TopBar */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
+			);
+			path = TopBar;
 			sourceTree = "<group>";
 		};
 		9B4EA9622ECE3D26002B570E /* Shared */ = {

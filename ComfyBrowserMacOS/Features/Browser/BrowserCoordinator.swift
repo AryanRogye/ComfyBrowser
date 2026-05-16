@@ -105,10 +105,21 @@ final class BrowserCoordinator {
 
 // MARK: - Tab Mutation
 extension BrowserCoordinator {
+    
     public func updateURL(at index: Int, url: URL) {
         guard tabs.indices.contains(index) else { return }
+        
+        /// add new URL to the history
+        tabs[index].history.append(
+            .init(
+                url: url,
+                visitedAt: .now
+            )
+        )
         tabs[index].url = url
+        tabs[index].historyIndex += 1
     }
+    
     public func updateTitle(at index: Int, title: String) {
         guard tabs.indices.contains(index) else { return }
         tabs[index].title = title
