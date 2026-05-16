@@ -23,24 +23,19 @@ final class BrowserCoordinator {
 
     var webView: WKWebView
     
-
     init() {
         webView = Self.getDefaultWebkitView()
         observeTabs()
     }
+}
 
-    func updateNameAtIndex(_ index: Int, to newName: String) {
-        guard index >= 0, index < tabs.count else { return }
-        var tab = tabs[index]
-        tab.title = newName
-        tabs[index] = tab
-        print("Updated Tab At Index: \(index) With Name: \(newName)")
-    }
-
+// MARK: - Search
+extension BrowserCoordinator {
+    /// TODO: TODO: replace createTabWith parsing using SearchInputResolver
     public func createTab(_ value: String? = nil) {
         /// Get default webView
         let newWebView = Self.getDefaultWebkitView()
-
+        
         var newTab: Tab?
         if let value {
             newTab = createTabWith(value)
@@ -49,7 +44,7 @@ final class BrowserCoordinator {
             newTab = createTempTab()
         }
         guard var newTab else { return }
-
+        
         newWebView.load(URLRequest(url: newTab.url))
         newTab.retainedWebView = newWebView
         
@@ -60,16 +55,16 @@ final class BrowserCoordinator {
         
         print("Current Tab Count: \(tabs.count)")
     }
-
+    
     private func createTabWith(_ value: String) -> Tab? {
         // Normalize input into a loadable URL
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
-
+        
         // Decide if input is likely a URL or a search query
         let hasScheme = trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://")
         let looksLikeDomain = trimmed.contains(".") && !trimmed.contains(" ")
-
+        
         var finalURL: URL?
         if hasScheme {
             finalURL = URL(string: trimmed)
@@ -80,11 +75,11 @@ final class BrowserCoordinator {
             // Treat as a search query
             finalURL = searchEngine.search(for: trimmed)
         }
-
+        
         guard let url = finalURL else { return nil }
-
+        
         let title = trimmed
-
+        
         let newTab = Tab(
             title: title,
             url: url,
@@ -92,7 +87,7 @@ final class BrowserCoordinator {
         )
         return newTab
     }
-
+    
     private func createTempTab() -> Tab {
         let newTab = Tab(
             title: "New Tab",
@@ -101,6 +96,7 @@ final class BrowserCoordinator {
         )
         return newTab
     }
+
 }
 
 // MARK: - Tab Mutation

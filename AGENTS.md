@@ -13,6 +13,8 @@ Guidance for Codex and other coding agents working in this repo.
 
 ## Swift Style
 
+- Absolutely NO Singletons
+  - Singletons need a proposal before implementing
 - Match the existing file style.
 - Use `///` comments above important functions, especially helpers that are not obvious.
 - Include small examples in comments when they clarify behavior.
