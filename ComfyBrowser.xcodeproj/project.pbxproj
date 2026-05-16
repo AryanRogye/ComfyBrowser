@@ -11,6 +11,31 @@
 		9B1A52AF2FB7E811009138E1 /* SearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A52AE2FB7E811009138E1 /* SearchEngine.swift */; };
 		9B1A52B02FB7EBA3009138E1 /* SearchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A52AE2FB7E811009138E1 /* SearchEngine.swift */; };
 		9B1A52BC2FB82790009138E1 /* FaviconFinder in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1A52BB2FB82790009138E1 /* FaviconFinder */; };
+		9B1A53552FB85C2D009138E1 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53342FB85C2D009138E1 /* URL.swift */; };
+		9B1A53562FB85C2D009138E1 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53352FB85C2D009138E1 /* View.swift */; };
+		9B1A53572FB85C2D009138E1 /* View+windowTitlebarArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53362FB85C2D009138E1 /* View+windowTitlebarArea.swift */; };
+		9B1A53582FB85C2D009138E1 /* BrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53382FB85C2D009138E1 /* BrowserViewModel.swift */; };
+		9B1A53592FB85C2D009138E1 /* FaviconService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53392FB85C2D009138E1 /* FaviconService.swift */; };
+		9B1A535A2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A533B2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift */; };
+		9B1A535B2FB85C2D009138E1 /* Shortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A533C2FB85C2D009138E1 /* Shortcuts.swift */; };
+		9B1A535C2FB85C2D009138E1 /* ComfyBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A533F2FB85C2D009138E1 /* ComfyBrowserViewModel.swift */; };
+		9B1A535D2FB85C2D009138E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53422FB85C2D009138E1 /* Sidebar.swift */; };
+		9B1A535E2FB85C2D009138E1 /* SidebarCollectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */; };
+		9B1A535F2FB85C2D009138E1 /* SidebarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */; };
+		9B1A53602FB85C2D009138E1 /* SidebarItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */; };
+		9B1A53612FB85C2D009138E1 /* SidebarRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53462FB85C2D009138E1 /* SidebarRow.swift */; };
+		9B1A53622FB85C2D009138E1 /* SidebarRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */; };
+		9B1A53632FB85C2D009138E1 /* SidebarScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */; };
+		9B1A53642FB85C2D009138E1 /* SidebarTabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */; };
+		9B1A53652FB85C2D009138E1 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A534A2FB85C2D009138E1 /* SidebarView.swift */; };
+		9B1A53662FB85C2D009138E1 /* ComfyBrowserRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A534C2FB85C2D009138E1 /* ComfyBrowserRoot.swift */; };
+		9B1A53672FB85C2D009138E1 /* SidebarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */; };
+		9B1A53682FB85C2D009138E1 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A534E2FB85C2D009138E1 /* TopBar.swift */; };
+		9B1A53692FB85C2D009138E1 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A534F2FB85C2D009138E1 /* WebView.swift */; };
+		9B1A536A2FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53522FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift */; };
+		9B1A536B2FB85C2D009138E1 /* SidebarTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53532FB85C2D009138E1 /* SidebarTracker.swift */; };
+		9B1A536C2FB85C2D009138E1 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9B1A53412FB85C2D009138E1 /* README.md */; };
+		9B1A536D2FB85C2D009138E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B1A53512FB85C2D009138E1 /* Assets.xcassets */; };
 		9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */; };
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
@@ -35,6 +60,31 @@
 
 /* Begin PBXFileReference section */
 		9B1A52AE2FB7E811009138E1 /* SearchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEngine.swift; sourceTree = "<group>"; };
+		9B1A53342FB85C2D009138E1 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
+		9B1A53352FB85C2D009138E1 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
+		9B1A53362FB85C2D009138E1 /* View+windowTitlebarArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+windowTitlebarArea.swift"; sourceTree = "<group>"; };
+		9B1A53382FB85C2D009138E1 /* BrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserViewModel.swift; sourceTree = "<group>"; };
+		9B1A53392FB85C2D009138E1 /* FaviconService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaviconService.swift; sourceTree = "<group>"; };
+		9B1A533B2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalShortcuts+Defaults.swift"; sourceTree = "<group>"; };
+		9B1A533C2FB85C2D009138E1 /* Shortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcuts.swift; sourceTree = "<group>"; };
+		9B1A533F2FB85C2D009138E1 /* ComfyBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComfyBrowserViewModel.swift; sourceTree = "<group>"; };
+		9B1A53412FB85C2D009138E1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9B1A53422FB85C2D009138E1 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionCoordinator.swift; sourceTree = "<group>"; };
+		9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCollectionView.swift; sourceTree = "<group>"; };
+		9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItemView.swift; sourceTree = "<group>"; };
+		9B1A53462FB85C2D009138E1 /* SidebarRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarRow.swift; sourceTree = "<group>"; };
+		9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarRowViewModel.swift; sourceTree = "<group>"; };
+		9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarScrollView.swift; sourceTree = "<group>"; };
+		9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTabItem.swift; sourceTree = "<group>"; };
+		9B1A534A2FB85C2D009138E1 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		9B1A534C2FB85C2D009138E1 /* ComfyBrowserRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComfyBrowserRoot.swift; sourceTree = "<group>"; };
+		9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarIcon.swift; sourceTree = "<group>"; };
+		9B1A534E2FB85C2D009138E1 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		9B1A534F2FB85C2D009138E1 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		9B1A53512FB85C2D009138E1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9B1A53522FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComfyBrowserMacOSApp.swift; sourceTree = "<group>"; };
+		9B1A53532FB85C2D009138E1 /* SidebarTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTracker.swift; sourceTree = "<group>"; };
 		9B2E02D52E58FEED0087A5CB /* ComfyBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComfyBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B4EA9682ECE3D39002B570E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		9BD47D9D2ECD2B700081FD2F /* ComfyBrowserMacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComfyBrowserMacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,11 +96,6 @@
 		9B2E02D72E58FEED0087A5CB /* ComfyBrowser */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ComfyBrowser;
-			sourceTree = "<group>";
-		};
-		9BD47D9E2ECD2B700081FD2F /* ComfyBrowserMacOS */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ComfyBrowserMacOS;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -90,12 +135,100 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9B1A53372FB85C2D009138E1 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53342FB85C2D009138E1 /* URL.swift */,
+				9B1A53352FB85C2D009138E1 /* View.swift */,
+				9B1A53362FB85C2D009138E1 /* View+windowTitlebarArea.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		9B1A533A2FB85C2D009138E1 /* Browser */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53382FB85C2D009138E1 /* BrowserViewModel.swift */,
+				9B1A53392FB85C2D009138E1 /* FaviconService.swift */,
+			);
+			path = Browser;
+			sourceTree = "<group>";
+		};
+		9B1A533D2FB85C2D009138E1 /* Shortcuts */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A533B2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift */,
+				9B1A533C2FB85C2D009138E1 /* Shortcuts.swift */,
+			);
+			path = Shortcuts;
+			sourceTree = "<group>";
+		};
+		9B1A533E2FB85C2D009138E1 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A533A2FB85C2D009138E1 /* Browser */,
+				9B1A533D2FB85C2D009138E1 /* Shortcuts */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		9B1A53402FB85C2D009138E1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A533F2FB85C2D009138E1 /* ComfyBrowserViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9B1A534B2FB85C2D009138E1 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53422FB85C2D009138E1 /* Sidebar.swift */,
+				9B1A534A2FB85C2D009138E1 /* SidebarView.swift */,
+				9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */,
+				9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */,
+				9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */,
+				9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */,
+				9B1A53462FB85C2D009138E1 /* SidebarRow.swift */,
+				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
+				9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */,
+				9B1A53412FB85C2D009138E1 /* README.md */,
+			);
+			path = Sidebar;
+			sourceTree = "<group>";
+		};
+		9B1A53502FB85C2D009138E1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A534B2FB85C2D009138E1 /* Sidebar */,
+				9B1A534C2FB85C2D009138E1 /* ComfyBrowserRoot.swift */,
+				9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */,
+				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
+				9B1A534F2FB85C2D009138E1 /* WebView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9B1A53542FB85C2D009138E1 /* ComfyBrowserMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53372FB85C2D009138E1 /* Extensions */,
+				9B1A533E2FB85C2D009138E1 /* Features */,
+				9B1A53402FB85C2D009138E1 /* ViewModels */,
+				9B1A53502FB85C2D009138E1 /* Views */,
+				9B1A53512FB85C2D009138E1 /* Assets.xcassets */,
+				9B1A53522FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift */,
+				9B1A53532FB85C2D009138E1 /* SidebarTracker.swift */,
+			);
+			path = ComfyBrowserMacOS;
+			sourceTree = "<group>";
+		};
 		9B2E02CC2E58FEED0087A5CB = {
 			isa = PBXGroup;
 			children = (
 				9B4EA9622ECE3D26002B570E /* Shared */,
 				9B2E02D72E58FEED0087A5CB /* ComfyBrowser */,
-				9BD47D9E2ECD2B700081FD2F /* ComfyBrowserMacOS */,
+				9B1A53542FB85C2D009138E1 /* ComfyBrowserMacOS */,
 				9B2E02D62E58FEED0087A5CB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -164,9 +297,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				9BD47D9E2ECD2B700081FD2F /* ComfyBrowserMacOS */,
 			);
 			name = ComfyBrowserMacOS;
 			packageProductDependencies = (
@@ -282,6 +412,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B1A536C2FB85C2D009138E1 /* README.md in Resources */,
+				9B1A536D2FB85C2D009138E1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +447,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B1A53552FB85C2D009138E1 /* URL.swift in Sources */,
+				9B1A53562FB85C2D009138E1 /* View.swift in Sources */,
+				9B1A53572FB85C2D009138E1 /* View+windowTitlebarArea.swift in Sources */,
+				9B1A53582FB85C2D009138E1 /* BrowserViewModel.swift in Sources */,
+				9B1A53592FB85C2D009138E1 /* FaviconService.swift in Sources */,
+				9B1A535A2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift in Sources */,
+				9B1A535B2FB85C2D009138E1 /* Shortcuts.swift in Sources */,
+				9B1A535C2FB85C2D009138E1 /* ComfyBrowserViewModel.swift in Sources */,
+				9B1A535D2FB85C2D009138E1 /* Sidebar.swift in Sources */,
+				9B1A535E2FB85C2D009138E1 /* SidebarCollectionCoordinator.swift in Sources */,
+				9B1A535F2FB85C2D009138E1 /* SidebarCollectionView.swift in Sources */,
+				9B1A53602FB85C2D009138E1 /* SidebarItemView.swift in Sources */,
+				9B1A53612FB85C2D009138E1 /* SidebarRow.swift in Sources */,
+				9B1A53622FB85C2D009138E1 /* SidebarRowViewModel.swift in Sources */,
+				9B1A53632FB85C2D009138E1 /* SidebarScrollView.swift in Sources */,
+				9B1A53642FB85C2D009138E1 /* SidebarTabItem.swift in Sources */,
+				9B1A53652FB85C2D009138E1 /* SidebarView.swift in Sources */,
+				9B1A53662FB85C2D009138E1 /* ComfyBrowserRoot.swift in Sources */,
+				9B1A53672FB85C2D009138E1 /* SidebarIcon.swift in Sources */,
+				9B1A53682FB85C2D009138E1 /* TopBar.swift in Sources */,
+				9B1A53692FB85C2D009138E1 /* WebView.swift in Sources */,
+				9B1A536A2FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift in Sources */,
+				9B1A536B2FB85C2D009138E1 /* SidebarTracker.swift in Sources */,
 				9B1A52AF2FB7E811009138E1 /* SearchEngine.swift in Sources */,
 				9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */,
 			);
