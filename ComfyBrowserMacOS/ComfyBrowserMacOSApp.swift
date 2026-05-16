@@ -11,13 +11,13 @@ import WebKit
 @main
 struct ComfyBrowserMacOSApp: App {
 
-    @State private var browserController = BrowserCoordinator()
+    @State private var browserCoordinator = BrowserCoordinator()
     @State private var comfyBrowserViewModel = ComfyBrowserViewModel()
 
     var body: some Scene {
         WindowGroup {
                 ComfyBrowserRoot()
-                    .environment(browserController)
+                    .environment(browserCoordinator)
                     .environment(comfyBrowserViewModel)
         }
         .windowStyle(.hiddenTitleBar)

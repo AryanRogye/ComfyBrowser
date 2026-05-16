@@ -10,7 +10,7 @@ import SwiftUI
 struct Sidebar: View {
 
     @Environment(ComfyBrowserViewModel.self) var comfyBrowserVM
-    @Bindable var browserController: BrowserCoordinator
+    @Bindable var browserCoordinator: BrowserCoordinator
 
 
     var body: some View {
@@ -18,15 +18,15 @@ struct Sidebar: View {
 
         if comfyBrowserVM.sidebarState == .open {
             SidebarView(
-                faviconService: browserController.faviconService,
-                tabs: $browserController.tabs,
+                faviconService: browserCoordinator.faviconService,
+                tabs: $browserCoordinator.tabs,
                 clickedTab: { tab in
                     /// if same just exit early
-                    if browserController.selectedTab?.id == tab.id { return }
-                    browserController.select(id: tab.id)
+                    if browserCoordinator.selectedTab?.id == tab.id { return }
+                    browserCoordinator.select(id: tab.id)
                 },
                 closeTab: { tab in
-                    browserController.closeTab(id: tab.id)
+                    browserCoordinator.closeTab(id: tab.id)
                 }
             )
             .frame(maxWidth: 200, maxHeight: .infinity, alignment: .top)

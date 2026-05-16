@@ -11,7 +11,7 @@ import SwiftUI
 struct ComfyBrowserRoot: View {
     
     @Environment(ComfyBrowserViewModel.self) var comfyBrowserViewModel
-    @Environment(BrowserCoordinator.self) var browserController
+    @Environment(BrowserCoordinator.self) var browserCoordinator
 
     var backgroundColor: some ShapeStyle {
             LinearGradient(
@@ -22,24 +22,6 @@ struct ComfyBrowserRoot: View {
     }
 
     var body: some View {
-        @Bindable var comfyBrowserViewModel = comfyBrowserViewModel
-        
-        let shouldShowSidebar: Binding<Bool> = Binding(
-            /// If Sidebar is Closed, we should hide the sidebar
-            get: { comfyBrowserViewModel.sidebarState == .closed },
-            set: { _ in }
-        )
-        let shouldShowContent = Binding(
-            /// If Sidebar is Closed, we should hide the sidebar
-            get: { comfyBrowserViewModel.sidebarState != .closed },
-            set: { _ in }
-        )
-        let shouldShowSidebarIconInTopBar = Binding(
-            /// If Sidebar is Closed, we should hide the sidebar
-            get: { comfyBrowserViewModel.sidebarState == .closed },
-            set: { _ in }
-        )
-        
         ZStack {
             
             /// Background
@@ -50,14 +32,12 @@ struct ComfyBrowserRoot: View {
             /// Main Content
             HStack(spacing: 6) {
                 Sidebar(
-                    browserController: browserController
+                    browserCoordinator: browserCoordinator
                 )
                 
                 VStack(spacing: 0) {
-                    TopBar(
-                        shouldShowSidebarIcon: shouldShowSidebarIconInTopBar,
-                        sidebarIcon: { sidebarIcon }
-                    )
+
+                    topBar
                     
                     WebView()
                         .clipShape(
@@ -73,25 +53,56 @@ struct ComfyBrowserRoot: View {
         .ignoresSafeArea(edges: .top)
         .animation(.snappy(duration: 0.2), value: comfyBrowserViewModel.sidebarState)
         .windowTitlebarArea(
-            shouldShowContent: shouldShowContent,
-            shouldHideTrafficLights: shouldShowSidebar,
+            /// show content when the sidebar is not open meaning
+            /// open/floating
+            shouldShowContent: Binding(
+                /// If Sidebar is Closed, we should hide the sidebar
+                get: { comfyBrowserViewModel.sidebarState != .closed },
+                set: { _ in }
+            ),
+            /// hide traffic lights when sidebar is closed
+            shouldHideTrafficLights: Binding(
+                /// If Sidebar is Closed, we should hide the sidebar
+                get: { comfyBrowserViewModel.sidebarState == .closed },
+                set: { _ in }
+            )
+,
             content: {
                 sidebarIcon
             }
         )
     }
     
+    // MARK: - TopBar
+    private var topBar: some View {
+        let shouldShowSidebarIconInTopBar = Binding(
+            /// If Sidebar is Closed, we should hide the sidebar
+            get: { comfyBrowserViewModel.sidebarState == .closed },
+            set: { _ in }
+        )
+        
+        return TopBar(
+            searchEngine: browserCoordinator.searchEngine,
+            shouldShowSidebarIcon: shouldShowSidebarIconInTopBar,
+            sidebarIcon: { sidebarIcon },
+            onSearch: { search in
+                browserCoordinator.createTab(search)
+            }
+        )
+    }
+    
+    // MARK: - Sidebar Icon
     private var sidebarIcon: some View {
         SidebarIcon(action: comfyBrowserViewModel.toggleSidebarOpenClose)
     }
 }
 
 #Preview {
-    @Previewable @State  var browserController = BrowserCoordinator()
+    @Previewable @State  var browserCoordinator = BrowserCoordinator()
     @Previewable @State  var comfyBrowserState = ComfyBrowserViewModel()
 
     ComfyBrowserRoot()
-        .environment(browserController)
+        .environment(browserCoordinator)
         .environment(comfyBrowserState)
         .padding()
         .frame(width: 600, height: 600)
