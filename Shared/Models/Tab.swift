@@ -7,13 +7,13 @@
 
 import Foundation
 
-final class Tab: Identifiable, Equatable {
-    
+struct Tab: Hashable, Identifiable, Equatable {
+
     let id: UUID
     var title: String
     var url: URL
     var isActive: Bool
-    
+
     init(
         title: String,
         url: URL,
@@ -24,5 +24,14 @@ final class Tab: Identifiable, Equatable {
         self.url = url
         self.isActive = isActive
     }
-    static func == (lhs: Tab, rhs: Tab) -> Bool { lhs.id == rhs.id }
+    static func == (lhs: Tab, rhs: Tab) -> Bool {
+        lhs.id == rhs.id
+            && lhs.title == rhs.title
+            && lhs.url == rhs.url
+            && lhs.isActive == rhs.isActive
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

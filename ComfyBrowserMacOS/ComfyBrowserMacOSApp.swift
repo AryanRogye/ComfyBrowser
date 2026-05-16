@@ -10,10 +10,10 @@ import WebKit
 
 @main
 struct ComfyBrowserMacOSApp: App {
-    
+
     @State private var browserVM = BrowserViewModel()
     @State private var comfyBrowserViewModel = ComfyBrowserViewModel()
-    
+
     var body: some Scene {
         WindowGroup {
                 ComfyBrowserRoot()

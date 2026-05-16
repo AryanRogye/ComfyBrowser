@@ -101,6 +101,12 @@ private class WindowTitlebarAreaView: NSView {
         observeWindow()
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(NSWindow.didResizeNotification)
+        NotificationCenter.default.removeObserver(NSWindow.didEnterFullScreenNotification)
+        NotificationCenter.default.removeObserver(NSWindow.didExitFullScreenNotification)
+    }
+    
     /// Observe the Window
     private func observeWindow() {
         guard let window, frameObs == nil else { return }
@@ -135,37 +141,34 @@ private class WindowTitlebarAreaView: NSView {
     
     /// Attach SwiftUI Button, And Move Traffic Lights
     private func attachIfNeededAndRefresh(completion: @escaping () -> Void = { }) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            guard let window else { return }
-            guard let zoom = window.standardWindowButton(.zoomButton),
-                  let container = zoom.superview else { return }
+        guard let window else { return }
+        guard let zoom = window.standardWindowButton(.zoomButton),
+              let container = zoom.superview else { return }
+        
+        /// 🔴 🟡 🟢 |<- 8px ->| [your icon]
+        let left_spacing : CGFloat = 8
+        let height       : CGFloat = 24
+        
+        if didAttach {
+            leadingC?.isActive = false
+            centerYC?.isActive = false
             
-            /// 🔴 🟡 🟢 |<- 8px ->| [your icon]
-            let left_spacing : CGFloat = 8
-            let height       : CGFloat = 24
+            leadingC = hosting.leadingAnchor.constraint(equalTo: zoom.trailingAnchor, constant: left_spacing)
+            centerYC = hosting.centerYAnchor.constraint(equalTo: zoom.centerYAnchor)
             
-            if didAttach {
-                leadingC?.isActive = false
-                centerYC?.isActive = false
-                
-                leadingC = hosting.leadingAnchor.constraint(equalTo: zoom.trailingAnchor, constant: left_spacing)
-                centerYC = hosting.centerYAnchor.constraint(equalTo: zoom.centerYAnchor)
-                
-                NSLayoutConstraint.activate([leadingC!, centerYC!])
-            } else {
-                self.didAttach = true
-                hosting.translatesAutoresizingMaskIntoConstraints = false
-                container.addSubview(hosting)
-                
-                leadingC = hosting.leadingAnchor.constraint(equalTo: zoom.trailingAnchor, constant: left_spacing)
-                centerYC = hosting.centerYAnchor.constraint(equalTo: zoom.centerYAnchor)
-                heightC  = hosting.heightAnchor.constraint(equalToConstant: height)
-                
-                NSLayoutConstraint.activate([leadingC!, centerYC!, heightC!])
-            }
-            moveTrafficLights(in: window, completion: completion)
+            NSLayoutConstraint.activate([leadingC!, centerYC!])
+        } else {
+            self.didAttach = true
+            hosting.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(hosting)
+            
+            leadingC = hosting.leadingAnchor.constraint(equalTo: zoom.trailingAnchor, constant: left_spacing)
+            centerYC = hosting.centerYAnchor.constraint(equalTo: zoom.centerYAnchor)
+            heightC  = hosting.heightAnchor.constraint(equalToConstant: height)
+            
+            NSLayoutConstraint.activate([leadingC!, centerYC!, heightC!])
         }
+        moveTrafficLights(in: window, completion: completion)
     }
     
     /// Update the hosting view

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B1A52AC2FB7E34D009138E1 /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1A52AB2FB7E34D009138E1 /* LocalShortcuts */; };
 		9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */; };
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
@@ -62,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B1A52AC2FB7E34D009138E1 /* LocalShortcuts in Frameworks */,
 				9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,6 +165,7 @@
 			name = ComfyBrowserMacOS;
 			packageProductDependencies = (
 				9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */,
+				9B1A52AB2FB7E34D009138E1 /* LocalShortcuts */,
 			);
 			productName = ComfyBrowserMacOS;
 			productReference = 9BD47D9D2ECD2B700081FD2F /* ComfyBrowserMacOS.app */;
@@ -244,7 +247,7 @@
 			mainGroup = 9B2E02CC2E58FEED0087A5CB;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9B1D9BF62EF4EA2200A75C2B /* XCLocalSwiftPackageReference "LocalShortcuts" */,
+				9B1A52AA2FB7E34D009138E1 /* XCRemoteSwiftPackageReference "LocalShortcuts" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9B2E02D62E58FEED0087A5CB /* Products */;
@@ -755,14 +758,23 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		9B1D9BF62EF4EA2200A75C2B /* XCLocalSwiftPackageReference "LocalShortcuts" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = LocalShortcuts;
+/* Begin XCRemoteSwiftPackageReference section */
+		9B1A52AA2FB7E34D009138E1 /* XCRemoteSwiftPackageReference "LocalShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AryanRogye/LocalShortcuts";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9B1A52AB2FB7E34D009138E1 /* LocalShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B1A52AA2FB7E34D009138E1 /* XCRemoteSwiftPackageReference "LocalShortcuts" */;
+			productName = LocalShortcuts;
+		};
 		9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LocalShortcuts;
