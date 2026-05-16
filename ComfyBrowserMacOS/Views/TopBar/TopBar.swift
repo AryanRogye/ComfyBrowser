@@ -9,14 +9,18 @@ import SwiftUI
 
 struct TopBar<SidebarIcon: View>: View {
     
+    @Bindable var faviconService: FaviconService
     let searchEngine: SearchEngine
     @Binding var shouldShowSidebarIcon: Bool
     @ViewBuilder var sidebarIcon: SidebarIcon
     var onSearch: (String) -> Void
+    var onOpenSuggestion: (SearchSuggestion) -> Void
+    var searching: (String) -> [SearchSuggestion]
     
     @FocusState private var isFocused: Bool
     @State private var isSearchOverlayVisible: Bool = false
     @State private var search: String = ""
+    @State private var searchSuggestions: [SearchSuggestion] = []
     
     /// Background Shape Of TopBar
     let background = UnevenRoundedRectangle(
@@ -106,8 +110,16 @@ struct TopBar<SidebarIcon: View>: View {
             
             /// if Focused we show a background
             if isSearchOverlayVisible {
-                FocusedSearchOverlay()
-                    .zIndex(searchContainerZIndex)
+                FocusedSearchOverlay {
+                    SearchSuggestionsList(
+                        suggestions: searchSuggestions,
+                        onHighlight: { _ in },
+                        onSelect: { suggestion in
+                            self.onOpenSuggestion(suggestion)
+                        }
+                    )
+                }
+                .zIndex(searchContainerZIndex)
             }
             
             HStack {
@@ -142,6 +154,10 @@ struct TopBar<SidebarIcon: View>: View {
                     isSearchOverlayVisible = true
                     if !isSearchOverlayVisible || search.isEmpty { return }
                     TextFieldSelectAll.selectAll()
+                }
+                .onChange(of: search) { _, newValue in
+                    searchSuggestions = searching(search)
+                    print("Search Suggestions: \(searchSuggestions.map { $0.title }.joined(separator: ", "))")
                 }
         }
         .padding(.leading)
@@ -208,12 +224,12 @@ private struct FocusedSearchOverlay<Content: View>: View {
                     divider
                     
                     content()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: overlayHeight)
             .padding(.horizontal, overlayHorizontalInset)
-            .allowsHitTesting(false)
     }
     
     private var divider: some View {
@@ -238,12 +254,20 @@ extension FocusedSearchOverlay where Content == EmptyView {
     
     VStack {
         TopBar(
+            faviconService: browserCoordinator.faviconService,
             searchEngine: .duckDuckGo,
             shouldShowSidebarIcon: .constant(true),
             sidebarIcon: {
                 SidebarIcon(action: comfyBrowserViewModel.toggleSidebarOpenClose)
-            }, onSearch: { search in
-                
+            },
+            onSearch: { searchTerm in
+                browserCoordinator.search(searchTerm)
+            },
+            onOpenSuggestion: { suggestion in
+                browserCoordinator.openSuggestion(suggestion)
+            },
+            searching: { searchTerm in
+                browserCoordinator.searching(searchTerm)
             })
         .padding()
     }

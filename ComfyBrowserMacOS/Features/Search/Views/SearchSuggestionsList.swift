@@ -5,43 +5,55 @@
 //  Created by Aryan Rogye on 5/16/26.
 //
 
+import AppKit
 import SwiftUI
 
 /// Renders the omnibar suggestion popup content.
 ///
-/// `TopBar` will own focus, keyboard navigation, and query text. This view only
-/// displays suggestions and reports highlight/select events back up.
+/// This is the SwiftUI entry point into an AppKit `NSCollectionView`, matching
+/// the sidebar's architecture. AppKit owns fast row reuse and scrolling, while
+/// each row remains a SwiftUI `SearchSuggestionRow`.
 ///
 /// Example:
 ///     Pressing Down in `TopBar` changes `highlightedID`, and this list redraws
 ///     the matching row as highlighted.
-struct SearchSuggestionsList: View {
+struct SearchSuggestionsList: NSViewRepresentable {
     
     var suggestions: [SearchSuggestion]
-    var highlightedID: SearchSuggestion.ID?
+    var highlightedID: SearchSuggestion.ID? = nil
     var onHighlight: (SearchSuggestion.ID?) -> Void
     var onSelect: (SearchSuggestion) -> Void
     
-    var body: some View {
-        VStack(spacing: 2) {
-            ForEach(suggestions) { suggestion in
-                SearchSuggestionRow(
-                    suggestion: suggestion,
-                    isHighlighted: highlightedID == suggestion.id
-                )
-                .onHover { isHovering in
-                    if isHovering {
-                        onHighlight(suggestion.id)
-                    }
-                }
-                .onTapGesture {
-                    onSelect(suggestion)
-                }
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.top, 58)
-        .padding(.bottom, 10)
+    func makeCoordinator() -> SearchSuggestionCollectionCoordinator {
+        SearchSuggestionCollectionCoordinator(
+            suggestions: suggestions,
+            highlightedID: highlightedID,
+            onHighlight: onHighlight,
+            onSelect: onSelect
+        )
+    }
+    
+    func makeNSView(context: Context) -> SearchSuggestionScrollView {
+        context.coordinator.suggestions = suggestions
+        context.coordinator.highlightedID = highlightedID
+        
+        let scrollView = SearchSuggestionScrollView()
+        scrollView.collectionView.dataSource = context.coordinator
+        scrollView.collectionView.delegate = context.coordinator
+        
+        return scrollView
+    }
+    
+    func updateNSView(
+        _ nsView: SearchSuggestionScrollView,
+        context: Context
+    ) {
+        context.coordinator.suggestions = suggestions
+        context.coordinator.highlightedID = highlightedID
+        context.coordinator.onHighlight = onHighlight
+        context.coordinator.onSelect = onSelect
+        
+        nsView.collectionView.reloadData()
     }
 }
 

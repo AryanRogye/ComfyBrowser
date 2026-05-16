@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// `SuggestionIndex`
+/// stores history in RAM so lookup is fast
+///
 /// A bounded in-memory cache of history records for fast omnibar lookups.
 ///
 /// This should never own `WKWebView` or other heavy browser objects. It stores

@@ -82,11 +82,18 @@ struct ComfyBrowserRoot: View {
         )
         
         return TopBar(
+            faviconService: browserCoordinator.faviconService,
             searchEngine: browserCoordinator.searchEngine,
             shouldShowSidebarIcon: shouldShowSidebarIconInTopBar,
             sidebarIcon: { sidebarIcon },
-            onSearch: { search in
-                browserCoordinator.createTab(search)
+            onSearch: { searchTerm in
+                browserCoordinator.search(searchTerm)
+            },
+            onOpenSuggestion: { suggestion in
+                browserCoordinator.openSuggestion(suggestion)
+            },
+            searching: { searchTerm in
+                return browserCoordinator.searching(searchTerm)
             }
         )
     }

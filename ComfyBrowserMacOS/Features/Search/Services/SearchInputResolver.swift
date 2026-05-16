@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// `SearchInputResolver`
+/// decides: "is this a URL, domain, search, or empty?"
+///
 /// Converts raw omnibar input into a browser action.
 ///
 /// `BrowserCoordinator` should use this instead of re-implementing URL/search

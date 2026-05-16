@@ -7,6 +7,9 @@
 
 import Foundation
 
+/// `SearchSuggestionProvider`
+/// combines everything into rows for the omnibar
+///
 /// Combines local sources into ranked omnibar suggestions.
 ///
 /// V1 sources are open tabs, cached history, a direct URL action, and a search

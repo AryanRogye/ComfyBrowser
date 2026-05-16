@@ -20,6 +20,7 @@ final class BrowserCoordinator {
     var searchEngine: SearchEngine = .duckDuckGo
     
     let faviconService = FaviconService()
+    let searchCoordinator = SearchCoordinator()
 
     var webView: WKWebView
     
@@ -31,30 +32,84 @@ final class BrowserCoordinator {
 
 // MARK: - Search
 extension BrowserCoordinator {
-    /// TODO: TODO: replace createTabWith parsing using SearchInputResolver
-    public func createTab(_ value: String? = nil) {
+    public func search(_ value: String) {
+        switch searchCoordinator.resolve(value, with: searchEngine) {
+        case .empty:
+            return
+        case .url(let url):
+            createTab(
+                url: url,
+                title: value
+            )
+        case .search(let query, let url):
+            createTab(
+                url: url,
+                title: query
+            )
+        }
+    }
+    
+    public func openSuggestion(
+        _ suggestion: SearchSuggestion
+    ) {
+        switch suggestion.kind {
+        case .openTab:
+            guard let tabID = suggestion.tabID else { return }
+            select(id: tabID)
+        case .history, .url, .search:
+            guard let url = suggestion.url else { return }
+            createTab(url: url, title: suggestion.title)
+        }
+    }
+    
+    public func createTab(url: URL, title: String) {
         /// Get default webView
         let newWebView = Self.getDefaultWebkitView()
+
+        var tab = Tab(title: title, url: url, isActive: true)
         
-        var newTab: Tab?
-        if let value {
-            newTab = createTabWith(value)
-        } else {
-            /// Create a new Tab
-            newTab = createTempTab()
-        }
-        guard var newTab else { return }
+        newWebView.load(URLRequest(url: tab.url))
+        tab.retainedWebView = newWebView
         
-        newWebView.load(URLRequest(url: newTab.url))
-        newTab.retainedWebView = newWebView
-        
-        /// Append to tabs array
-        tabs.append(newTab)
-        selectedTab = newTab
+        tabs.append(tab)
+        selectedTab = tab
         webView = newWebView
         
-        print("Current Tab Count: \(tabs.count)")
+        searchCoordinator.recordHistoryVisit(url: url, title: title)
     }
+    
+    public func searching(_ value: String) -> [SearchSuggestion] {
+        searchCoordinator.suggestions(
+            for: value,
+            with: searchEngine,
+            tabs: tabs
+        )
+    }
+
+//    /// TODO: TODO: replace createTabWith parsing using SearchInputResolver
+//    public func search(_ value: String? = nil) {
+//        /// Get default webView
+//        let newWebView = Self.getDefaultWebkitView()
+//        
+//        var newTab: Tab?
+//        if let value {
+//            newTab = createTabWith(value)
+//        } else {
+//            /// Create a new Tab
+//            newTab = createTempTab()
+//        }
+//        guard var newTab else { return }
+//        
+//        newWebView.load(URLRequest(url: newTab.url))
+//        newTab.retainedWebView = newWebView
+//        
+//        /// Append to tabs array
+//        tabs.append(newTab)
+//        selectedTab = newTab
+//        webView = newWebView
+//        
+//        print("Current Tab Count: \(tabs.count)")
+//    }
     
     private func createTabWith(_ value: String) -> Tab? {
         // Normalize input into a loadable URL

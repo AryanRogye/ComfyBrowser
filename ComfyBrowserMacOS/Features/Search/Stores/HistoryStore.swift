@@ -139,7 +139,7 @@ extension HistoryStore {
     /// Creates a store and loads persisted history asynchronously.
     ///
     /// This should be the normal app startup path once history is wired into
-    /// `BrowserCoordinator`. The file read happens in `loadRecords(from:)`,
+    /// `SearchCoordinator`. The file read happens in `loadRecords(from:)`,
     /// which performs the blocking disk work in a detached task.
     ///
     /// Example:
