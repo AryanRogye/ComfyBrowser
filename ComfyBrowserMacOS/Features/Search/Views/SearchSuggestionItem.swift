@@ -17,19 +17,20 @@ final class SearchSuggestionItem: NSCollectionViewItem {
     static let identifier = NSUserInterfaceItemIdentifier("SearchSuggestionItem")
     
     private var hostingView: NSHostingView<SearchSuggestionRow>?
-    private var suggestion: SearchSuggestion?
-    private var onHighlight: ((SearchSuggestion.ID?) -> Void)?
-    private var onSelect: ((SearchSuggestion) -> Void)?
+    private var onTap: (() -> Void)?
+    
+    private var vm : SearchSuggestionRowViewModel?
     
     override func loadView() {
         let view = SearchSuggestionItemView()
         view.onTap = { [weak self] in
-            guard let self, let suggestion else { return }
-            onSelect?(suggestion)
+            guard let self else { return }
+            onTap?()
         }
         view.onHover = { [weak self] isHovering in
-            guard let self, let suggestion else { return }
-            onHighlight?(isHovering ? suggestion.id : nil)
+            guard let self else { return }
+            
+            vm?.isHovering = isHovering
         }
         self.view = view
     }
@@ -38,28 +39,27 @@ final class SearchSuggestionItem: NSCollectionViewItem {
         with suggestion: SearchSuggestion,
         isHighlighted: Bool,
         faviconService: FaviconService,
-        onHighlight: @escaping (SearchSuggestion.ID?) -> Void,
-        onSelect: @escaping (SearchSuggestion) -> Void
+        onTap: @escaping () -> Void
     ) {
-        self.suggestion = suggestion
-        self.onHighlight = onHighlight
-        self.onSelect = onSelect
+        self.onTap = onTap
+        self.vm = SearchSuggestionRowViewModel(
+            faviconService: faviconService,
+            suggestion: suggestion
+        )
+        
         setup(
             faviconService: faviconService,
             suggestion: suggestion,
-            isHighlighted: isHighlighted
         )
     }
     
     private func setup(
         faviconService: FaviconService,
         suggestion: SearchSuggestion,
-        isHighlighted: Bool
     ) {
+        guard let vm else { return }
         let row = SearchSuggestionRow(
-            faviconService: faviconService,
-            suggestion: suggestion,
-            isHighlighted: isHighlighted
+            vm: vm,
         )
         
         if let hostingView {

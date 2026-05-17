@@ -61,10 +61,23 @@ final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDat
             with: suggestion,
             isHighlighted: highlightedID == suggestion.id,
             faviconService: faviconService,
-            onHighlight: onHighlight,
-            onSelect: onSelect
+            onTap: { [weak self] in
+                guard let self else { return }
+                self.onSelect(suggestion)
+            }
         )
         
         return item
     }
+    
+//    /// Opens the suggestion at a collection-view item index.
+//    ///
+//    /// Example:
+//    ///     `SearchSuggestionCollectionView` maps a click to item `3`, and this
+//    ///     method selects the fourth suggestion if it still exists.
+//    func selectItem(at index: Int) {
+//        guard suggestions.indices.contains(index) else { return }
+//        
+//        onSelect(suggestions[index])
+//    }
 }

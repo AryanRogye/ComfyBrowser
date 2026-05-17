@@ -24,7 +24,10 @@ struct SearchSuggestionsList: NSViewRepresentable {
     var highlightedID: SearchSuggestion.ID? = nil
     var onHighlight: (SearchSuggestion.ID?) -> Void
     var onSelect: (SearchSuggestion) -> Void
-    
+}
+
+// MARK: - Coordinator Creation
+extension SearchSuggestionsList {
     func makeCoordinator() -> SearchSuggestionCollectionCoordinator {
         SearchSuggestionCollectionCoordinator(
             faviconService: faviconService,
@@ -34,7 +37,10 @@ struct SearchSuggestionsList: NSViewRepresentable {
             onSelect: onSelect
         )
     }
-    
+}
+
+// MARK: - Make
+extension SearchSuggestionsList {
     func makeNSView(context: Context) -> SearchSuggestionScrollView {
         context.coordinator.suggestions = suggestions
         context.coordinator.highlightedID = highlightedID
@@ -43,10 +49,14 @@ struct SearchSuggestionsList: NSViewRepresentable {
         /// set delegates
         scrollView.collectionView.dataSource = context.coordinator
         scrollView.collectionView.delegate = context.coordinator
+        scrollView.reloadData(itemCount: suggestions.count)
         
         return scrollView
     }
-    
+}
+
+// MARK: - Update
+extension SearchSuggestionsList {
     func updateNSView(
         _ nsView: SearchSuggestionScrollView,
         context: Context
@@ -57,7 +67,7 @@ struct SearchSuggestionsList: NSViewRepresentable {
         context.coordinator.onHighlight = onHighlight
         context.coordinator.onSelect = onSelect
         
-        nsView.collectionView.reloadData()
+        nsView.reloadData(itemCount: suggestions.count)
     }
 }
 

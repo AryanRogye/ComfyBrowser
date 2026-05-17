@@ -16,9 +16,7 @@ import SwiftUI
 ///     `.openTab` rows show a window icon, `.history` rows show a clock icon.
 struct SearchSuggestionRow: View {
     
-    var faviconService: FaviconService
-    var suggestion: SearchSuggestion
-    var isHighlighted: Bool
+    @Bindable var vm: SearchSuggestionRowViewModel
     
     var body: some View {
         HStack(spacing: 12) {
@@ -26,12 +24,12 @@ struct SearchSuggestionRow: View {
                 .frame(width: 20)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(suggestion.title)
+                Text(vm.suggestion.title)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
                 
-                if let subtitle = suggestion.subtitle {
+                if let subtitle = vm.suggestion.subtitle {
                     Text(subtitle)
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
@@ -44,7 +42,7 @@ struct SearchSuggestionRow: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .background {
-            if isHighlighted {
+            if vm.isHovering {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.primary.opacity(0.08))
             }
@@ -54,7 +52,7 @@ struct SearchSuggestionRow: View {
     
     @ViewBuilder
     private var icon: some View {
-        if let icon = faviconService.favicon(for: suggestion.url) {
+        if let icon = vm.faviconService.favicon(for: vm.suggestion.url) {
             Image(nsImage: icon)
                 .resizable()
                 .frame(width: 16, height: 16)
@@ -67,7 +65,7 @@ struct SearchSuggestionRow: View {
     }
     
     private var systemImage: String {
-        switch suggestion.kind {
+        switch vm.suggestion.kind {
         case .openTab:
             return "macwindow"
         case .history:
@@ -83,16 +81,17 @@ struct SearchSuggestionRow: View {
 #Preview {
     VStack {
         SearchSuggestionRow(
-            faviconService: FaviconService(),
-            suggestion: SearchSuggestion(
-                id: "preview",
-                kind: .history,
-                title: "ComfyBrowser",
-                subtitle: "github.com/AryanRogye/ComfyBrowser",
-                url: URL(string: "https://github.com/AryanRogye/ComfyBrowser"),
-                score: 1
-            ),
-            isHighlighted: true
+            vm: SearchSuggestionRowViewModel(
+                faviconService: FaviconService(),
+                suggestion: SearchSuggestion(
+                    id: "preview",
+                    kind: .history,
+                    title: "ComfyBrowser",
+                    subtitle: "github.com/AryanRogye/ComfyBrowser",
+                    url: URL(string: "https://github.com/AryanRogye/ComfyBrowser"),
+                    score: 1
+                )
+            )
         )
     }
     .padding()

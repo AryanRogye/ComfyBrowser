@@ -41,6 +41,7 @@
 		9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */; };
 		9B4B6E332FB91FD900CED910 /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */; };
 		9B4B6ECE2FB9378E00CED910 /* FocusedSearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */; };
+		9B4B6F472FB961E200CED910 /* SearchSuggestionRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */; };
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
@@ -110,6 +111,7 @@
 		9B2E02D52E58FEED0087A5CB /* ComfyBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComfyBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
 		9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedSearchOverlay.swift; sourceTree = "<group>"; };
+		9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionRowViewModel.swift; sourceTree = "<group>"; };
 		9B4EA9682ECE3D39002B570E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
@@ -306,14 +308,6 @@
 			path = TopBar;
 			sourceTree = "<group>";
 		};
-		9BC0002D2FB96965009138E1 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				9BC0002B2FB96965009138E1 /* ComfyTextField.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
 		9B4EA9622ECE3D26002B570E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -380,11 +374,20 @@
 				9BC000202FB9532A009138E1 /* SearchSuggestionCollectionView.swift */,
 				9BC000212FB9532A009138E1 /* SearchSuggestionItem.swift */,
 				9BC000222FB9532A009138E1 /* SearchSuggestionItemView.swift */,
-				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
 				9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */,
+				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
+				9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */,
 				9BC000292FB956AA009138E1 /* README.md */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		9BC0002D2FB96965009138E1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				9BC0002B2FB96965009138E1 /* ComfyTextField.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -576,6 +579,7 @@
 				9B1A53552FB85C2D009138E1 /* URL.swift in Sources */,
 				9B1A53562FB85C2D009138E1 /* View.swift in Sources */,
 				9B1A53572FB85C2D009138E1 /* View+windowTitlebarArea.swift in Sources */,
+				9B4B6F472FB961E200CED910 /* SearchSuggestionRowViewModel.swift in Sources */,
 				9B1A53582FB85C2D009138E1 /* BrowserCoordinator.swift in Sources */,
 				9B1A53592FB85C2D009138E1 /* FaviconService.swift in Sources */,
 				9B1A535A2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift in Sources */,

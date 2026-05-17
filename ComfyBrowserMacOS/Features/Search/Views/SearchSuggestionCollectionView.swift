@@ -19,6 +19,7 @@ class SearchSuggestionCollectionView: NSCollectionView {
     
     let cellWidth: CGFloat = 520
     let cellHeight: CGFloat = 46
+    let lineSpacing: CGFloat = 2
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -40,7 +41,7 @@ class SearchSuggestionCollectionView: NSCollectionView {
             width: cellWidth,
             height: cellHeight
         )
-        layout.minimumLineSpacing = 2
+        layout.minimumLineSpacing = lineSpacing
         
         layout.sectionInset = NSEdgeInsets(
             top: distanceFromTop,
@@ -64,5 +65,25 @@ class SearchSuggestionCollectionView: NSCollectionView {
         
         let inset = flowLayout.sectionInset.left + flowLayout.sectionInset.right
         flowLayout.itemSize.width = max(0, bounds.width - inset)
+    }
+    
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        true
+    }
+    
+    /// Returns the document height needed for every suggestion row.
+    ///
+    /// Example:
+    ///     Three rows need top inset + bottom inset + three row heights + two
+    ///     line spacings, so all rows live inside the clickable document view.
+    func documentHeight(for itemCount: Int) -> CGFloat {
+        guard itemCount > 0 else {
+            return distanceFromTop + paddingAround
+        }
+        
+        let rowHeights = CGFloat(itemCount) * cellHeight
+        let spacings = CGFloat(max(0, itemCount - 1)) * lineSpacing
+        
+        return distanceFromTop + rowHeights + spacings + paddingAround
     }
 }

@@ -58,6 +58,16 @@ When changing the generated/editor SwiftUI source through Codex:
 - Do not invent unrelated features.
 - Return complete Swift source when replacing the editor text.
 
+## SwiftUI/AppKit Interop
+
+- When a SwiftUI view needs AppKit behavior, start with the smallest AppKit hook that solves the exact problem.
+  - Examples: `acceptsFirstMouse(for:)`, `mouseDown(with:)`, `NSTrackingArea`, `NSTextFieldDelegate`, or first-responder handling.
+- Avoid broad `hitTest(_:)` overrides unless there is no smaller option. They can trap events, steal clicks from hosted SwiftUI subviews, or make only part of a collection view behave correctly.
+- Before adding a coordinator-level routing system, custom click mapping, or extra state layer, test the simple AppKit primitive first.
+  - Example: for clickable `NSCollectionViewItem` rows hosting SwiftUI content, prefer an `NSView` item shell with `acceptsFirstMouse(for:)` and `mouseDown(with:)` before overriding collection-view hit testing.
+- Keep SwiftUI as the owner of app state and AppKit as the owner of imperative edge behavior. Do not duplicate source of truth between both sides.
+- If a bug is about focus, clicks, hover, or responder-chain behavior, describe the actual event path in comments or review notes before expanding the architecture.
+
 ## Git Safety
 
 - The worktree may contain user changes.

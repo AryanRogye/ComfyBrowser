@@ -15,6 +15,7 @@ import AppKit
 class SearchSuggestionScrollView: NSScrollView {
     
     let collectionView = SearchSuggestionCollectionView()
+    private var itemCount: Int = 0
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -36,5 +37,38 @@ class SearchSuggestionScrollView: NSScrollView {
         backgroundColor = .clear
         
         autohidesScrollers = true
+    }
+    
+    override func layout() {
+        super.layout()
+        resizeDocumentView()
+    }
+    
+    /// Reloads rows and resizes the document view to contain every item.
+    ///
+    /// Example:
+    ///     If suggestions grow from one row to five rows, the collection view's
+    ///     document height grows too, so all five rows are inside the clickable
+    ///     AppKit hit-test area.
+    func reloadData(itemCount: Int) {
+        self.itemCount = itemCount
+        resizeDocumentView()
+        collectionView.reloadData()
+    }
+    
+    private func resizeDocumentView() {
+        let width = contentView.bounds.width
+        let height = max(
+            contentView.bounds.height,
+            collectionView.documentHeight(for: itemCount)
+        )
+        
+        collectionView.frame = NSRect(
+            x: 0,
+            y: 0,
+            width: width,
+            height: height
+        )
+        collectionView.collectionViewLayout?.invalidateLayout()
     }
 }
