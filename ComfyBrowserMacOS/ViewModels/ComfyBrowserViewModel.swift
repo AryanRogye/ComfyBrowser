@@ -62,13 +62,9 @@ final class ComfyBrowserViewModel {
         }
     }
 
-    func navBack() {
-        navigateBack?()
-    }
+    private var lastNavigationTime = Date.distantPast
+    private let navigationCooldown: TimeInterval = 0.2
 
-    func navForward() {
-        navigateForward?()
-    }
 
     func onSearch() {
         isShowingNewTabSearch = true
@@ -76,5 +72,29 @@ final class ComfyBrowserViewModel {
     
     func toggleSidebarOpenClose() {
         sidebarState = (sidebarState == .open) ? .closed : .open
+    }
+}
+
+// MARK: - Navigation
+extension ComfyBrowserViewModel {
+    private func canNavigate() -> Bool {
+        let now = Date()
+
+        guard now.timeIntervalSince(lastNavigationTime) > navigationCooldown else {
+            return false
+        }
+
+        lastNavigationTime = now
+        return true
+    }
+
+    func navBack() {
+        guard canNavigate() else { return }
+        navigateBack?()
+    }
+
+    func navForward() {
+        guard canNavigate() else { return }
+        navigateForward?()
     }
 }
