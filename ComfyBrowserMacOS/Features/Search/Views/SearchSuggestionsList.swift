@@ -51,6 +51,7 @@ struct SearchSuggestionsList: NSViewRepresentable {
         _ nsView: SearchSuggestionScrollView,
         context: Context
     ) {
+        context.coordinator.faviconService = faviconService
         context.coordinator.suggestions = suggestions
         context.coordinator.highlightedID = highlightedID
         context.coordinator.onHighlight = onHighlight

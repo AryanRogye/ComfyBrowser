@@ -31,7 +31,7 @@ class SearchSuggestionCollectionView: NSCollectionView {
     }
     
     private func setup() {
-        isSelectable = true
+        isSelectable = false
         backgroundColors = [.clear]
         
         let layout = NSCollectionViewFlowLayout()

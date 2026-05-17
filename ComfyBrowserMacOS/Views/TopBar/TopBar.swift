@@ -14,13 +14,11 @@ struct TopBar<SidebarIcon: View>: View {
     @Binding var shouldShowSidebarIcon: Bool
     @ViewBuilder var sidebarIcon: SidebarIcon
     var onSearch: (String) -> Void
-    var onOpenSuggestion: (SearchSuggestion) -> Void
     var searching: (String) -> [SearchSuggestion]
-    
-    @FocusState private var isFocused: Bool
-    @State private var isSearchOverlayVisible: Bool = false
-    @State private var search: String = ""
-    @State private var searchSuggestions: [SearchSuggestion] = []
+    @Binding var isSearchOverlayVisible: Bool
+    @Binding var isSearchFieldFocused: Bool
+    @Binding var search: String
+    @Binding var searchSuggestions: [SearchSuggestion]
     
     /// Background Shape Of TopBar
     let background = UnevenRoundedRectangle(
@@ -40,24 +38,19 @@ struct TopBar<SidebarIcon: View>: View {
         40
     }
     
-    /// when the serach overlay is visible we want it floating on top
-    var containerZIndex: CGFloat {
-        isSearchOverlayVisible ? 10 : 1
+    /// Top bar material while the search popup is closed.
+    ///
+    /// Example:
+    ///     When the popup is open, `FocusedSearchOverlay` provides the white
+    ///     surface behind the text field, so this background becomes clear.
+    var backgroundFill: AnyShapeStyle {
+        if isSearchOverlayVisible {
+            return AnyShapeStyle(.clear)
+        }
+        
+        return AnyShapeStyle(.regularMaterial)
     }
     
-    
-    /// Container Holding Search Items
-    /// ZIndex = 0 because it has to be held UNDER the textfield
-    var searchContainerZIndex: CGFloat {
-        0
-    }
-    
-    /// Container Holding Search Items
-    /// ZIndex = 1 because it has to be held ABOVE the textfield
-    var textfieldContainerZIndex: CGFloat {
-        1
-    }
-
     var body: some View {
         ZStack(alignment: .topLeading) {
             topBar
@@ -67,7 +60,7 @@ struct TopBar<SidebarIcon: View>: View {
                 .frame(height: height)
                 .background {
                     background
-                        .fill(.regularMaterial)
+                        .fill(backgroundFill)
                 }
                 .contentShape(Rectangle())
                 .zIndex(1)
@@ -77,7 +70,6 @@ struct TopBar<SidebarIcon: View>: View {
             height: height,
             alignment: .topLeading
         )
-        .zIndex(containerZIndex)
         .animation(
             .snappy(duration: 0.2),
             value: shouldShowSidebarIcon
@@ -86,12 +78,6 @@ struct TopBar<SidebarIcon: View>: View {
             .snappy(duration: 0.2),
             value: isSearchOverlayVisible
         )
-        .onAppear {
-            search = "you"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isFocused = true
-            }
-        }
     }
     
     /// MARK: - Top Bar
@@ -113,27 +99,10 @@ struct TopBar<SidebarIcon: View>: View {
 
     private var searchContainer: some View {
         ZStack(alignment: .topLeading) {
-            
-            /// if Focused we show a background
-            if isSearchOverlayVisible {
-                FocusedSearchOverlay {
-                    SearchSuggestionsList(
-                        faviconService: faviconService,
-                        suggestions: searchSuggestions,
-                        onHighlight: { _ in },
-                        onSelect: { suggestion in
-                            self.onOpenSuggestion(suggestion)
-                        }
-                    )
-                }
-                .zIndex(searchContainerZIndex)
-            }
-            
             HStack {
                 textfield
                 Spacer()
             }
-            .zIndex(textfieldContainerZIndex)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 40, alignment: .topLeading)
@@ -144,28 +113,32 @@ struct TopBar<SidebarIcon: View>: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.black)
             
-            TextField("Search with \(searchEngine.rawValue) or enter address", text: $search)
-                .textFieldStyle(.plain)
-                .foregroundStyle(.black)
-                .onSubmit {
+            ComfyTextField(
+                placeholder: "Search with \(searchEngine.rawValue) or enter address",
+                text: $search,
+                isFocused: $isSearchFieldFocused,
+                selectAllOnFocus: true,
+                onSubmit: {
                     if search.isEmpty { return }
                     onSearch(search)
-                    isFocused = false
-                }
-                .focused($isFocused)
-                .onChange(of: isFocused) { _, newValue in
+                    isSearchOverlayVisible = false
+                    isSearchFieldFocused = false
+                },
+                onFocusRequest: {
+                    isSearchOverlayVisible = true
+                    searchSuggestions = searching(search)
+                },
+                onFocusChange: { newValue in
                     if !newValue {
-                        isSearchOverlayVisible = false
                         return
                     }
                     isSearchOverlayVisible = true
-                    if !isSearchOverlayVisible || search.isEmpty { return }
-                    TextFieldSelectAll.selectAll()
-                }
-                .onChange(of: search) { _, newValue in
                     searchSuggestions = searching(search)
-                    print("Search Suggestions: \(searchSuggestions.map { $0.title }.joined(separator: ", "))")
+                },
+                onTextChange: { newValue in
+                    searchSuggestions = searching(newValue)
                 }
+            )
         }
         .padding(.leading)
         .frame(height: 40)
@@ -173,7 +146,7 @@ struct TopBar<SidebarIcon: View>: View {
         .simultaneousGesture(
             TapGesture().onEnded {
                 isSearchOverlayVisible = true
-                isFocused = true
+                isSearchFieldFocused = true
             }
         )
         .animation(.snappy(duration: 0.2), value: isSearchOverlayVisible)
@@ -196,12 +169,14 @@ struct TopBar<SidebarIcon: View>: View {
             onSearch: { searchTerm in
                 browserCoordinator.search(searchTerm)
             },
-            onOpenSuggestion: { suggestion in
-                browserCoordinator.openSuggestion(suggestion)
-            },
             searching: { searchTerm in
                 browserCoordinator.searching(searchTerm)
-            })
+            },
+            isSearchOverlayVisible: .constant(false),
+            isSearchFieldFocused: .constant(false),
+            search: .constant(""),
+            searchSuggestions: .constant([])
+        )
         .padding()
     }
     .frame(width: 400, height: 500)

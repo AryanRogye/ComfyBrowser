@@ -18,6 +18,17 @@ final class SearchSuggestionItemView: NSView {
     
     private var trackingArea: NSTrackingArea?
     
+    /// Makes the whole collection item behave like one clickable row.
+    ///
+    /// Without this, the embedded SwiftUI `NSHostingView` can become the hit
+    /// target, which makes `mouseDown` on this shell feel inconsistent.
+    ///
+    /// Example:
+    ///     Clicking the row title or favicon still lands on this item view.
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        bounds.contains(point) ? self : nil
+    }
+    
     override func mouseDown(with event: NSEvent) {
         onTap?()
     }
