@@ -19,6 +19,12 @@ struct ComfyBrowserMacOSApp: App {
                 ComfyBrowserRoot()
                     .environment(browserCoordinator)
                     .environment(comfyBrowserViewModel)
+                    .task {
+                        comfyBrowserViewModel.assign(
+                            navigateBack: browserCoordinator.navigateBack,
+                            navigateForward: browserCoordinator.navigateForward
+                        )
+                    }
         }
         .windowStyle(.hiddenTitleBar)
     }

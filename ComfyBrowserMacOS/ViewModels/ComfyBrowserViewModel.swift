@@ -23,11 +23,24 @@ final class ComfyBrowserViewModel {
     var isHoveringOverSidebarSide: Bool = false
     var shouldSidebarShowButton: Bool = false
     var isShowingNewTabSearch: Bool = false
-    
+
+    var navigateBack: (() -> Void)?
+    var navigateForward: (() -> Void)?
+
+    public func assign(navigateBack: @escaping () -> Void, navigateForward: @escaping () -> Void) {
+        if self.navigateBack != nil && self.navigateForward != nil {
+            return
+        }
+        self.navigateBack = navigateBack
+        self.navigateForward = navigateForward
+    }
+
     init() {
         shortcuts.register(
             onToggleSidebar: toggleSidebarOpenClose,
-            onSearch: onSearch
+            onSearch: onSearch,
+            navigateBack: navBack,
+            navigateForward: navForward
         )
         observeHoveringOverSidebar()
     }
@@ -48,12 +61,40 @@ final class ComfyBrowserViewModel {
             }
         }
     }
-    
+
+    private var lastNavigationTime = Date.distantPast
+    private let navigationCooldown: TimeInterval = 0.2
+
+
     func onSearch() {
         isShowingNewTabSearch = true
     }
     
     func toggleSidebarOpenClose() {
         sidebarState = (sidebarState == .open) ? .closed : .open
+    }
+}
+
+// MARK: - Navigation
+extension ComfyBrowserViewModel {
+    private func canNavigate() -> Bool {
+        let now = Date()
+
+        guard now.timeIntervalSince(lastNavigationTime) > navigationCooldown else {
+            return false
+        }
+
+        lastNavigationTime = now
+        return true
+    }
+
+    func navBack() {
+        guard canNavigate() else { return }
+        navigateBack?()
+    }
+
+    func navForward() {
+        guard canNavigate() else { return }
+        navigateForward?()
     }
 }
