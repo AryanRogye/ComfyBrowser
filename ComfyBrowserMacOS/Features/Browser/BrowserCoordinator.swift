@@ -80,22 +80,10 @@ extension BrowserCoordinator {
         )
     }
     
-    public func openSuggestionInPlace(
-        _ suggestion: SearchSuggestion
-    ) {
-        switch suggestion.kind {
-        case .openTab:
-            guard let tabID = suggestion.tabID else { return }
-            select(id: tabID)
-        case .history, .url, .search:
-            guard let url = suggestion.url else { return }
-            createTabInPlace(url: url, title: suggestion.title)
-        }
-    }
-    
     /// Clicking a Suggestion
     public func openSuggestion(
-        _ suggestion: SearchSuggestion
+        _ suggestion: SearchSuggestion,
+        inPlace: Bool = false
     ) {
         switch suggestion.kind {
         case .openTab:
@@ -103,7 +91,11 @@ extension BrowserCoordinator {
             select(id: tabID)
         case .history, .url, .search:
             guard let url = suggestion.url else { return }
-            createTab(url: url, title: suggestion.title)
+            if inPlace {
+                createTabInPlace(url: url, title: suggestion.title)
+            } else {
+                createTab(url: url, title: suggestion.title)
+            }
         }
     }
     

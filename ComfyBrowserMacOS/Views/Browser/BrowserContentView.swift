@@ -166,7 +166,7 @@ struct BrowserContentView<SidebarIcon: View>: View {
     }
     
     private func selectSuggestionReplace(_ suggestion: SearchSuggestion) {
-        browserCoordinator.openSuggestionInPlace(suggestion)
+        browserCoordinator.openSuggestion(suggestion, inPlace: true)
         isSearchOverlayVisible = false
         isSearchFieldFocused = false
     }
