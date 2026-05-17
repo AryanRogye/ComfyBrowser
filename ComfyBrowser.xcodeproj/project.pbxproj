@@ -191,9 +191,9 @@
 			children = (
 				9B7556622FBA386F00E89B86 /* View+readFrame.swift */,
 				9B1A53F12FB86771009138E1 /* View+if.swift */,
+				9B1A53362FB85C2D009138E1 /* View+windowTitlebarArea.swift */,
 				9B1A53342FB85C2D009138E1 /* URL.swift */,
 				9B1A53352FB85C2D009138E1 /* View.swift */,
-				9B1A53362FB85C2D009138E1 /* View+windowTitlebarArea.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
