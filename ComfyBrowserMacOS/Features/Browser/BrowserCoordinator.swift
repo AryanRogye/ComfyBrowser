@@ -34,20 +34,37 @@ final class BrowserCoordinator {
 extension BrowserCoordinator {
     
     /// Search "String"
-    public func search(_ value: String) {
+    public func search(_ value: String, inPlace: Bool = false) {
+        
+        let openInPlace = inPlace && !tabs.isEmpty
+        
         switch searchCoordinator.resolve(value, with: searchEngine) {
         case .empty:
             return
         case .url(let url):
-            createTab(
-                url: url,
-                title: value
-            )
+            if openInPlace {
+                createTabInPlace(
+                    url: url,
+                    title: value
+                )
+            } else {
+                createTab(
+                    url: url,
+                    title: value
+                )
+            }
         case .search(let query, let url):
-            createTab(
-                url: url,
-                title: query
-            )
+            if openInPlace {
+                createTabInPlace(
+                    url: url,
+                    title: query
+                )
+            } else {
+                createTab(
+                    url: url,
+                    title: query
+                )
+            }
         }
     }
     
@@ -63,6 +80,19 @@ extension BrowserCoordinator {
         )
     }
     
+    public func openSuggestionInPlace(
+        _ suggestion: SearchSuggestion
+    ) {
+        switch suggestion.kind {
+        case .openTab:
+            guard let tabID = suggestion.tabID else { return }
+            select(id: tabID)
+        case .history, .url, .search:
+            guard let url = suggestion.url else { return }
+            createTabInPlace(url: url, title: suggestion.title)
+        }
+    }
+    
     /// Clicking a Suggestion
     public func openSuggestion(
         _ suggestion: SearchSuggestion
@@ -73,9 +103,27 @@ extension BrowserCoordinator {
             select(id: tabID)
         case .history, .url, .search:
             guard let url = suggestion.url else { return }
-            print("Creating Tab")
             createTab(url: url, title: suggestion.title)
         }
+    }
+    
+    internal func createTabConfig(url: URL, title: String) -> (Tab, WKWebView) {
+        let newWebView = Self.getDefaultWebkitView()
+        var tab = Tab(title: title, url: url, isActive: true)
+        newWebView.load(URLRequest(url: tab.url))
+        tab.retainedWebView = newWebView
+        
+        return (tab, newWebView)
+    }
+    
+    /// Internal Function Creates a tab and replaces
+    /// the current tab with it
+    internal func createTabInPlace(
+        url: URL,
+        title: String
+    ) {
+        webView.load(URLRequest(url: url))
+        updateSelectedTab(url: url, title: title)
     }
     
     /// Internal Function Creates a tab and adds it to the
@@ -84,13 +132,7 @@ extension BrowserCoordinator {
         url: URL,
         title: String
     ) {
-        /// Get default webView
-        let newWebView = Self.getDefaultWebkitView()
-
-        var tab = Tab(title: title, url: url, isActive: true)
-        
-        newWebView.load(URLRequest(url: tab.url))
-        tab.retainedWebView = newWebView
+        let (tab, newWebView) = createTabConfig(url: url, title: title)
         
         tabs.append(tab)
         selectedTab = tab
@@ -275,6 +317,7 @@ extension BrowserCoordinator {
         config.allowsAirPlayForMediaPlayback = true
         config.preferences.isElementFullscreenEnabled = true
         config.preferences.inactiveSchedulingPolicy = .none
+        config.suppressesIncrementalRendering = false
         
         return config
     }
@@ -283,6 +326,7 @@ extension BrowserCoordinator {
         let webView = WKWebView(frame: .zero, configuration: Self.makeConfig())
         
         webView.autoresizingMask = [.width, .height]
+        webView.allowsMagnification = true
         
         webView.customUserAgent =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15"

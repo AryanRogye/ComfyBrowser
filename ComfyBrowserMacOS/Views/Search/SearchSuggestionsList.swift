@@ -22,7 +22,6 @@ struct SearchSuggestionsList: NSViewRepresentable {
     var faviconService: FaviconService
     var suggestions: [SearchSuggestion]
     var highlightedID: SearchSuggestion.ID? = nil
-    var onHighlight: (SearchSuggestion.ID?) -> Void
     var onSelect: (SearchSuggestion) -> Void
 }
 
@@ -32,8 +31,6 @@ extension SearchSuggestionsList {
         SearchSuggestionCollectionCoordinator(
             faviconService: faviconService,
             suggestions: suggestions,
-            highlightedID: highlightedID,
-            onHighlight: onHighlight,
             onSelect: onSelect
         )
     }
@@ -43,7 +40,6 @@ extension SearchSuggestionsList {
 extension SearchSuggestionsList {
     func makeNSView(context: Context) -> SearchSuggestionScrollView {
         context.coordinator.suggestions = suggestions
-        context.coordinator.highlightedID = highlightedID
         
         let scrollView = SearchSuggestionScrollView()
         /// set delegates
@@ -63,8 +59,6 @@ extension SearchSuggestionsList {
     ) {
         context.coordinator.faviconService = faviconService
         context.coordinator.suggestions = suggestions
-        context.coordinator.highlightedID = highlightedID
-        context.coordinator.onHighlight = onHighlight
         context.coordinator.onSelect = onSelect
         
         nsView.reloadData(itemCount: suggestions.count)
@@ -94,7 +88,6 @@ extension SearchSuggestionsList {
             )
         ],
         highlightedID: "tab",
-        onHighlight: { _ in },
         onSelect: { _ in }
     )
     .frame(width: 520)

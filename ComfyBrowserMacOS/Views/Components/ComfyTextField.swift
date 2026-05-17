@@ -176,7 +176,8 @@ extension ComfyTextField.Coordinator {
             }
             
             if !shouldFocus, window.firstResponder === currentEditor {
-                window.makeFirstResponder(window.contentView)
+                textField.abortEditing()
+                window.makeFirstResponder(nil)
             }
         }
     }

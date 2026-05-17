@@ -20,21 +20,15 @@ final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDat
     
     var faviconService: FaviconService
     var suggestions: [SearchSuggestion]
-    var highlightedID: SearchSuggestion.ID?
-    var onHighlight: (SearchSuggestion.ID?) -> Void
     var onSelect: (SearchSuggestion) -> Void
     
     init(
         faviconService: FaviconService,
         suggestions: [SearchSuggestion],
-        highlightedID: SearchSuggestion.ID?,
-        onHighlight: @escaping (SearchSuggestion.ID?) -> Void,
         onSelect: @escaping (SearchSuggestion) -> Void
     ) {
         self.faviconService = faviconService
         self.suggestions = suggestions
-        self.highlightedID = highlightedID
-        self.onHighlight = onHighlight
         self.onSelect = onSelect
     }
     
@@ -59,7 +53,6 @@ final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDat
         let suggestion = suggestions[indexPath.item]
         item.configure(
             with: suggestion,
-            isHighlighted: highlightedID == suggestion.id,
             faviconService: faviconService,
             onTap: { [weak self] in
                 guard let self else { return }
@@ -69,15 +62,4 @@ final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDat
         
         return item
     }
-    
-//    /// Opens the suggestion at a collection-view item index.
-//    ///
-//    /// Example:
-//    ///     `SearchSuggestionCollectionView` maps a click to item `3`, and this
-//    ///     method selects the fourth suggestion if it still exists.
-//    func selectItem(at index: Int) {
-//        guard suggestions.indices.contains(index) else { return }
-//        
-//        onSelect(suggestions[index])
-//    }
 }
