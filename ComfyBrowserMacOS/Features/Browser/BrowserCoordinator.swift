@@ -157,6 +157,7 @@ extension BrowserCoordinator {
     
     /// Navigates the active tab backward when WebKit has a valid entry.
     public func navigateBack() {
+        guard canNavigateBack else { return }
         guard webView.canGoBack else {
             refreshNavigationAvailability()
             return
@@ -168,6 +169,7 @@ extension BrowserCoordinator {
     
     /// Navigates the active tab forward when WebKit has a valid entry.
     public func navigateForward() {
+        guard canNavigateForward else { return }
         guard webView.canGoForward else {
             refreshNavigationAvailability()
             return

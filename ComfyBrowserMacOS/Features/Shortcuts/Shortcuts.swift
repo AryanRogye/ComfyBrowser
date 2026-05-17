@@ -17,7 +17,9 @@ class Shortcuts {
     
     func register(
         onToggleSidebar: @escaping () -> Void,
-        onSearch: @escaping () -> Void
+        onSearch: @escaping () -> Void,
+        navigateBack: @escaping () -> Void,
+        navigateForward: @escaping () -> Void,
     ) {
         /// Register what happens on keydown for toggling the sidebar
         LocalShortcuts.Name.onKeyDown(for: .toggleSidebar) {
@@ -25,6 +27,12 @@ class Shortcuts {
         }
         LocalShortcuts.Name.onKeyDown(for: .search) {
             onSearch()
+        }
+        LocalShortcuts.Name.onKeyDown(for: .navigateBack) {
+            navigateBack()
+        }
+        LocalShortcuts.Name.onKeyDown(for: .navigateForward) {
+            navigateForward()
         }
     }
 }

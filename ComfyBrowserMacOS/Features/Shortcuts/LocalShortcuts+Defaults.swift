@@ -16,4 +16,12 @@ extension LocalShortcuts.Name {
         modifier: [.command],
         keys: [.t]
     ))
+    static let navigateBack = LocalShortcuts.Name("NavigateBack", .init(
+        modifier: [.command],
+        keys: [.leftBracket]
+    ))
+    static let navigateForward = LocalShortcuts.Name("NavigateForward", .init(
+        modifier: [.command],
+        keys: [.rightBracket]
+    ))
 }

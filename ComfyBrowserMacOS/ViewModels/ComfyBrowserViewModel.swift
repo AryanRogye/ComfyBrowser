@@ -23,11 +23,24 @@ final class ComfyBrowserViewModel {
     var isHoveringOverSidebarSide: Bool = false
     var shouldSidebarShowButton: Bool = false
     var isShowingNewTabSearch: Bool = false
-    
+
+    var navigateBack: (() -> Void)?
+    var navigateForward: (() -> Void)?
+
+    public func assign(navigateBack: @escaping () -> Void, navigateForward: @escaping () -> Void) {
+        if self.navigateBack != nil && self.navigateForward != nil {
+            return
+        }
+        self.navigateBack = navigateBack
+        self.navigateForward = navigateForward
+    }
+
     init() {
         shortcuts.register(
             onToggleSidebar: toggleSidebarOpenClose,
-            onSearch: onSearch
+            onSearch: onSearch,
+            navigateBack: navBack,
+            navigateForward: navForward
         )
         observeHoveringOverSidebar()
     }
@@ -48,7 +61,15 @@ final class ComfyBrowserViewModel {
             }
         }
     }
-    
+
+    func navBack() {
+        navigateBack?()
+    }
+
+    func navForward() {
+        navigateForward?()
+    }
+
     func onSearch() {
         isShowingNewTabSearch = true
     }
