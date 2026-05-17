@@ -85,13 +85,16 @@ extension BrowserCoordinator {
         _ suggestion: SearchSuggestion,
         inPlace: Bool = false
     ) {
+        
+        let openInPlace = inPlace && !tabs.isEmpty
+        
         switch suggestion.kind {
         case .openTab:
             guard let tabID = suggestion.tabID else { return }
             select(id: tabID)
         case .history, .url, .search:
             guard let url = suggestion.url else { return }
-            if inPlace {
+            if openInPlace {
                 createTabInPlace(url: url, title: suggestion.title)
             } else {
                 createTab(url: url, title: suggestion.title)
