@@ -56,6 +56,19 @@ struct BrowserContentView<SidebarIcon: View>: View {
 
             centerSearchOverlay
         }
+        /// if searchField gets focused hide this
+        .onChange(of: isSearchFieldFocused) { _, newValue in
+            if newValue {
+                comfyBrowserViewModel.isShowingNewTabSearch = false
+            }
+        }
+        /// if center search is focused then hide the search bar
+        .onChange(of: comfyBrowserViewModel.isShowingNewTabSearch) { _, newValue in
+            if newValue {
+                isSearchOverlayVisible = false
+                isSearchFieldFocused = false
+            }
+        }
     }
     
     // MARK: - Browser Surface Shadow
