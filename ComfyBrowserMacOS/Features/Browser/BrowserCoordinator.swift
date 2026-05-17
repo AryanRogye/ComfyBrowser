@@ -20,77 +20,83 @@ final class BrowserCoordinator {
     var searchEngine: SearchEngine = .duckDuckGo
     
     let faviconService = FaviconService()
+    let searchCoordinator = SearchCoordinator()
 
     var webView: WKWebView
     
-
     init() {
         webView = Self.getDefaultWebkitView()
         observeTabs()
     }
+}
 
-    func updateNameAtIndex(_ index: Int, to newName: String) {
-        guard index >= 0, index < tabs.count else { return }
-        var tab = tabs[index]
-        tab.title = newName
-        tabs[index] = tab
-        print("Updated Tab At Index: \(index) With Name: \(newName)")
+// MARK: - Search
+extension BrowserCoordinator {
+    
+    /// Search "String"
+    public func search(_ value: String) {
+        switch searchCoordinator.resolve(value, with: searchEngine) {
+        case .empty:
+            return
+        case .url(let url):
+            createTab(
+                url: url,
+                title: value
+            )
+        case .search(let query, let url):
+            createTab(
+                url: url,
+                title: query
+            )
+        }
     }
-
-    public func createTab(_ value: String? = nil) {
+    
+    /// While Searching we can call this to get a list
+    /// of searchSuggestions (uses users history)
+    public func searching(
+        _ value: String
+    ) -> [SearchSuggestion] {
+        searchCoordinator.suggestions(
+            for: value,
+            with: searchEngine,
+            tabs: tabs
+        )
+    }
+    
+    /// Clicking a Suggestion
+    public func openSuggestion(
+        _ suggestion: SearchSuggestion
+    ) {
+        switch suggestion.kind {
+        case .openTab:
+            guard let tabID = suggestion.tabID else { return }
+            select(id: tabID)
+        case .history, .url, .search:
+            guard let url = suggestion.url else { return }
+            print("Creating Tab")
+            createTab(url: url, title: suggestion.title)
+        }
+    }
+    
+    /// Internal Function Creates a tab and adds it to the
+    /// tabs array
+    internal func createTab(
+        url: URL,
+        title: String
+    ) {
         /// Get default webView
         let newWebView = Self.getDefaultWebkitView()
 
-        var newTab: Tab?
-        if let value {
-            newTab = createTabWith(value)
-        } else {
-            /// Create a new Tab
-            newTab = createTempTab()
-        }
-        guard var newTab else { return }
-
-        newWebView.load(URLRequest(url: newTab.url))
-        newTab.retainedWebView = newWebView
+        var tab = Tab(title: title, url: url, isActive: true)
         
-        /// Append to tabs array
-        tabs.append(newTab)
-        selectedTab = newTab
+        newWebView.load(URLRequest(url: tab.url))
+        tab.retainedWebView = newWebView
+        
+        tabs.append(tab)
+        selectedTab = tab
         webView = newWebView
         
-        print("Current Tab Count: \(tabs.count)")
-    }
-
-    private func createTabWith(_ value: String) -> Tab? {
-        // Normalize input into a loadable URL
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-
-        // Decide if input is likely a URL or a search query
-        let hasScheme = trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://")
-        let looksLikeDomain = trimmed.contains(".") && !trimmed.contains(" ")
-
-        var finalURL: URL?
-        if hasScheme {
-            finalURL = URL(string: trimmed)
-        } else if looksLikeDomain {
-            // Prepend https:// for bare domains
-            finalURL = URL(string: "https://\(trimmed)")
-        } else {
-            // Treat as a search query
-            finalURL = searchEngine.search(for: trimmed)
-        }
-
-        guard let url = finalURL else { return nil }
-
-        let title = trimmed
-
-        let newTab = Tab(
-            title: title,
-            url: url,
-            isActive: true
-        )
-        return newTab
+        searchCoordinator.recordHistoryVisit(url: url, title: title)
     }
 
     private func createTempTab() -> Tab {
@@ -101,58 +107,51 @@ final class BrowserCoordinator {
         )
         return newTab
     }
-}
-
-// MARK: - Tab Mutation
-extension BrowserCoordinator {
-    
-    public func updateURL(at index: Int, url: URL) {
-        guard tabs.indices.contains(index) else { return }
-        
-        /// add new URL to the history
-        tabs[index].history.append(
-            .init(
-                url: url,
-                visitedAt: .now
-            )
-        )
-        tabs[index].url = url
-        tabs[index].historyIndex += 1
-    }
-    
-    public func updateTitle(at index: Int, title: String) {
-        guard tabs.indices.contains(index) else { return }
-        tabs[index].title = title
-    }
-    public func saveRetainedWebView(for tab: Tab, webview: WKWebView) {
-        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
-        guard tabs.indices.contains(index) else { return }
-        tabs[index].retainedWebView = webview
-    }
 
 }
+
 
 // MARK: - Tab Management
 extension BrowserCoordinator {
     
-    public func updateURLAndTitle(_ url: URL?, _ title: String?) {
-        if let url, let title {
-            /// find the browser tab in the tabs array
-            guard let selectedTab = selectedTab else { return }
-            guard let index = tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
-            
+    /// Updates the selected tab with the latest loaded page state.
+    ///
+    /// This is typically called by `WebViewContainer` after a navigation finishes
+    /// or the page title changes.
+    ///
+    /// Example:
+    ///     updateSelectedTab(
+    ///         url: URL(string: "https://github.com")!,
+    ///         title: "GitHub"
+    ///     )
+    public func updateSelectedTab(
+        url: URL,
+        title: String
+    ) {
+        guard let selectedTab else { return }
+        guard let index = tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
+        
+        let didURLChange = tabs[index].url != url
+        
+        /// Ony Update and add to history if url is not the same
+        if didURLChange {
             updateURL(at: index, url: url)
-            updateTitle(at: index, title: title)
+            searchCoordinator.recordHistoryVisit(url: url, title: title)
         }
+        
+        updateTitle(at: index, title: title)
     }
     
-    internal func saveCurrentTab() {
-        if let currentTab = self.selectedTab {
-            self.saveRetainedWebView(for: currentTab, webview: webView)
-        }
-    }
-    
-    public func closeTab(id: UUID) {
+    /// Closes a tab and releases its retained `WKWebView`.
+    ///
+    /// If the closed tab is currently selected, the browser selects the nearest
+    /// remaining tab. If no tabs remain, the browser resets to a fresh blank
+    /// `WKWebView`.
+    ///
+    /// Most likely a "xmark" button will do this
+    public func closeTab(
+        id: UUID
+    ) {
         guard let index = tabs.firstIndex(where: { $0.id == id }) else {
             return
         }
@@ -178,7 +177,15 @@ extension BrowserCoordinator {
             select(id: tabs[newIndex].id)
         }
     }
-
+    
+    /// Selects a tab and restores its retained `WKWebView` if available.
+    ///
+    /// Before switching tabs, the current visible `WKWebView` is saved back into
+    /// the previously selected tab. If the destination tab does not already retain
+    /// a `WKWebView`, a new one is created and loaded with the tab's current URL.
+    ///
+    /// Example:
+    ///     select(id: tab.id)
     public func select(id: UUID) {
         
         saveCurrentTab()
@@ -200,9 +207,47 @@ extension BrowserCoordinator {
     }
 }
 
-// MARK: - Observations
+// MARK: - Tab Mutation
 extension BrowserCoordinator {
     
+    /// Updates a tab's current URL and appends a new history entry.
+    internal func updateURL(at index: Int, url: URL) {
+        guard tabs.indices.contains(index) else { return }
+        
+        /// add new URL to the history
+        tabs[index].history.append(
+            .init(
+                url: url,
+                visitedAt: .now
+            )
+        )
+        tabs[index].url = url
+        tabs[index].historyIndex += 1
+    }
+    
+    /// Updates a tab's display title.
+    internal func updateTitle(at index: Int, title: String) {
+        guard tabs.indices.contains(index) else { return }
+        tabs[index].title = title
+    }
+    
+    /// Stores the active `WKWebView` instance back into the matching tab.
+    internal func saveRetainedWebView(for tab: Tab, webview: WKWebView) {
+        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
+        guard tabs.indices.contains(index) else { return }
+        tabs[index].retainedWebView = webview
+    }
+    
+    /// Persists the currently displayed `WKWebView` into the selected tab.
+    internal func saveCurrentTab() {
+        if let currentTab = self.selectedTab {
+            self.saveRetainedWebView(for: currentTab, webview: webView)
+        }
+    }
+}
+
+// MARK: - Observations
+extension BrowserCoordinator {
     /// Function Observes all tabs (for no reason right now)
     func observeTabs() {
         withObservationTracking {
@@ -220,9 +265,8 @@ extension BrowserCoordinator {
     }
 }
 
-// MARK: - Helpers
+// MARK: - Static Helpers
 extension BrowserCoordinator {
-    
     internal static func makeConfig() -> WKWebViewConfiguration {
         let config = WKWebViewConfiguration()
         config.websiteDataStore = dataStore

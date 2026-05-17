@@ -1,0 +1,102 @@
+//
+//  SearchSuggestionsList.swift
+//  ComfyBrowser
+//
+//  Created by Aryan Rogye on 5/16/26.
+//
+
+import AppKit
+import SwiftUI
+
+/// Renders the omnibar suggestion popup content.
+///
+/// This is the SwiftUI entry point into an AppKit `NSCollectionView`, matching
+/// the sidebar's architecture. AppKit owns fast row reuse and scrolling, while
+/// each row remains a SwiftUI `SearchSuggestionRow`.
+///
+/// Example:
+///     Pressing Down in `TopBar` changes `highlightedID`, and this list redraws
+///     the matching row as highlighted.
+struct SearchSuggestionsList: NSViewRepresentable {
+    
+    var faviconService: FaviconService
+    var suggestions: [SearchSuggestion]
+    var highlightedID: SearchSuggestion.ID? = nil
+    var onHighlight: (SearchSuggestion.ID?) -> Void
+    var onSelect: (SearchSuggestion) -> Void
+}
+
+// MARK: - Coordinator Creation
+extension SearchSuggestionsList {
+    func makeCoordinator() -> SearchSuggestionCollectionCoordinator {
+        SearchSuggestionCollectionCoordinator(
+            faviconService: faviconService,
+            suggestions: suggestions,
+            highlightedID: highlightedID,
+            onHighlight: onHighlight,
+            onSelect: onSelect
+        )
+    }
+}
+
+// MARK: - Make
+extension SearchSuggestionsList {
+    func makeNSView(context: Context) -> SearchSuggestionScrollView {
+        context.coordinator.suggestions = suggestions
+        context.coordinator.highlightedID = highlightedID
+        
+        let scrollView = SearchSuggestionScrollView()
+        /// set delegates
+        scrollView.collectionView.dataSource = context.coordinator
+        scrollView.collectionView.delegate = context.coordinator
+        scrollView.reloadData(itemCount: suggestions.count)
+        
+        return scrollView
+    }
+}
+
+// MARK: - Update
+extension SearchSuggestionsList {
+    func updateNSView(
+        _ nsView: SearchSuggestionScrollView,
+        context: Context
+    ) {
+        context.coordinator.faviconService = faviconService
+        context.coordinator.suggestions = suggestions
+        context.coordinator.highlightedID = highlightedID
+        context.coordinator.onHighlight = onHighlight
+        context.coordinator.onSelect = onSelect
+        
+        nsView.reloadData(itemCount: suggestions.count)
+    }
+}
+
+#Preview {
+    SearchSuggestionsList(
+        faviconService: FaviconService(),
+        suggestions: [
+            SearchSuggestion(
+                id: "tab",
+                kind: .openTab,
+                title: "GitHub",
+                subtitle: "github.com",
+                url: URL(string: "https://github.com"),
+                score: 1
+            ),
+            SearchSuggestion(
+                id: "search",
+                kind: .search,
+                title: "swiftui search",
+                subtitle: "Search with DuckDuckGo",
+                url: URL(string: "https://duckduckgo.com/?q=swiftui%20search"),
+                query: "swiftui search",
+                score: 1
+            )
+        ],
+        highlightedID: "tab",
+        onHighlight: { _ in },
+        onSelect: { _ in }
+    )
+    .frame(width: 520)
+    .padding()
+}

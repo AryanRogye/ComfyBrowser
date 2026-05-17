@@ -15,6 +15,17 @@
 - Avoid making swipe actions, long-presses, or bottom sheets the primary way to discover important features. If such an interaction exists in shared code, ensure macOS has an equally discoverable desktop alternative.
 - Prefer `Button`, `Menu`, `Toggle`, `Picker`, and other standard controls over gesture-only interactions.
 
+## SwiftUI/AppKit interop
+
+- Use AppKit only for the smallest missing desktop behavior, such as first-responder control, `NSTextFieldDelegate`, `NSTrackingArea`, `acceptsFirstMouse(for:)`, or `mouseDown(with:)`.
+- Do not jump straight to custom hit-test routing, collection-level click mapping, or duplicated state layers. First try the local AppKit primitive closest to the failing interaction.
+- Treat `hitTest(_:)` overrides as a last resort. They can accidentally swallow events from hosted SwiftUI views, make only some collection rows clickable, or bypass normal AppKit responder behavior.
+- For `NSCollectionViewItem` rows that host SwiftUI content, prefer a simple AppKit shell view that handles:
+  - `acceptsFirstMouse(for:)` for inactive-window clicks.
+  - `mouseDown(with:)` for row selection.
+  - `NSTrackingArea` for hover state.
+- Keep SwiftUI as the source of truth for app state. Let AppKit report imperative events back through narrow callbacks rather than becoming a parallel UI architecture.
+
 ## Windows, menus, and files
 
 - Consider whether the app should use `WindowGroup`, `Window`, `Settings`, `MenuBarExtra`, or `DocumentGroup` rather than forcing everything into one window.

@@ -12,6 +12,11 @@ struct ComfyBrowserRoot: View {
     
     @Environment(ComfyBrowserViewModel.self) var comfyBrowserViewModel
     @Environment(BrowserCoordinator.self) var browserCoordinator
+    
+    @State private var isSearchOverlayVisible: Bool = false
+    @State private var isSearchFieldFocused: Bool = false
+    @State private var search: String = ""
+    @State private var searchSuggestions: [SearchSuggestion] = []
 
     var backgroundColor: some ShapeStyle {
             LinearGradient(
@@ -35,18 +40,7 @@ struct ComfyBrowserRoot: View {
                     browserCoordinator: browserCoordinator
                 )
                 
-                VStack(spacing: 0) {
-
-                    topBar
-                    
-                    WebView()
-                        .clipShape(
-                            .rect(
-                                bottomLeadingRadius: 8,
-                                bottomTrailingRadius: 8
-                            )
-                        )
-                }
+                rightContent
             }
             .padding(6)
         }
@@ -73,6 +67,37 @@ struct ComfyBrowserRoot: View {
         )
     }
     
+    // MARK: - Right Content
+    private var rightContent: some View {
+        ZStack(alignment: .topLeading) {
+            VStack(spacing: 0) {
+                /// Keeps `WebView` below the top bar without making the popup
+                /// part of the normal VStack layout.
+                Color.clear
+                    .frame(height: 40)
+                
+                WebView()
+                    .clipShape(
+                        .rect(
+                            bottomLeadingRadius: 8,
+                            bottomTrailingRadius: 8
+                        )
+                    )
+            }
+            
+            if isSearchOverlayVisible {
+                dismissSearchOverlayLayer
+                    .zIndex(9)
+                
+                searchOverlay
+                    .zIndex(10)
+            }
+            
+            topBar
+                .zIndex(11)
+        }
+    }
+    
     // MARK: - TopBar
     private var topBar: some View {
         let shouldShowSidebarIconInTopBar = Binding(
@@ -82,13 +107,62 @@ struct ComfyBrowserRoot: View {
         )
         
         return TopBar(
+            faviconService: browserCoordinator.faviconService,
             searchEngine: browserCoordinator.searchEngine,
             shouldShowSidebarIcon: shouldShowSidebarIconInTopBar,
             sidebarIcon: { sidebarIcon },
-            onSearch: { search in
-                browserCoordinator.createTab(search)
-            }
+            onSearch: { searchTerm in
+                browserCoordinator.search(searchTerm)
+            },
+            searching: { searchTerm in
+                return browserCoordinator.searching(searchTerm)
+            },
+            isSearchOverlayVisible: $isSearchOverlayVisible,
+            isSearchFieldFocused: $isSearchFieldFocused,
+            search: $search,
+            searchSuggestions: $searchSuggestions
         )
+    }
+    
+    // MARK: - Search Overlay
+    private var dismissSearchOverlayLayer: some View {
+        Color.clear
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isSearchOverlayVisible = false
+                isSearchFieldFocused = false
+            }
+    }
+    
+    private var searchOverlay: some View {
+        FocusedSearchOverlay {
+            SearchSuggestionsList(
+                faviconService: browserCoordinator.faviconService,
+                suggestions: searchSuggestions,
+                onHighlight: { _ in },
+                onSelect: { suggestion in
+                    browserCoordinator.openSuggestion(suggestion)
+                    isSearchOverlayVisible = false
+                    isSearchFieldFocused = false
+                }
+            )
+        }
+        .padding(.leading, searchOverlayLeadingPadding)
+        .padding(.trailing, 10)
+    }
+    
+    /// Matches the search field's leading edge inside `TopBar`.
+    ///
+    /// Example:
+    ///     When the sidebar is closed, the top bar also shows the sidebar
+    ///     button, so the popup starts after that button and the HStack spacing.
+    private var searchOverlayLeadingPadding: CGFloat {
+        if comfyBrowserViewModel.sidebarState == .closed {
+            return 45
+        }
+        
+        return 10
     }
     
     // MARK: - Sidebar Icon

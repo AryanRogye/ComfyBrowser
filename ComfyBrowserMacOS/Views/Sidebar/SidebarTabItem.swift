@@ -33,13 +33,6 @@ final class SidebarTabItem: NSCollectionViewItem {
         }
     }
     
-    
-    @objc private func handleClick() {
-        if let vm {
-            vm.clickedTab(vm.tab)
-        }
-    }
-    
     func configure(
         faviconService: FaviconService,
         with tab: Tab,
