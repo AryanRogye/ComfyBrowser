@@ -23,6 +23,8 @@ final class SearchCoordinator {
     private(set) var historyStore = HistoryStore()
     let suggestionIndex = SuggestionIndex()
     let suggestionProvider = SearchSuggestionProvider()
+    private var didLoadHistory = false
+    private var pendingVisits: [(url: URL, title: String?)] = []
     
     init() {
         loadSearchHistory()
@@ -61,9 +63,20 @@ extension SearchCoordinator {
             let recent = await store.recent(limit: 2000)
             
             historyStore = store
-            suggestionIndex.warm(
-                with: recent
-            )
+            
+            suggestionIndex.warm(with: recent)
+            
+            didLoadHistory = true
+            
+            let pending = pendingVisits
+            pendingVisits.removeAll()
+            
+            for visit in pending {
+                recordHistoryVisit(
+                    url: visit.url,
+                    title: visit.title
+                )
+            }
         }
     }
     
@@ -71,7 +84,10 @@ extension SearchCoordinator {
         url: URL,
         title: String?
     ) {
-        let historyStore = historyStore
+        guard didLoadHistory else {
+            pendingVisits.append((url, title))
+            return
+        }
         
         Task { @MainActor in
             guard let record = await historyStore.recordVisit(

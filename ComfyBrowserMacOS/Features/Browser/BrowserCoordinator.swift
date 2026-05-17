@@ -131,7 +131,14 @@ extension BrowserCoordinator {
         guard let selectedTab else { return }
         guard let index = tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
         
-        updateURL(at: index, url: url)
+        let didURLChange = tabs[index].url != url
+        
+        /// Ony Update and add to history if url is not the same
+        if didURLChange {
+            updateURL(at: index, url: url)
+            searchCoordinator.recordHistoryVisit(url: url, title: title)
+        }
+        
         updateTitle(at: index, title: title)
     }
     
