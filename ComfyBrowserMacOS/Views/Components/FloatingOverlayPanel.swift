@@ -1,5 +1,5 @@
 //
-//  FocusedSearchOverlay.swift
+//  FloatingOverlayPanel.swift
 //  ComfyBrowser
 //
 //  Created by Aryan Rogye on 5/16/26.
@@ -7,16 +7,32 @@
 
 import SwiftUI
 
-/// When The Search Textfield is clicked this is the
-/// background that shows up behind it
-struct FocusedSearchOverlay<Content: View>: View {
+/// Floating panel used to host search and launcher overlay content.
+///
+/// Example:
+///     `FloatingOverlayPanel { SearchSuggestionsList(...) }` renders the
+///     shared white panel used by the top-bar search popup.
+struct FloatingOverlayPanel<Content: View, Label: View>: View {
     
+    var useDividerPadding: Bool = false
+    var overlayHeight: CGFloat = 172
     @ViewBuilder var content: () -> Content
+    @ViewBuilder var label: () -> Label
     
     /// Shape of Overlay
     var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: 12)
     }
+    
+    var background : UnevenRoundedRectangle {
+        UnevenRoundedRectangle(
+            topLeadingRadius: 8,
+            bottomLeadingRadius: 0,
+            bottomTrailingRadius: 0,
+            topTrailingRadius: 8
+        )
+    }
+
 
     /// Overlay Stroke Color
     var strokeColor: Color {
@@ -26,11 +42,6 @@ struct FocusedSearchOverlay<Content: View>: View {
     /// Overlay Shadow Color
     var shadowColor: Color {
         Color.black.opacity(0.14)
-    }
-    
-    /// Overlay Height
-    var overlayHeight: CGFloat {
-        172
     }
     
     /// Padding Inset
@@ -74,6 +85,19 @@ struct FocusedSearchOverlay<Content: View>: View {
                 .allowsHitTesting(false)
             
             VStack(spacing: 0) {
+                
+                if Label.self == EmptyView.self {
+                    Color.white
+                        .frame(height: dividerTopPadding)
+                        .background {
+                            background
+                        }
+                        .clipShape(background)
+                } else {
+                    label()
+                        .frame(maxWidth: .infinity)
+                }
+
                 divider
                 
                 content()
@@ -92,11 +116,30 @@ struct FocusedSearchOverlay<Content: View>: View {
             .fill(.black.opacity(0.12))
             .frame(height: dividerHeight)
             .padding(.horizontal, 20)
-            .padding(.top, dividerTopPadding)
+            .padding(.top, useDividerPadding ? dividerTopPadding : 0)
     }
 }
 
-extension FocusedSearchOverlay where Content == EmptyView {
+extension FloatingOverlayPanel where Label == EmptyView {
+    
+    /// Builds the overlay when there is no custom label content.
+    ///
+    /// Example:
+    ///     `FloatingOverlayPanel { SearchSuggestionsList(...) }` uses this
+    ///     initializer and stores `EmptyView` for the unused label slot.
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content
+        self.label = { EmptyView() }
+    }
+}
+
+extension FloatingOverlayPanel where Content == EmptyView, Label == EmptyView {
+    
+    /// Builds an empty overlay shell for layout previews.
+    ///
+    /// Example:
+    ///     `FloatingOverlayPanel()` renders the overlay background and divider
+    ///     without suggestion rows.
     init() {
         self.init { EmptyView() }
     }

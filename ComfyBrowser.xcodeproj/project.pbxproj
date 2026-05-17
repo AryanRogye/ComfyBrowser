@@ -40,10 +40,12 @@
 		9B1A53F22FB86771009138E1 /* View+if.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53F12FB86771009138E1 /* View+if.swift */; };
 		9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */; };
 		9B4B6E332FB91FD900CED910 /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */; };
-		9B4B6ECE2FB9378E00CED910 /* FocusedSearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */; };
+		9B4B6ECE2FB9378E00CED910 /* FloatingOverlayPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6ECD2FB9378E00CED910 /* FloatingOverlayPanel.swift */; };
 		9B4B6F472FB961E200CED910 /* SearchSuggestionRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */; };
+		9B4B6FB22FB99C8C00CED910 /* NewTabSearchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6FB12FB99C8900CED910 /* NewTabSearchPanel.swift */; };
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
+		9B7555FB2FB9A7CD00E89B86 /* BrowserContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7555FA2FB9A7CD00E89B86 /* BrowserContentView.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
 		9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */; };
 		9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */; };
@@ -110,9 +112,11 @@
 		9B1A53F12FB86771009138E1 /* View+if.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+if.swift"; sourceTree = "<group>"; };
 		9B2E02D52E58FEED0087A5CB /* ComfyBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComfyBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
-		9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedSearchOverlay.swift; sourceTree = "<group>"; };
+		9B4B6ECD2FB9378E00CED910 /* FloatingOverlayPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingOverlayPanel.swift; sourceTree = "<group>"; };
 		9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionRowViewModel.swift; sourceTree = "<group>"; };
+		9B4B6FB12FB99C8900CED910 /* NewTabSearchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSearchPanel.swift; sourceTree = "<group>"; };
 		9B4EA9682ECE3D39002B570E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
+		9B7555FA2FB9A7CD00E89B86 /* BrowserContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserContentView.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
 		9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQueryIntent.swift; sourceTree = "<group>"; };
@@ -246,12 +250,11 @@
 		9B1A53502FB85C2D009138E1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9BC0002D2FB96965009138E1 /* Components */,
-				9B4B6DFE2FB8F39B00CED910 /* TopBar */,
+				9B7555F92FB9A68C00E89B86 /* Browser */,
+				9B4B6FAE2FB99B3200CED910 /* Search */,
 				9B1A534B2FB85C2D009138E1 /* Sidebar */,
+				9BC0002D2FB96965009138E1 /* Components */,
 				9B1A534C2FB85C2D009138E1 /* ComfyBrowserRoot.swift */,
-				9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */,
-				9B1A534F2FB85C2D009138E1 /* WebView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -299,13 +302,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9B4B6DFE2FB8F39B00CED910 /* TopBar */ = {
+		9B4B6FAE2FB99B3200CED910 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */,
-				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
+				9BC0000D2FB94D11009138E1 /* SearchSuggestionsList.swift */,
+				9BC000232FB9532A009138E1 /* SearchSuggestionScrollView.swift */,
+				9BC000202FB9532A009138E1 /* SearchSuggestionCollectionView.swift */,
+				9BC000212FB9532A009138E1 /* SearchSuggestionItem.swift */,
+				9BC000222FB9532A009138E1 /* SearchSuggestionItemView.swift */,
+				9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */,
+				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
+				9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */,
+				9BC000292FB956AA009138E1 /* README.md */,
 			);
-			path = TopBar;
+			path = Search;
 			sourceTree = "<group>";
 		};
 		9B4EA9622ECE3D26002B570E /* Shared */ = {
@@ -325,13 +335,23 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		9B7555F92FB9A68C00E89B86 /* Browser */ = {
+			isa = PBXGroup;
+			children = (
+				9B7555FA2FB9A7CD00E89B86 /* BrowserContentView.swift */,
+				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
+				9B1A534F2FB85C2D009138E1 /* WebView.swift */,
+				9B4B6FB12FB99C8900CED910 /* NewTabSearchPanel.swift */,
+			);
+			path = Browser;
+			sourceTree = "<group>";
+		};
 		9BC0000F2FB94D11009138E1 /* Search */ = {
 			isa = PBXGroup;
 			children = (
 				9BC000102FB94D11009138E1 /* Models */,
 				9BC000112FB94D11009138E1 /* Stores */,
 				9BC000122FB94D11009138E1 /* Services */,
-				9BC000132FB94D11009138E1 /* Views */,
 				9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */,
 			);
 			path = Search;
@@ -366,26 +386,12 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		9BC000132FB94D11009138E1 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				9BC0000D2FB94D11009138E1 /* SearchSuggestionsList.swift */,
-				9BC000232FB9532A009138E1 /* SearchSuggestionScrollView.swift */,
-				9BC000202FB9532A009138E1 /* SearchSuggestionCollectionView.swift */,
-				9BC000212FB9532A009138E1 /* SearchSuggestionItem.swift */,
-				9BC000222FB9532A009138E1 /* SearchSuggestionItemView.swift */,
-				9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */,
-				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
-				9B4B6F462FB961E200CED910 /* SearchSuggestionRowViewModel.swift */,
-				9BC000292FB956AA009138E1 /* README.md */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		9BC0002D2FB96965009138E1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9B4B6ECD2FB9378E00CED910 /* FloatingOverlayPanel.swift */,
 				9BC0002B2FB96965009138E1 /* ComfyTextField.swift */,
+				9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -591,7 +597,7 @@
 				9B1A535F2FB85C2D009138E1 /* SidebarCollectionView.swift in Sources */,
 				9B1A53602FB85C2D009138E1 /* SidebarItemView.swift in Sources */,
 				9B1A53612FB85C2D009138E1 /* SidebarRow.swift in Sources */,
-				9B4B6ECE2FB9378E00CED910 /* FocusedSearchOverlay.swift in Sources */,
+				9B4B6ECE2FB9378E00CED910 /* FloatingOverlayPanel.swift in Sources */,
 				9B1A53622FB85C2D009138E1 /* SidebarRowViewModel.swift in Sources */,
 				9B1A53632FB85C2D009138E1 /* SidebarScrollView.swift in Sources */,
 				9B1A53642FB85C2D009138E1 /* SidebarTabItem.swift in Sources */,
@@ -620,6 +626,8 @@
 				9BC000282FB9532A009138E1 /* SearchSuggestionScrollView.swift in Sources */,
 				9B1A536A2FB85C2D009138E1 /* ComfyBrowserMacOSApp.swift in Sources */,
 				9B1A536B2FB85C2D009138E1 /* SidebarTracker.swift in Sources */,
+				9B4B6FB22FB99C8C00CED910 /* NewTabSearchPanel.swift in Sources */,
+				9B7555FB2FB9A7CD00E89B86 /* BrowserContentView.swift in Sources */,
 				9B1A52AF2FB7E811009138E1 /* SearchEngine.swift in Sources */,
 				9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */,
 			);

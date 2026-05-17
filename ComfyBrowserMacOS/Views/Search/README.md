@@ -4,7 +4,7 @@
           |                ComfyBrowserRoot
           |                         |
           V                         V
-    Search Text          FocusedSearchOverlay
+    Search Text          FloatingOverlayPanel
                                     |
                                     V
             SearchSuggestionsList-----SearchSuggestionCollectionCoordinator-|

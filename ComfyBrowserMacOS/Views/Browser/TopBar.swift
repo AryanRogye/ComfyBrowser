@@ -9,17 +9,16 @@ import SwiftUI
 
 struct TopBar<SidebarIcon: View>: View {
     
-    @Bindable var faviconService: FaviconService
     let searchEngine: SearchEngine
     @Binding var shouldShowSidebarIcon: Bool
-    @ViewBuilder var sidebarIcon: SidebarIcon
-    var onSearch: (String) -> Void
-    var searching: (String) -> [SearchSuggestion]
     @Binding var isSearchOverlayVisible: Bool
     @Binding var isSearchFieldFocused: Bool
     @Binding var search: String
     @Binding var searchSuggestions: [SearchSuggestion]
-    
+    @ViewBuilder var sidebarIcon: SidebarIcon
+    var onSearch: (String) -> Void
+    var searching: (String) -> [SearchSuggestion]
+
     /// Background Shape Of TopBar
     let background = UnevenRoundedRectangle(
         topLeadingRadius: 8,
@@ -41,7 +40,7 @@ struct TopBar<SidebarIcon: View>: View {
     /// Top bar material while the search popup is closed.
     ///
     /// Example:
-    ///     When the popup is open, `FocusedSearchOverlay` provides the white
+    ///     When the popup is open, `FloatingOverlayPanel` provides the white
     ///     surface behind the text field, so this background becomes clear.
     var backgroundFill: AnyShapeStyle {
         if isSearchOverlayVisible {
@@ -160,9 +159,12 @@ struct TopBar<SidebarIcon: View>: View {
     
     VStack {
         TopBar(
-            faviconService: browserCoordinator.faviconService,
             searchEngine: .duckDuckGo,
             shouldShowSidebarIcon: .constant(true),
+            isSearchOverlayVisible: .constant(false),
+            isSearchFieldFocused: .constant(false),
+            search: .constant(""),
+            searchSuggestions: .constant([]),
             sidebarIcon: {
                 SidebarIcon(action: comfyBrowserViewModel.toggleSidebarOpenClose)
             },
@@ -172,10 +174,6 @@ struct TopBar<SidebarIcon: View>: View {
             searching: { searchTerm in
                 browserCoordinator.searching(searchTerm)
             },
-            isSearchOverlayVisible: .constant(false),
-            isSearchFieldFocused: .constant(false),
-            search: .constant(""),
-            searchSuggestions: .constant([])
         )
         .padding()
     }

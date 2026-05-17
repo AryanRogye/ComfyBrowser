@@ -22,6 +22,7 @@ final class ComfyBrowserViewModel {
     var sidebarState: SidebarState = .open
     var isHoveringOverSidebarSide: Bool = false
     var shouldSidebarShowButton: Bool = false
+    var isShowingNewTabSearch: Bool = false
     
     init() {
         shortcuts.register(
@@ -49,7 +50,7 @@ final class ComfyBrowserViewModel {
     }
     
     func onSearch() {
-        
+        isShowingNewTabSearch = true
     }
     
     func toggleSidebarOpenClose() {

@@ -37,7 +37,6 @@ final class SearchSuggestionItem: NSCollectionViewItem {
     
     func configure(
         with suggestion: SearchSuggestion,
-        isHighlighted: Bool,
         faviconService: FaviconService,
         onTap: @escaping () -> Void
     ) {
