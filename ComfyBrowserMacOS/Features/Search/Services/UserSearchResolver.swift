@@ -1,5 +1,5 @@
 //
-//  SearchInputResolver.swift
+//  UserSearchResolver.swift
 //  ComfyBrowser
 //
 //  Created by Aryan Rogye on 5/16/26.
@@ -14,7 +14,7 @@ import Foundation
 ///
 /// `BrowserCoordinator` should use this instead of re-implementing URL/search
 /// parsing in multiple places.
-struct SearchInputResolver {
+enum UserSearchResolver {
     
     /// Resolves typed omnibar text into the action the browser should perform.
     ///
@@ -22,7 +22,7 @@ struct SearchInputResolver {
     ///     github.com -> .url(https://github.com)
     ///     https://example.com/docs -> .url(https://example.com/docs)
     ///     comfy browser -> .search("comfy browser", searchEngineURL)
-    func resolve(
+    static func resolve(
         _ input: String,
         searchEngine: SearchEngine
     ) -> SearchQueryIntent {
@@ -45,9 +45,9 @@ struct SearchInputResolver {
     }
 }
 
-extension SearchInputResolver {
+extension UserSearchResolver {
     
-    private func explicitHTTPURL(
+    private static func explicitHTTPURL(
         from input: String
     ) -> URL? {
         guard let url = URL(string: input) else { return nil }
@@ -57,7 +57,7 @@ extension SearchInputResolver {
         return url
     }
     
-    private func bareDomainURL(
+    private static func bareDomainURL(
         from input: String
     ) -> URL? {
         guard !input.contains(" ") else { return nil }

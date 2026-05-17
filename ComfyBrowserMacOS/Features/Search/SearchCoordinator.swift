@@ -19,11 +19,10 @@ import Foundation
 @Observable
 @MainActor
 final class SearchCoordinator {
+    
     private(set) var historyStore = HistoryStore()
     let suggestionIndex = SuggestionIndex()
     let suggestionProvider = SearchSuggestionProvider()
-    let searchInputResolver = SearchInputResolver()
-    
     
     init() {
         loadSearchHistory()
@@ -35,7 +34,7 @@ extension SearchCoordinator {
         _ input: String,
         with searchEngine: SearchEngine
     ) -> SearchQueryIntent {
-        searchInputResolver.resolve(
+        UserSearchResolver.resolve(
             input,
             searchEngine: searchEngine
         )

@@ -19,6 +19,7 @@ import SwiftUI
 ///     the matching row as highlighted.
 struct SearchSuggestionsList: NSViewRepresentable {
     
+    var faviconService: FaviconService
     var suggestions: [SearchSuggestion]
     var highlightedID: SearchSuggestion.ID? = nil
     var onHighlight: (SearchSuggestion.ID?) -> Void
@@ -26,6 +27,7 @@ struct SearchSuggestionsList: NSViewRepresentable {
     
     func makeCoordinator() -> SearchSuggestionCollectionCoordinator {
         SearchSuggestionCollectionCoordinator(
+            faviconService: faviconService,
             suggestions: suggestions,
             highlightedID: highlightedID,
             onHighlight: onHighlight,
@@ -38,6 +40,7 @@ struct SearchSuggestionsList: NSViewRepresentable {
         context.coordinator.highlightedID = highlightedID
         
         let scrollView = SearchSuggestionScrollView()
+        /// set delegates
         scrollView.collectionView.dataSource = context.coordinator
         scrollView.collectionView.delegate = context.coordinator
         
@@ -59,6 +62,7 @@ struct SearchSuggestionsList: NSViewRepresentable {
 
 #Preview {
     SearchSuggestionsList(
+        faviconService: FaviconService(),
         suggestions: [
             SearchSuggestion(
                 id: "tab",

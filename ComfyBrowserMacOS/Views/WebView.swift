@@ -16,14 +16,8 @@ struct WebView: View {
         WebViewContainer(
             webView: browserCoordinator.webView,
             onURLOrTitleChange: { url, title in
-                if let url, let title {
-                    /// find the browser tab in the tabs array
-                    guard let selectedTab = browserCoordinator.selectedTab else { return }
-                    guard let index = browserCoordinator.tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
-                    
-                    browserCoordinator.tabs[index].url = url
-                    browserCoordinator.tabs[index].title = title
-                }
+                guard let url, let title else { return }
+                browserCoordinator.updateSelectedTab(url: url, title: title)
             }
         )
         .id(ObjectIdentifier(browserCoordinator.webView))

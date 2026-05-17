@@ -40,6 +40,7 @@
 		9B1A53F22FB86771009138E1 /* View+if.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1A53F12FB86771009138E1 /* View+if.swift */; };
 		9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */; };
 		9B4B6E332FB91FD900CED910 /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */; };
+		9B4B6ECE2FB9378E00CED910 /* FocusedSearchOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */; };
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
@@ -49,7 +50,7 @@
 		9BC000192FB94D11009138E1 /* HistoryRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000092FB94D11009138E1 /* HistoryRecord.swift */; };
 		9BC0001A2FB94D11009138E1 /* SearchSuggestionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000A2FB94D11009138E1 /* SearchSuggestionProvider.swift */; };
 		9BC0001B2FB94D11009138E1 /* SuggestionIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000B2FB94D11009138E1 /* SuggestionIndex.swift */; };
-		9BC0001C2FB94D11009138E1 /* SearchInputResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000C2FB94D11009138E1 /* SearchInputResolver.swift */; };
+		9BC0001C2FB94D11009138E1 /* UserSearchResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000C2FB94D11009138E1 /* UserSearchResolver.swift */; };
 		9BC0001D2FB94D11009138E1 /* SearchSuggestionsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000D2FB94D11009138E1 /* SearchSuggestionsList.swift */; };
 		9BC0001E2FB94D11009138E1 /* SearchSuggestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */; };
 		9BC000242FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */; };
@@ -107,6 +108,7 @@
 		9B1A53F12FB86771009138E1 /* View+if.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+if.swift"; sourceTree = "<group>"; };
 		9B2E02D52E58FEED0087A5CB /* ComfyBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComfyBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
+		9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusedSearchOverlay.swift; sourceTree = "<group>"; };
 		9B4EA9682ECE3D39002B570E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
@@ -115,7 +117,7 @@
 		9BC000092FB94D11009138E1 /* HistoryRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRecord.swift; sourceTree = "<group>"; };
 		9BC0000A2FB94D11009138E1 /* SearchSuggestionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionProvider.swift; sourceTree = "<group>"; };
 		9BC0000B2FB94D11009138E1 /* SuggestionIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionIndex.swift; sourceTree = "<group>"; };
-		9BC0000C2FB94D11009138E1 /* SearchInputResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchInputResolver.swift; sourceTree = "<group>"; };
+		9BC0000C2FB94D11009138E1 /* UserSearchResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchResolver.swift; sourceTree = "<group>"; };
 		9BC0000D2FB94D11009138E1 /* SearchSuggestionsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionsList.swift; sourceTree = "<group>"; };
 		9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionRow.swift; sourceTree = "<group>"; };
 		9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionCollectionCoordinator.swift; sourceTree = "<group>"; };
@@ -208,7 +210,6 @@
 				9B1A533A2FB85C2D009138E1 /* Browser */,
 				9B1A533D2FB85C2D009138E1 /* Shortcuts */,
 				9BC0000F2FB94D11009138E1 /* Search */,
-				9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -296,6 +297,7 @@
 		9B4B6DFE2FB8F39B00CED910 /* TopBar */ = {
 			isa = PBXGroup;
 			children = (
+				9B4B6ECD2FB9378E00CED910 /* FocusedSearchOverlay.swift */,
 				9B1A534E2FB85C2D009138E1 /* TopBar.swift */,
 			);
 			path = TopBar;
@@ -325,6 +327,7 @@
 				9BC000112FB94D11009138E1 /* Stores */,
 				9BC000122FB94D11009138E1 /* Services */,
 				9BC000132FB94D11009138E1 /* Views */,
+				9B4B6E322FB91FD500CED910 /* SearchCoordinator.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -353,7 +356,7 @@
 			children = (
 				9BC0000A2FB94D11009138E1 /* SearchSuggestionProvider.swift */,
 				9BC0000B2FB94D11009138E1 /* SuggestionIndex.swift */,
-				9BC0000C2FB94D11009138E1 /* SearchInputResolver.swift */,
+				9BC0000C2FB94D11009138E1 /* UserSearchResolver.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -362,12 +365,12 @@
 			isa = PBXGroup;
 			children = (
 				9BC0000D2FB94D11009138E1 /* SearchSuggestionsList.swift */,
-				9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */,
-				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
+				9BC000232FB9532A009138E1 /* SearchSuggestionScrollView.swift */,
 				9BC000202FB9532A009138E1 /* SearchSuggestionCollectionView.swift */,
 				9BC000212FB9532A009138E1 /* SearchSuggestionItem.swift */,
 				9BC000222FB9532A009138E1 /* SearchSuggestionItemView.swift */,
-				9BC000232FB9532A009138E1 /* SearchSuggestionScrollView.swift */,
+				9BC0001F2FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift */,
+				9BC0000E2FB94D11009138E1 /* SearchSuggestionRow.swift */,
 				9BC000292FB956AA009138E1 /* README.md */,
 			);
 			path = Views;
@@ -573,6 +576,7 @@
 				9B1A535F2FB85C2D009138E1 /* SidebarCollectionView.swift in Sources */,
 				9B1A53602FB85C2D009138E1 /* SidebarItemView.swift in Sources */,
 				9B1A53612FB85C2D009138E1 /* SidebarRow.swift in Sources */,
+				9B4B6ECE2FB9378E00CED910 /* FocusedSearchOverlay.swift in Sources */,
 				9B1A53622FB85C2D009138E1 /* SidebarRowViewModel.swift in Sources */,
 				9B1A53632FB85C2D009138E1 /* SidebarScrollView.swift in Sources */,
 				9B1A53642FB85C2D009138E1 /* SidebarTabItem.swift in Sources */,
@@ -590,7 +594,7 @@
 				9BC000192FB94D11009138E1 /* HistoryRecord.swift in Sources */,
 				9BC0001A2FB94D11009138E1 /* SearchSuggestionProvider.swift in Sources */,
 				9BC0001B2FB94D11009138E1 /* SuggestionIndex.swift in Sources */,
-				9BC0001C2FB94D11009138E1 /* SearchInputResolver.swift in Sources */,
+				9BC0001C2FB94D11009138E1 /* UserSearchResolver.swift in Sources */,
 				9BC0001D2FB94D11009138E1 /* SearchSuggestionsList.swift in Sources */,
 				9BC0001E2FB94D11009138E1 /* SearchSuggestionRow.swift in Sources */,
 				9BC000242FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift in Sources */,

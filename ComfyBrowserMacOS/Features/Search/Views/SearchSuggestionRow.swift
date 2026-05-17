@@ -16,6 +16,7 @@ import SwiftUI
 ///     `.openTab` rows show a window icon, `.history` rows show a clock icon.
 struct SearchSuggestionRow: View {
     
+    var faviconService: FaviconService
     var suggestion: SearchSuggestion
     var isHighlighted: Bool
     
@@ -51,10 +52,18 @@ struct SearchSuggestionRow: View {
         .contentShape(Rectangle())
     }
     
+    @ViewBuilder
     private var icon: some View {
-        Image(systemName: systemImage)
-            .font(.system(size: 14, weight: .medium))
-            .foregroundStyle(.secondary)
+        if let icon = faviconService.favicon(for: suggestion.url) {
+            Image(nsImage: icon)
+                .resizable()
+                .frame(width: 16, height: 16)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+        } else {
+            Image(systemName: systemImage)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
     }
     
     private var systemImage: String {
@@ -74,6 +83,7 @@ struct SearchSuggestionRow: View {
 #Preview {
     VStack {
         SearchSuggestionRow(
+            faviconService: FaviconService(),
             suggestion: SearchSuggestion(
                 id: "preview",
                 kind: .history,

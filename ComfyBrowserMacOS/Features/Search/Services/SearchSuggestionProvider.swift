@@ -24,8 +24,7 @@ import Foundation
 ///         searchEngine: .duckDuckGo
 ///     )
 struct SearchSuggestionProvider {
-    
-    var resolver = SearchInputResolver()
+
     var maxSuggestions: Int = 8
     
     /// Builds ranked suggestions for the current query.
@@ -149,7 +148,7 @@ extension SearchSuggestionProvider {
         for query: String,
         searchEngine: SearchEngine
     ) -> [SearchSuggestion] {
-        switch resolver.resolve(query, searchEngine: searchEngine) {
+        switch UserSearchResolver.resolve(query, searchEngine: searchEngine) {
         case .empty:
             return []
         case .url(let url):

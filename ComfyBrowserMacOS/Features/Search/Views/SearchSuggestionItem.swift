@@ -37,6 +37,7 @@ final class SearchSuggestionItem: NSCollectionViewItem {
     func configure(
         with suggestion: SearchSuggestion,
         isHighlighted: Bool,
+        faviconService: FaviconService,
         onHighlight: @escaping (SearchSuggestion.ID?) -> Void,
         onSelect: @escaping (SearchSuggestion) -> Void
     ) {
@@ -44,16 +45,19 @@ final class SearchSuggestionItem: NSCollectionViewItem {
         self.onHighlight = onHighlight
         self.onSelect = onSelect
         setup(
+            faviconService: faviconService,
             suggestion: suggestion,
             isHighlighted: isHighlighted
         )
     }
     
     private func setup(
+        faviconService: FaviconService,
         suggestion: SearchSuggestion,
         isHighlighted: Bool
     ) {
         let row = SearchSuggestionRow(
+            faviconService: faviconService,
             suggestion: suggestion,
             isHighlighted: isHighlighted
         )

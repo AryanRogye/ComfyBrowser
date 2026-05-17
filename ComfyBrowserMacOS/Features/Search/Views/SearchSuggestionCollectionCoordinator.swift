@@ -18,17 +18,20 @@ import AppKit
 ///     coordinator reloads rows without rebuilding the entire top bar.
 final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDataSource, NSCollectionViewDelegate {
     
+    var faviconService: FaviconService
     var suggestions: [SearchSuggestion]
     var highlightedID: SearchSuggestion.ID?
     var onHighlight: (SearchSuggestion.ID?) -> Void
     var onSelect: (SearchSuggestion) -> Void
     
     init(
+        faviconService: FaviconService,
         suggestions: [SearchSuggestion],
         highlightedID: SearchSuggestion.ID?,
         onHighlight: @escaping (SearchSuggestion.ID?) -> Void,
         onSelect: @escaping (SearchSuggestion) -> Void
     ) {
+        self.faviconService = faviconService
         self.suggestions = suggestions
         self.highlightedID = highlightedID
         self.onHighlight = onHighlight
@@ -57,6 +60,7 @@ final class SearchSuggestionCollectionCoordinator: NSObject, NSCollectionViewDat
         item.configure(
             with: suggestion,
             isHighlighted: highlightedID == suggestion.id,
+            faviconService: faviconService,
             onHighlight: onHighlight,
             onSelect: onSelect
         )
