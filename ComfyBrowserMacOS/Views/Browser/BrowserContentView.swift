@@ -52,7 +52,7 @@ struct BrowserContentView<SidebarIcon: View>: View {
                     )
             }
 
-            topBarContent
+            topBar
 
             centerSearchOverlay
         }
@@ -85,29 +85,8 @@ struct BrowserContentView<SidebarIcon: View>: View {
     }
     
     // MARK: - TopBar
-    @ViewBuilder
-    private var topBarContent: some View {
-        if isSearchOverlayVisible {
-            /// tap to dismiss
-            Color.clear
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    isSearchOverlayVisible = false
-                    isSearchFieldFocused = false
-                }
-                .zIndex(9)
-            
-            searchOverlay
-                .zIndex(10)
-        }
-        
-        /// this is always pushed to the top, keeping highest z ordering
-        topBar
-            .zIndex(11)
-    }
-    
     private var topBar: some View {
+        @Bindable var browserCoordinator = browserCoordinator
         let shouldShowSidebarIconInTopBar = Binding(
             /// If Sidebar is Closed, we should hide the sidebar
             get: { comfyBrowserViewModel.sidebarState == .closed },
@@ -116,6 +95,9 @@ struct BrowserContentView<SidebarIcon: View>: View {
         
         return TopBar(
             searchEngine: browserCoordinator.searchEngine,
+            faviconService: browserCoordinator.faviconService,
+            canNavigateBack: $browserCoordinator.canNavigateBack,
+            canNavigateForward: $browserCoordinator.canNavigateForward,
             shouldShowSidebarIcon: shouldShowSidebarIconInTopBar,
             isSearchOverlayVisible: $isSearchOverlayVisible,
             isSearchFieldFocused: $isSearchFieldFocused,
@@ -128,20 +110,10 @@ struct BrowserContentView<SidebarIcon: View>: View {
             searching: { searchTerm in
                 return browserCoordinator.searching(searchTerm)
             },
+            selectSuggestionReplace: selectSuggestionReplace,
+            onForward: browserCoordinator.navigateForward,
+            onBack: browserCoordinator.navigateBack
         )
-    }
-
-    // MARK: - Search Overlay
-    private var searchOverlay: some View {
-        FloatingOverlayPanel {
-            SearchSuggestionsList(
-                faviconService: browserCoordinator.faviconService,
-                suggestions: searchSuggestions,
-                onSelect: selectSuggestionReplace
-            )
-        }
-        .padding(.leading, searchOverlayLeadingPadding)
-        .padding(.trailing, 10)
     }
     
     // MARK: - Center Search Overlay

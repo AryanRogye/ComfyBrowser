@@ -46,6 +46,8 @@
 		9B4EA96A2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B4EA96B2ECE3D39002B570E /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4EA9682ECE3D39002B570E /* Tab.swift */; };
 		9B7555FB2FB9A7CD00E89B86 /* BrowserContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7555FA2FB9A7CD00E89B86 /* BrowserContentView.swift */; };
+		9B7556632FBA387200E89B86 /* View+readFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7556622FBA386F00E89B86 /* View+readFrame.swift */; };
+		9B7556652FBA3FCD00E89B86 /* HoverBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7556642FBA3FCD00E89B86 /* HoverBackground.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
 		9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */; };
 		9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */; };
@@ -117,6 +119,8 @@
 		9B4B6FB12FB99C8900CED910 /* NewTabSearchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTabSearchPanel.swift; sourceTree = "<group>"; };
 		9B4EA9682ECE3D39002B570E /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
 		9B7555FA2FB9A7CD00E89B86 /* BrowserContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserContentView.swift; sourceTree = "<group>"; };
+		9B7556622FBA386F00E89B86 /* View+readFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+readFrame.swift"; sourceTree = "<group>"; };
+		9B7556642FBA3FCD00E89B86 /* HoverBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverBackground.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
 		9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQueryIntent.swift; sourceTree = "<group>"; };
@@ -185,6 +189,7 @@
 		9B1A53372FB85C2D009138E1 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				9B7556622FBA386F00E89B86 /* View+readFrame.swift */,
 				9B1A53F12FB86771009138E1 /* View+if.swift */,
 				9B1A53342FB85C2D009138E1 /* URL.swift */,
 				9B1A53352FB85C2D009138E1 /* View.swift */,
@@ -389,6 +394,7 @@
 		9BC0002D2FB96965009138E1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				9B7556642FBA3FCD00E89B86 /* HoverBackground.swift */,
 				9B4B6ECD2FB9378E00CED910 /* FloatingOverlayPanel.swift */,
 				9BC0002B2FB96965009138E1 /* ComfyTextField.swift */,
 				9B1A534D2FB85C2D009138E1 /* SidebarIcon.swift */,
@@ -588,6 +594,7 @@
 				9B4B6F472FB961E200CED910 /* SearchSuggestionRowViewModel.swift in Sources */,
 				9B1A53582FB85C2D009138E1 /* BrowserCoordinator.swift in Sources */,
 				9B1A53592FB85C2D009138E1 /* FaviconService.swift in Sources */,
+				9B7556652FBA3FCD00E89B86 /* HoverBackground.swift in Sources */,
 				9B1A535A2FB85C2D009138E1 /* LocalShortcuts+Defaults.swift in Sources */,
 				9B1A535B2FB85C2D009138E1 /* Shortcuts.swift in Sources */,
 				9B1A535C2FB85C2D009138E1 /* ComfyBrowserViewModel.swift in Sources */,
@@ -620,6 +627,7 @@
 				9BC0001D2FB94D11009138E1 /* SearchSuggestionsList.swift in Sources */,
 				9BC0001E2FB94D11009138E1 /* SearchSuggestionRow.swift in Sources */,
 				9BC000242FB9532A009138E1 /* SearchSuggestionCollectionCoordinator.swift in Sources */,
+				9B7556632FBA387200E89B86 /* View+readFrame.swift in Sources */,
 				9BC000252FB9532A009138E1 /* SearchSuggestionCollectionView.swift in Sources */,
 				9BC000262FB9532A009138E1 /* SearchSuggestionItem.swift in Sources */,
 				9BC000272FB9532A009138E1 /* SearchSuggestionItemView.swift in Sources */,

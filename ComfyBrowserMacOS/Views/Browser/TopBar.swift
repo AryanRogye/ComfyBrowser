@@ -7,9 +7,20 @@
 
 import SwiftUI
 
+private struct SearchFieldFrameKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
 struct TopBar<SidebarIcon: View>: View {
-    
+
     let searchEngine: SearchEngine
+    @Bindable var faviconService: FaviconService
+    @Binding var canNavigateBack: Bool
+    @Binding var canNavigateForward: Bool
     @Binding var shouldShowSidebarIcon: Bool
     @Binding var isSearchOverlayVisible: Bool
     @Binding var isSearchFieldFocused: Bool
@@ -18,6 +29,15 @@ struct TopBar<SidebarIcon: View>: View {
     @ViewBuilder var sidebarIcon: SidebarIcon
     var onSearch: (String) -> Void
     var searching: (String) -> [SearchSuggestion]
+    var selectSuggestionReplace: (SearchSuggestion) -> Void
+    var onForward: () -> Void
+    var onBack: () -> Void
+
+    @State private var hoveringOverSearch: Bool = false
+    @State private var hoveringOverLink: Bool = false
+
+    @State private var searchFieldFrame: CGRect = .zero
+    private let coordinateSpaceName = "TopBarSpace"
 
     /// Background Shape Of TopBar
     let background = UnevenRoundedRectangle(
@@ -26,17 +46,17 @@ struct TopBar<SidebarIcon: View>: View {
         bottomTrailingRadius: 0,
         topTrailingRadius: 8
     )
-    
+
     /// Padding Around
     var inset : CGFloat {
         10
     }
-    
+
     /// Height
     var height: CGFloat {
         40
     }
-    
+
     /// Top bar material while the search popup is closed.
     ///
     /// Example:
@@ -46,24 +66,51 @@ struct TopBar<SidebarIcon: View>: View {
         if isSearchOverlayVisible {
             return AnyShapeStyle(.clear)
         }
-        
-        return AnyShapeStyle(.regularMaterial)
+
+        return AnyShapeStyle(.white)
     }
-    
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            topBar
-                .padding(.horizontal, inset)
-                .foregroundStyle(.black)
-                .frame(maxWidth: .infinity)
-                .frame(height: height)
-                .background {
-                    background
-                        .fill(backgroundFill)
-                }
-                .contentShape(Rectangle())
-                .zIndex(1)
+
+    var textFieldBackground: Color {
+        if isSearchFieldFocused || isSearchOverlayVisible {
+            return .white
         }
+        return hoveringOverSearch ? .gray.opacity(0.2) : .gray.opacity(0.1)
+    }
+
+    /// TopBar shows up in a ZStack so this will get ordered correctly
+    var body: some View {
+        if isSearchOverlayVisible, searchFieldFrame.width > 0 {
+            /// tap to dismiss
+            tapToDismissView
+                .zIndex(9)
+
+            /// suggestions show up in this container
+            searchSuggestionsContainer
+                .zIndex(10)
+        }
+
+        HStack {
+
+            /// Sidebar Icon
+            if shouldShowSidebarIcon {
+                sidebarIcon
+            }
+
+            navigationButtons
+                .padding(.horizontal)
+
+            /// Search field
+            textfield
+        }
+        .padding(.horizontal, inset)
+        .foregroundStyle(.black)
+        .frame(maxWidth: .infinity)
+        .frame(height: height)
+        .background {
+            background
+                .fill(backgroundFill)
+        }
+        .contentShape(Rectangle())
         .frame(maxWidth: .infinity)
         .frame(
             height: height,
@@ -77,41 +124,93 @@ struct TopBar<SidebarIcon: View>: View {
             .snappy(duration: 0.2),
             value: isSearchOverlayVisible
         )
-    }
-    
-    /// MARK: - Top Bar
-    private var topBar: some View {
-        HStack {
-            /// Sidebar Icon
-            if shouldShowSidebarIcon {
-                sidebarIcon
-            }
-            
-            /// Container For Search
-            /// This is seperate so that it shows up
-            /// as "another" container
-            searchContainer
+        .zIndex(11)
+        .coordinateSpace(name: coordinateSpaceName)
+        .onPreferenceChange(SearchFieldFrameKey.self) { frame in
+            print("searchFieldFrame:", frame)
+            searchFieldFrame = frame
         }
     }
-    
-    
 
-    private var searchContainer: some View {
-        ZStack(alignment: .topLeading) {
-            HStack {
-                textfield
-                Spacer()
+    // MARK: - Tap To Dismiss
+    private var tapToDismissView: some View {
+        Color.clear
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                isSearchOverlayVisible = false
+                isSearchFieldFocused = false
             }
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 40, alignment: .topLeading)
     }
-    
+
+    // MARK: - Search Suggestions Container
+    private var searchSuggestionsContainer: some View {
+        return FloatingOverlayPanel {
+            SearchSuggestionsList(
+                faviconService: faviconService,
+                suggestions: searchSuggestions,
+                onSelect: selectSuggestionReplace
+            )
+        }
+        .frame(width: searchFieldFrame.width + (inset * 2))
+        .offset(x: searchFieldFrame.minX - inset)
+    }
+
+    // MARK: - Navigation Buttons
+    @ViewBuilder
+    private var navigationButtons: some View {
+        HStack(spacing: 10) {
+            Button {
+                onBack()
+            } label: {
+                HoverBackground(
+                    innerColor: .black.opacity(0.15),
+                    outerColor: .black.opacity(0.2)
+                ) {
+                    Image(systemName: "arrow.backward")
+                        .padding(6)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(!canNavigateBack)
+
+            Button {
+                onForward()
+            } label: {
+                HoverBackground(
+                    innerColor: .black.opacity(0.15),
+                    outerColor: .black.opacity(0.2)
+                ) {
+                    Image(systemName: "arrow.forward")
+                        .padding(6)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(!canNavigateForward)
+        }
+    }
+
+    // MARK: - Textfield
     private var textfield: some View {
         HStack(alignment: .center) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.black)
-            
+            if isSearchOverlayVisible {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.black)
+                    .frame(width: 18)
+            } else {
+                Button(action: {
+                    /// copy to clipboard
+                }) {
+                    HoverBackground {
+                        Image(systemName: "link")
+                            .foregroundStyle(.black)
+                            .padding(3)
+                    }
+                }
+                .buttonStyle(.plain)
+                .frame(width: 18)
+            }
+
             ComfyTextField(
                 placeholder: "Search with \(searchEngine.rawValue) or enter address",
                 text: $search,
@@ -140,6 +239,7 @@ struct TopBar<SidebarIcon: View>: View {
             )
         }
         .padding(.leading)
+        .frame(maxWidth: .infinity)
         .frame(height: 40)
         .contentShape(Rectangle())
         .simultaneousGesture(
@@ -149,6 +249,41 @@ struct TopBar<SidebarIcon: View>: View {
             }
         )
         .animation(.snappy(duration: 0.2), value: isSearchOverlayVisible)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(textFieldBackground)
+                .padding(.vertical, 3)
+                .onTapGesture {
+                    isSearchOverlayVisible = true
+                    isSearchFieldFocused = true
+                }
+        }
+        .onHover { hovering in
+            if isSearchFieldFocused || isSearchOverlayVisible {
+                hoveringOverSearch = false
+            } else {
+                hoveringOverSearch = hovering
+            }
+        }
+        .onChange(of: isSearchFieldFocused) { _, newValue in
+            if newValue {
+                hoveringOverSearch = false
+            }
+        }
+        .onChange(of: isSearchOverlayVisible) { _, newValue in
+            if newValue {
+                hoveringOverSearch = false
+            }
+        }
+        .animation(.bouncy, value: hoveringOverSearch)
+        .overlay {
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: SearchFieldFrameKey.self,
+                    value: proxy.frame(in: .named(coordinateSpaceName))
+                )
+            }
+        }
     }
 }
 
@@ -160,6 +295,9 @@ struct TopBar<SidebarIcon: View>: View {
     VStack {
         TopBar(
             searchEngine: .duckDuckGo,
+            faviconService: browserCoordinator.faviconService,
+            canNavigateBack: .constant(true),
+            canNavigateForward: .constant(true),
             shouldShowSidebarIcon: .constant(true),
             isSearchOverlayVisible: .constant(false),
             isSearchFieldFocused: .constant(false),
@@ -174,6 +312,10 @@ struct TopBar<SidebarIcon: View>: View {
             searching: { searchTerm in
                 browserCoordinator.searching(searchTerm)
             },
+            selectSuggestionReplace: { suggestion in
+            },
+            onForward: browserCoordinator.navigateForward,
+            onBack: browserCoordinator.navigateBack
         )
         .padding()
     }
