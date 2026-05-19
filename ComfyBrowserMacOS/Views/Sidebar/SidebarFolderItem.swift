@@ -43,12 +43,10 @@ final class SidebarFolderItem: NSCollectionViewItem {
     ) {
         if let vm {
             vm.folder = folder
-            vm.isHovered = false
             setup(with: vm)
         } else {
             let vm = SidebarFolderRowViewModel(folder: folder, clickedFolder: clickedFolder)
             self.vm = vm
-            vm.isHovered = false
             setup(with: vm)
         }
     }
