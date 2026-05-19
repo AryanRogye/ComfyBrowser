@@ -53,6 +53,7 @@
 		9B75582F2FBC281500E89B86 /* SidebarFolderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */; };
 		9B7558312FBC286D00E89B86 /* SidebarFolderRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */; };
 		9B7558332FBC320000E89B86 /* AnimatedFolderIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7558322FBC320000E89B86 /* AnimatedFolderIcon.swift */; };
+		9B7558C52FBD261D00E89B86 /* ThemeColorPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 9B7558C42FBD261D00E89B86 /* ThemeColorPicker */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
 		9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */; };
 		9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */; };
@@ -173,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9B7558C52FBD261D00E89B86 /* ThemeColorPicker in Frameworks */,
 				9B1A52BC2FB82790009138E1 /* FaviconFinder in Frameworks */,
 				9B1A52AC2FB7E34D009138E1 /* LocalShortcuts in Frameworks */,
 				9B1D9BF82EF4EA2200A75C2B /* LocalShortcuts in Frameworks */,
@@ -459,6 +461,7 @@
 				9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */,
 				9B1A52AB2FB7E34D009138E1 /* LocalShortcuts */,
 				9B1A52BB2FB82790009138E1 /* FaviconFinder */,
+				9B7558C42FBD261D00E89B86 /* ThemeColorPicker */,
 			);
 			productName = ComfyBrowserMacOS;
 			productReference = 9BD47D9D2ECD2B700081FD2F /* ComfyBrowserMacOS.app */;
@@ -542,6 +545,7 @@
 			packageReferences = (
 				9B1A52AA2FB7E34D009138E1 /* XCRemoteSwiftPackageReference "LocalShortcuts" */,
 				9B1A52BA2FB82790009138E1 /* XCRemoteSwiftPackageReference "FaviconFinder" */,
+				9B7558C32FBD261D00E89B86 /* XCLocalSwiftPackageReference "Ideas/Arc_Zen_like_ColorPicker" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9B2E02D62E58FEED0087A5CB /* Products */;
@@ -1129,6 +1133,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		9B7558C32FBD261D00E89B86 /* XCLocalSwiftPackageReference "Ideas/Arc_Zen_like_ColorPicker" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Ideas/Arc_Zen_like_ColorPicker;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		9B1A52AA2FB7E34D009138E1 /* XCRemoteSwiftPackageReference "LocalShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1162,6 +1173,10 @@
 		9B1D9BF72EF4EA2200A75C2B /* LocalShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LocalShortcuts;
+		};
+		9B7558C42FBD261D00E89B86 /* ThemeColorPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ThemeColorPicker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
