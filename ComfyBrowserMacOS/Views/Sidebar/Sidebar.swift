@@ -20,6 +20,7 @@ struct Sidebar: View {
             SidebarView(
                 faviconService: browserCoordinator.faviconService,
                 sidebar: $browserCoordinator.sidebar,
+                selectedTab: $browserCoordinator.selectedTab,
                 clickedTab: { tab in
                     /// if same just exit early
                     if browserCoordinator.selectedTab?.id == tab.id { return }
@@ -27,6 +28,9 @@ struct Sidebar: View {
                 },
                 closeTab: { tab in
                     browserCoordinator.closeTab(id: tab.id)
+                },
+                clickedFolder: { folder in
+                    browserCoordinator.toggleFolder(id: folder.id)
                 }
             )
             .frame(maxWidth: 200, maxHeight: .infinity, alignment: .top)
@@ -34,30 +38,31 @@ struct Sidebar: View {
     }
 }
 
-//#Preview {
-//    VStack {
-//        SidebarView(
-//            //        SidebarContent(
-//            faviconService: FaviconService(),
-//            tabs: .constant([
-//                .init(
-//                    title: "DuckDuckGo",
-//                    url: URL(string: "https://duckduckgo.com")!,
-//                    isActive: true
-//                ),
-//                .init(
-//                    title: "GitHub",
-//                    url: URL(string: "https://github.com")!,
-//                    isActive: false
-//                ),
-//                .init(
-//                    title: "UIC Blackboard",
-//                    url: URL(string: "https://uic.blackboard.com")!,
-//                    isActive: false
-//                )
-//            ])
-//        ) { tab in } closeTab: { tab in }
-//            .padding()
-//    }
-//    .frame(width: 200, height: 510)
-//}
+#Preview {
+
+    @Previewable @State  var browserCoordinator = BrowserCoordinator()
+    @Previewable @State  var comfyBrowserState = ComfyBrowserViewModel()
+
+    ZStack {
+        LinearGradient(
+            colors: [.red.opacity(0.5), .red.opacity(0.7), .pink.opacity(0.9)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
+
+        VStack {
+            SidebarView(
+                //        SidebarContent(
+                faviconService: browserCoordinator.faviconService,
+                sidebar: $browserCoordinator.sidebar,
+                selectedTab: $browserCoordinator.selectedTab,
+            ) { tab in } closeTab: { tab in } clickedFolder: { folder in }
+                .padding()
+        }
+    }
+    .frame(width: 200, height: 510)
+    .task {
+        browserCoordinator.selectedTab = browserCoordinator.sidebar.tabs.first!
+    }
+}

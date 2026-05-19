@@ -1,8 +1,8 @@
 //
-//  SidebarTabItem.swift
+//  SidebarFolderItem.swift
 //  ComfyBrowser
 //
-//  Created by Aryan Rogye on 5/16/26.
+//  Created by Aryan Rogye on 5/19/26.
 //
 
 import AppKit
@@ -10,19 +10,17 @@ import SwiftUI
 
 // MARK: - SidebarTabItem
 /// This shows the actual content for each `Tab`
-final class SidebarTabItem: NSCollectionViewItem {
-    static let identifier = NSUserInterfaceItemIdentifier("SidebarTabItem")
-    
+final class SidebarFolderItem: NSCollectionViewItem {
+    static let identifier = NSUserInterfaceItemIdentifier("SidebarFolderItem")
+
     /// swiftui content in here
-    private var hostingView: NSHostingView<SidebarRow>?
-    
-    private var vm: SidebarRowViewModel?
-    
+    private var hostingView: NSHostingView<SidebarFolderRow>?
+
     override func loadView() {
         let v = SidebarItemView()
         v.onTap = { [weak self] in
             guard let self, let vm else { return }
-            vm.clickedTab(vm.tab)
+            vm.clickedFolder(vm.folder)
         }
         v.onHover = { [weak self] hovering in
             guard let self, let vm else { return }
@@ -30,42 +28,36 @@ final class SidebarTabItem: NSCollectionViewItem {
         }
         view = v
     }
-    
+
     override var isSelected: Bool {
         didSet {
-            vm?.isSelected = isSelected
+            vm?.folder.isExpanded = isSelected
         }
     }
-    
+
+    private var vm: SidebarFolderRowViewModel?
+
     func configure(
-        faviconService: FaviconService,
-        with tab: Tab,
-        selectedTab: Tab?,
-        closeTab: @escaping (Tab) -> Void,
-        clickedTab: @escaping (Tab) -> Void
+        with folder: Folder,
+        clickedFolder: @escaping (Folder) -> Void
     ) {
         if let vm {
-            vm.tab = tab
-            vm.isSelected = isSelected
-            vm.faviconService = faviconService
+            vm.folder = folder
             vm.isHovered = false
-            vm.selectedTab = selectedTab
             setup(with: vm)
         } else {
-            let vm = SidebarRowViewModel(faviconService: faviconService, tab: tab, selectedTab: selectedTab, closeTab: closeTab, clickedTab: clickedTab)
-            vm.isSelected = isSelected
-            vm.isHovered = false
-            vm.selectedTab = selectedTab
+            let vm = SidebarFolderRowViewModel(folder: folder, clickedFolder: clickedFolder)
             self.vm = vm
+            vm.isHovered = false
             setup(with: vm)
         }
     }
-    
-    private func setup(with vm: SidebarRowViewModel) {
-        let row = SidebarRow(
-            vm: vm,
+
+    private func setup(with vm: SidebarFolderRowViewModel) {
+        let row = SidebarFolderRow(
+            vm: vm
         )
-        
+
         /// Update
         if let hostingView {
             hostingView.rootView = row
@@ -79,16 +71,16 @@ final class SidebarTabItem: NSCollectionViewItem {
             /// for minimum, intrinsic, and maximum size
             hosting.sizingOptions = []
             hosting.translatesAutoresizingMaskIntoConstraints = false
-            
+
             view.addSubview(hosting)
-            
+
             NSLayoutConstraint.activate([
                 hosting.topAnchor.constraint(equalTo: view.topAnchor),
                 hosting.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 hosting.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 hosting.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             ])
-            
+
             hostingView = hosting
         }
     }

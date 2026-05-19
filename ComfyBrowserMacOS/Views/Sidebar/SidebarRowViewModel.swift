@@ -13,18 +13,22 @@ import SwiftUI
 final class SidebarRowViewModel {
     var faviconService: FaviconService
     var tab: Tab
+    var selectedTab: Tab?
     var isSelected = false
+    var isHovered: Bool = false
     var closeTab: (Tab) -> Void
     var clickedTab: (Tab) -> Void
 
     init(
         faviconService: FaviconService,
         tab: Tab,
+        selectedTab: Tab?,
         closeTab: @escaping (Tab) -> Void,
         clickedTab: @escaping (Tab) -> Void
     ) {
         self.faviconService = faviconService
         self.tab = tab
+        self.selectedTab = selectedTab
         self.closeTab = closeTab
         self.clickedTab = clickedTab
     }

@@ -49,6 +49,9 @@
 		9B7556632FBA387200E89B86 /* View+readFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7556622FBA386F00E89B86 /* View+readFrame.swift */; };
 		9B7556652FBA3FCD00E89B86 /* HoverBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7556642FBA3FCD00E89B86 /* HoverBackground.swift */; };
 		9B75582A2FBC1C7500E89B86 /* SidebarSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7558292FBC1C7500E89B86 /* SidebarSectionHeaderView.swift */; };
+		9B75582D2FBC27E400E89B86 /* SidebarFolderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B75582C2FBC27E300E89B86 /* SidebarFolderItem.swift */; };
+		9B75582F2FBC281500E89B86 /* SidebarFolderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */; };
+		9B7558312FBC286D00E89B86 /* SidebarFolderRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
 		9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */; };
 		9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */; };
@@ -123,6 +126,9 @@
 		9B7556622FBA386F00E89B86 /* View+readFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+readFrame.swift"; sourceTree = "<group>"; };
 		9B7556642FBA3FCD00E89B86 /* HoverBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverBackground.swift; sourceTree = "<group>"; };
 		9B7558292FBC1C7500E89B86 /* SidebarSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSectionHeaderView.swift; sourceTree = "<group>"; };
+		9B75582C2FBC27E300E89B86 /* SidebarFolderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarFolderItem.swift; sourceTree = "<group>"; };
+		9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarFolderRow.swift; sourceTree = "<group>"; };
+		9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarFolderRowViewModel.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
 		9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQueryIntent.swift; sourceTree = "<group>"; };
@@ -242,14 +248,17 @@
 			children = (
 				9B1A53422FB85C2D009138E1 /* Sidebar.swift */,
 				9B1A534A2FB85C2D009138E1 /* SidebarView.swift */,
+				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
 				9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */,
 				9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */,
 				9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */,
+				9B75582C2FBC27E300E89B86 /* SidebarFolderItem.swift */,
 				9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */,
 				9B7558292FBC1C7500E89B86 /* SidebarSectionHeaderView.swift */,
 				9B1A53462FB85C2D009138E1 /* SidebarRow.swift */,
-				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
+				9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */,
 				9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */,
+				9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */,
 				9B1A53412FB85C2D009138E1 /* README.md */,
 			);
 			path = Sidebar;
@@ -609,11 +618,13 @@
 				9B1A53612FB85C2D009138E1 /* SidebarRow.swift in Sources */,
 				9B4B6ECE2FB9378E00CED910 /* FloatingOverlayPanel.swift in Sources */,
 				9B1A53622FB85C2D009138E1 /* SidebarRowViewModel.swift in Sources */,
+				9B7558312FBC286D00E89B86 /* SidebarFolderRowViewModel.swift in Sources */,
 				9B1A53632FB85C2D009138E1 /* SidebarScrollView.swift in Sources */,
 				9B1A53642FB85C2D009138E1 /* SidebarTabItem.swift in Sources */,
 				9B1A53F22FB86771009138E1 /* View+if.swift in Sources */,
 				9B1A53652FB85C2D009138E1 /* SidebarView.swift in Sources */,
 				9B1A53662FB85C2D009138E1 /* ComfyBrowserRoot.swift in Sources */,
+				9B75582D2FBC27E400E89B86 /* SidebarFolderItem.swift in Sources */,
 				9B1A53672FB85C2D009138E1 /* SidebarIcon.swift in Sources */,
 				9B1A53682FB85C2D009138E1 /* TopBar.swift in Sources */,
 				9B1A53692FB85C2D009138E1 /* WebView.swift in Sources */,
@@ -621,6 +632,7 @@
 				9BC0002C2FB96965009138E1 /* ComfyTextField.swift in Sources */,
 				9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */,
 				9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */,
+				9B75582F2FBC281500E89B86 /* SidebarFolderRow.swift in Sources */,
 				9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */,
 				9BC000182FB94D11009138E1 /* HistoryStore.swift in Sources */,
 				9BC000192FB94D11009138E1 /* HistoryRecord.swift in Sources */,

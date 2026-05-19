@@ -211,7 +211,15 @@ extension BrowserCoordinator {
         updateTitle(tabID: selectedTab.id, title: title)
         self.selectedTab = sidebar.findTab(id: selectedTab.id)
     }
-    
+
+    public func toggleFolder(
+        id: UUID
+    ) {
+        sidebar.updateFolder(id: id) { folder in
+            folder.isExpanded.toggle()
+        }
+    }
+
     /// Closes a tab and releases its retained `WKWebView`.
     ///
     /// If the closed tab is currently selected, the browser selects the nearest

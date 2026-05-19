@@ -10,9 +10,32 @@ import WebKit
 
 
 struct SidebarModel: Codable, Hashable, Sendable {
-    var pinned: [Tab] = []
-    var saved: [SidebarNode] = []
-    var regular: [Tab] = []
+    //    var pinned: [Tab] = []
+    //    var saved: [SidebarNode] = []
+    //    var regular: [Tab] = []
+    /// MOCK DELETE WHEN MERGING TO MAIN
+    var pinned: [Tab] = [
+        .init(title: "Reddit", url: URL(string: "https://reddit.com")!, isActive: false),
+        .init(title: "GitHub", url: URL(string: "https://github.com")!, isActive: false),
+        .init(title: "YouTube", url: URL(string: "https://youtube.com")!, isActive: false),
+    ]
+    var saved: [SidebarNode] = [
+        .folder(.init(title: "My Folder", children: [
+            .tab(.init(title: "X", url: URL(string: "https://x.com")!, isActive: false),),
+            .folder(.init(title: "Social Media", children: [
+                .tab(.init(title: "X", url: URL(string: "https://x.com")!, isActive: false),),
+                .tab(.init(title: "Reddit", url: URL(string: "https://reddit.com")!, isActive: false),),
+                .tab(.init(title: "Instagram", url: URL(string: "https://instagram.com")!, isActive: false),),
+                .tab(.init(title: "Facebook", url: URL(string: "https://facebook.com")!, isActive: false),),
+            ]))
+        ]))
+    ]
+    var regular: [Tab] = [
+        .init(title: "X", url: URL(string: "https://x.com")!, isActive: false),
+        .init(title: "Hacker News", url: URL(string: "https://news.ycombinator.com")!, isActive: false),
+        .init(title: "Linear", url: URL(string: "https://linear.app")!, isActive: false),
+    ]
+
 
     var tabs: [Tab] {
         pinned + saved.allTabs() + regular
@@ -26,6 +49,19 @@ struct SidebarModel: Codable, Hashable, Sendable {
         pinned.findTab(id: id)
         ?? saved.findTab(id: id)
         ?? regular.findTab(id: id)
+    }
+
+    func item(at indexPath: IndexPath) -> (SidebarSectionKind, SidebarNode) {
+        switch indexPath.section {
+        case 0: return (.pinned, .tab(pinned[indexPath.item]))
+        case 1: return (.saved, savedRows[indexPath.item])
+        case 2: return (.regular, .tab(regular[indexPath.item]))
+        default: fatalError()
+        }
+    }
+
+    var savedRows: [SidebarNode] {
+        saved.visibleRows()
     }
 
     mutating func moveTab(
@@ -47,7 +83,7 @@ struct SidebarModel: Codable, Hashable, Sendable {
             switch node {
             case .tab(let tab):
                 pinned.insertClamped(tab, at: index)
-            case .folder(_):
+            default:
                 return
             }
         case .saved:
@@ -56,7 +92,7 @@ struct SidebarModel: Codable, Hashable, Sendable {
             switch node {
             case .tab(let tab):
                 regular.insertClamped(tab, at: index)
-            case .folder(_):
+            default:
                 return
             }
         }
@@ -98,6 +134,10 @@ struct SidebarModel: Codable, Hashable, Sendable {
 
     mutating func removeFolder(id: UUID) -> Folder? {
         saved.removeFolder(id: id)
+    }
+
+    mutating func updateFolder(id: UUID, _ update: (inout Folder) -> Void) {
+        if saved.updateFolder(id: id, update) { return }
     }
 }
 
@@ -219,6 +259,15 @@ struct Folder: Codable, Hashable, Identifiable, Equatable, Sendable {
         self.title = title
     }
 
+    init(
+        title: String,
+        children: [SidebarNode]
+    ) {
+        self.id = UUID()
+        self.title = title
+        self.children = children
+    }
+
     static func == (lhs: Folder, rhs: Folder) -> Bool {
         lhs.id == rhs.id
         && lhs.title == rhs.title
@@ -336,6 +385,26 @@ extension Array where Element == Tab {
     }
 }
 extension Array where Element == SidebarNode {
+    /// Returns the rows currently visible in the sidebar tree.
+    ///
+    /// Example:
+    ///     An expanded folder containing Tab A returns [Folder, Tab A].
+    ///     A collapsed folder returns [Folder].
+    func visibleRows() -> [SidebarNode] {
+        flatMap { node -> [SidebarNode] in
+            switch node {
+            case .tab:
+                return [node]
+            case .folder(let folder):
+                var rows: [SidebarNode] = [node]
+                if folder.isExpanded {
+                    rows += folder.children.visibleRows()
+                }
+                return rows
+            }
+        }
+    }
+
     /// Recursively searches the sidebar tree for a tab matching the provided ID.
     ///
     /// Example Tree:
@@ -432,6 +501,37 @@ extension Array where Element == Tab {
 }
 
 extension Array where Element == SidebarNode {
+    mutating func updateFolder(
+        id: UUID,
+        _ update: (inout Folder) -> Void
+    ) -> Bool {
+        for index in indices {
+            switch self[index] {
+            case .tab(var tab) where tab.id == id:
+                return false
+
+            case .folder(var folder):
+                if folder.id == id {
+                    update(&folder)
+                    self[index] = .folder(folder)
+                    return true  // ← you're missing this
+                }
+                /// keep going deeper
+                else {
+                    if folder.children.updateFolder(id: id, update) {
+                        self[index] = .folder(folder)
+                        return true
+                    }
+                }
+
+            default:
+                continue
+            }
+        }
+
+        return false
+    }
+
     mutating func updateTab(
         id: UUID,
         _ update: (inout Tab) -> Void

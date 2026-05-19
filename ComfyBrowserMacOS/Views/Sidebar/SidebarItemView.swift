@@ -9,8 +9,27 @@ import AppKit
 
 class SidebarItemView: NSView {
     var onTap: (() -> Void)?
-    
+    var onHover: ((Bool) -> Void)?
+
     override func mouseDown(with event: NSEvent) {
         onTap?()
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        onHover?(true)
+    }
+    override func mouseExited(with event: NSEvent) {
+        onHover?(false)
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        trackingAreas.forEach { removeTrackingArea($0) }
+        addTrackingArea(NSTrackingArea(
+            rect: bounds,
+            options: [.mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
+            owner: self,
+            userInfo: nil
+        ))
     }
 }

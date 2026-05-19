@@ -12,13 +12,20 @@ struct SidebarRow: View {
     @Bindable var vm: SidebarRowViewModel
     
     var color: Color {
-        vm.isSelected
-        ? .white.opacity(0.45)
-        : .white.opacity(0.18)
+        vm.selectedTab?.id == vm.tab.id
+        ? .white.opacity(0.9)
+        : (
+            vm.isHovered
+            ? .white.opacity(0.66)
+            : (vm.isSelected
+               ? .white.opacity(0.45)
+               : .white.opacity(0.18)
+            )
+        )
     }
-    
+
     var strokeColor: Color {
-        Color.white.opacity(vm.isSelected ? 0.25 : 0)
+        Color.white.opacity(vm.isHovered ? 2 : ( vm.isSelected ? 0.25 : 0))
     }
     
     var body: some View {
@@ -33,16 +40,18 @@ struct SidebarRow: View {
             
             Spacer()
             
-            Button {
-                vm.closeTab(vm.tab)
-            } label: {
-                Image(systemName: "xmark")
+            if vm.isHovered {
+                Button {
+                    vm.closeTab(vm.tab)
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(SidebarRowMinusButtonStyle())
             }
-            .buttonStyle(SidebarRowMinusButtonStyle())
         }
         .lineLimit(1)
         .padding(6)
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
             RoundedRectangle(cornerRadius: 6)
                 .fill(color)

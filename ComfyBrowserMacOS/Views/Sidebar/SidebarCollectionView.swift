@@ -12,8 +12,11 @@ import SwiftUI
 class SidebarCollectionView: NSCollectionView {
     
     let distanceFromTop: CGFloat = 40
-    let paddingAround: CGFloat = 4
-    
+    let leftInset: CGFloat = 0
+    let rightInset: CGFloat = 0
+    let bottomInset: CGFloat = 0
+
+
     let cellWidth: CGFloat = 200
     let cellHeight: CGFloat = 36
     
@@ -44,9 +47,9 @@ class SidebarCollectionView: NSCollectionView {
         layout.sectionInset = NSEdgeInsets(
             
             top: distanceFromTop,
-            left: paddingAround,
-            bottom: paddingAround,
-            right: paddingAround
+            left: leftInset,
+            bottom: bottomInset,
+            right: rightInset
         )
         
         collectionViewLayout = layout
@@ -55,6 +58,10 @@ class SidebarCollectionView: NSCollectionView {
         register(
             SidebarTabItem.self,
             forItemWithIdentifier: SidebarTabItem.identifier
+        )
+        register(
+            SidebarFolderItem.self,
+            forItemWithIdentifier: SidebarFolderItem.identifier
         )
 
         /// Register Section Views
