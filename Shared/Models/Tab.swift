@@ -9,7 +9,7 @@ import Foundation
 import WebKit
 
 
-struct SidebarModel: Codable, Hashable {
+struct SidebarModel: Codable, Hashable, Sendable {
     var pinned: [SidebarNode] = []
     var folders: [SidebarNode] = []
     var regular: [SidebarNode] = []
@@ -93,13 +93,13 @@ struct SidebarModel: Codable, Hashable {
     }
 }
 
-enum SidebarSectionKind: Codable, Hashable {
+enum SidebarSectionKind: Codable, Hashable, Sendable {
     case pinned
     case folders
     case regular
 }
 
-enum SidebarNode: Hashable, Equatable, Codable {
+enum SidebarNode: Hashable, Equatable, Codable, Sendable {
     case tab(Tab)
     case folder(Folder)
 
@@ -113,7 +113,7 @@ enum SidebarNode: Hashable, Equatable, Codable {
     }
 }
 
-struct Tab: Codable, Hashable, Identifiable, Equatable {
+struct Tab: Codable, Hashable, Identifiable, Equatable, Sendable {
 
     let id: UUID
     var title: String
@@ -191,7 +191,7 @@ struct Tab: Codable, Hashable, Identifiable, Equatable {
     }
 }
 
-struct Folder: Codable, Hashable, Identifiable, Equatable {
+struct Folder: Codable, Hashable, Identifiable, Equatable, Sendable {
     let id: UUID
     var title: String
     var children: [SidebarNode] = []

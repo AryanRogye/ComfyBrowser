@@ -53,7 +53,7 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
             switch node {
             case .tab(let tab):
                 return tab
-            case .folder(let folder):
+            case .folder(_):
                 return nil
             }
         }

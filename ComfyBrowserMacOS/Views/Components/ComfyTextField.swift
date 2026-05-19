@@ -165,7 +165,7 @@ extension ComfyTextField.Coordinator {
             
             guard
                 self.isFocused.wrappedValue == shouldFocus,
-                let window = textField.window
+                let window = unsafe textField.window
             else { return }
             
             let currentEditor = textField.currentEditor()
