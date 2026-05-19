@@ -53,3 +53,7 @@ Every UI mode shares the **same underlying engine and process model**. The UI sw
 - Keep the process model dead simple first. Don't over-engineer tab suspension before the UI even works.
 - All three UIs should share the same `BrowserViewModel` — the layout changes, not the data.
 - The mode switcher should be a single keyboard shortcut. Something fast.
+
+## License
+
+ComfyBrowser is available under the MIT License. See [LICENSE](LICENSE).

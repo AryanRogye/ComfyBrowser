@@ -4,21 +4,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "Arc_Zen_like_ColorPicker",
+    name: "ThemeColorPicker",
     platforms: [
         .macOS(.v26)
     ],
     products: [
-        .library(name: "ZenThemeColorPicker", targets: ["ZenThemeColorPicker"]),
-        .executable(name: "Arc_Zen_like_ColorPicker", targets: ["Arc_Zen_like_ColorPicker"])
+        .library(name: "ThemeColorPicker", targets: ["ThemeColorPicker"]),
+        .executable(name: "ColorPickerDemo", targets: ["ColorPickerDemo"])
     ],
     targets: [
         .target(
-            name: "ZenThemeColorPicker"
+            name: "ThemeColorPicker"
         ),
         .executableTarget(
-            name: "Arc_Zen_like_ColorPicker",
-            dependencies: ["ZenThemeColorPicker"]
+            name: "ColorPickerDemo",
+            dependencies: ["ThemeColorPicker"]
         ),
     ]
 )

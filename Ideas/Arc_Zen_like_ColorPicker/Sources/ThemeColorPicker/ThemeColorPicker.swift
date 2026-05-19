@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum ZenThemeScheme: String, CaseIterable, Identifiable, Sendable {
+public enum ThemeColorScheme: String, CaseIterable, Identifiable, Sendable {
     case automatic
     case light
     case dark
@@ -8,7 +8,7 @@ public enum ZenThemeScheme: String, CaseIterable, Identifiable, Sendable {
     public var id: String { rawValue }
 }
 
-public struct ZenThemeColor: Equatable, Sendable {
+public struct ThemeColor: Equatable, Sendable {
     public var red: Double
     public var green: Double
     public var blue: Double
@@ -22,7 +22,7 @@ public struct ZenThemeColor: Equatable, Sendable {
     }
 }
 
-extension ZenThemeColor {
+extension ThemeColor {
     public init(hex: UInt32, alpha: Double = 1) {
         self.init(
             red: Double((hex >> 16) & 0xFF) / 255,
@@ -44,13 +44,13 @@ extension ZenThemeColor {
     }
 }
 
-public struct ZenThemeColorDot: Identifiable, Equatable, Sendable {
+public struct ThemeColorDot: Identifiable, Equatable, Sendable {
     public var id: UUID
-    public var color: ZenThemeColor
+    public var color: ThemeColor
     public var x: Double
     public var y: Double
 
-    public init(id: UUID = UUID(), color: ZenThemeColor, x: Double, y: Double) {
+    public init(id: UUID = UUID(), color: ThemeColor, x: Double, y: Double) {
         self.id = id
         self.color = color
         self.x = x
@@ -58,17 +58,17 @@ public struct ZenThemeColorDot: Identifiable, Equatable, Sendable {
     }
 }
 
-public struct ZenThemePickerValue: Equatable, Sendable {
-    public var scheme: ZenThemeScheme
-    public var dots: [ZenThemeColorDot]
+public struct ThemeColorPickerValue: Equatable, Sendable {
+    public var scheme: ThemeColorScheme
+    public var dots: [ThemeColorDot]
     public var opacity: Double
-    public var customColors: [ZenThemeColor]
+    public var customColors: [ThemeColor]
 
     public init(
-        scheme: ZenThemeScheme = .automatic,
-        dots: [ZenThemeColorDot] = Self.defaultDots,
+        scheme: ThemeColorScheme = .automatic,
+        dots: [ThemeColorDot] = Self.defaultDots,
         opacity: Double = 0.42,
-        customColors: [ZenThemeColor] = []
+        customColors: [ThemeColor] = []
     ) {
         self.scheme = scheme
         self.dots = dots
@@ -77,16 +77,16 @@ public struct ZenThemePickerValue: Equatable, Sendable {
     }
 }
 
-extension ZenThemePickerValue {
+extension ThemeColorPickerValue {
     public static let defaultDots = [
-        ZenThemeColorDot(color: ZenThemeColor(hex: 0xF2E9D1), x: 226, y: 232)
+        ThemeColorDot(color: ThemeColor(hex: 0xF2E9D1), x: 226, y: 232)
     ]
 }
 
-public struct ZenThemeBackground: View {
-    private let value: ZenThemePickerValue
+public struct ThemeColorBackground: View {
+    private let value: ThemeColorPickerValue
 
-    public init(value: ZenThemePickerValue) {
+    public init(value: ThemeColorPickerValue) {
         self.value = value
     }
 
@@ -137,7 +137,7 @@ public struct ZenThemeBackground: View {
         max(0.22, min(0.58, value.opacity * 0.92))
     }
 
-    private func backgroundPoint(for dot: ZenThemeColorDot, in size: CGSize) -> CGPoint {
+    private func backgroundPoint(for dot: ThemeColorDot, in size: CGSize) -> CGPoint {
         CGPoint(
             x: size.width * dot.x / 360,
             y: size.height * dot.y / 360
@@ -145,22 +145,22 @@ public struct ZenThemeBackground: View {
     }
 }
 
-public struct ZenThemeColorPicker: View {
-    @Binding private var value: ZenThemePickerValue
+public struct ThemeColorPicker: View {
+    @Binding private var value: ThemeColorPickerValue
     private let showsCustomColors: Bool
     @State private var currentPage = 0
-    @State private var customColor = ZenThemeColor(hex: 0xA588FF)
+    @State private var customColor = ThemeColor(hex: 0xA588FF)
     @State private var customOpacity = 1.0
     @State private var draggingDotID: UUID?
 
-    /// Creates a reusable Zen-style theme color picker.
+    /// Creates a reusable browser theme color picker.
     ///
     /// Example:
     /// ```swift
-    /// @State private var theme = ZenThemePickerValue()
-    /// ZenThemeColorPicker(value: $theme)
+    /// @State private var theme = ThemeColorPickerValue()
+    /// ThemeColorPicker(value: $theme)
     /// ```
-    public init(value: Binding<ZenThemePickerValue>, showsCustomColors: Bool = true) {
+    public init(value: Binding<ThemeColorPickerValue>, showsCustomColors: Bool = true) {
         self._value = value
         self.showsCustomColors = showsCustomColors
     }
@@ -186,7 +186,7 @@ public struct ZenThemeColorPicker: View {
     }
 }
 
-private extension ZenThemeColorPicker {
+private extension ThemeColorPicker {
     enum Metrics {
         static let panelWidth: CGFloat = 372
         static let panelPadding: CGFloat = 12
@@ -201,10 +201,10 @@ private extension ZenThemeColorPicker {
     }
 }
 
-private extension ZenThemeColorPicker {
+private extension ThemeColorPicker {
     var gradientEditor: some View {
         ZStack {
-            ZenDottedWell()
+            ThemeDottedWell()
 
             HStack(spacing: 5) {
                 schemeButton(.automatic, systemImage: "circle.grid.cross")
@@ -222,12 +222,6 @@ private extension ZenThemeColorPicker {
                 }
             }
             .position(x: Metrics.gradientSize / 2, y: Metrics.gradientSize - 24)
-
-            Text("Right click a node to remove it")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(.secondary.opacity(0.82))
-                .allowsHitTesting(false)
-                .position(x: Metrics.gradientSize / 2, y: Metrics.gradientSize - 50)
 
             if value.dots.isEmpty {
                 Text("Click to add")
@@ -248,7 +242,7 @@ private extension ZenThemeColorPicker {
         }
     }
 
-    func schemeButton(_ scheme: ZenThemeScheme, systemImage: String) -> some View {
+    func schemeButton(_ scheme: ThemeColorScheme, systemImage: String) -> some View {
         Button {
             value.scheme = scheme
         } label: {
@@ -282,7 +276,7 @@ private extension ZenThemeColorPicker {
         .contentShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
     }
 
-    func colorDot(_ dot: ZenThemeColorDot, isPrimary: Bool) -> some View {
+    func colorDot(_ dot: ThemeColorDot, isPrimary: Bool) -> some View {
         let size = isPrimary ? Metrics.firstDotSize : Metrics.dotSize
         let borderWidth: CGFloat = isPrimary ? 6 : 3
 
@@ -315,7 +309,7 @@ private extension ZenThemeColorPicker {
     }
 }
 
-private extension ZenThemeColorPicker {
+private extension ThemeColorPicker {
     var palettePager: some View {
         HStack(spacing: 9) {
             pageButton(systemImage: "chevron.left", disabled: currentPage == 0) {
@@ -327,7 +321,7 @@ private extension ZenThemeColorPicker {
                     Button {
                         apply(swatch)
                     } label: {
-                        ZenPaletteSwatchView(swatch: swatch)
+                        ThemePaletteSwatchView(swatch: swatch)
                             .frame(width: Metrics.swatchSize, height: Metrics.swatchSize)
                     }
                     .buttonStyle(.plain)
@@ -360,9 +354,9 @@ private extension ZenThemeColorPicker {
     }
 }
 
-private extension ZenThemeColorPicker {
+private extension ThemeColorPicker {
     var controls: some View {
-        ZenOpacityWaveSlider(value: Binding(
+        ThemeOpacityWaveSlider(value: Binding(
             get: { value.opacity },
             set: { value.opacity = min(0.88, max(0.28, $0)) }
         ))
@@ -386,7 +380,7 @@ private extension ZenThemeColorPicker {
 
                     ColorPicker("", selection: Binding(
                         get: { customColor.color.opacity(customOpacity) },
-                        set: { customColor = ZenThemeColor(nsColor: NSColor($0)); customOpacity = customColor.alpha }
+                        set: { customColor = ThemeColor(nsColor: NSColor($0)); customOpacity = customColor.alpha }
                     ), supportsOpacity: true)
                     .labelsHidden()
                     .opacity(0.001)
@@ -425,7 +419,7 @@ private extension ZenThemeColorPicker {
         .frame(width: Metrics.gradientSize)
     }
 
-    func customColorRow(_ color: ZenThemeColor, index: Int) -> some View {
+    func customColorRow(_ color: ThemeColor, index: Int) -> some View {
         HStack(spacing: 10) {
             RoundedRectangle(cornerRadius: 5, style: .continuous)
                 .fill(color.color)
@@ -454,9 +448,9 @@ private extension ZenThemeColorPicker {
     }
 }
 
-private extension ZenThemeColorPicker {
+private extension ThemeColorPicker {
     /// Maps preset-space coordinates onto the visible square.
-    func point(for dot: ZenThemeColorDot) -> CGPoint {
+    func point(for dot: ThemeColorDot) -> CGPoint {
         CGPoint(
             x: dot.x / Metrics.sourceSize * Metrics.gradientSize,
             y: dot.y / Metrics.sourceSize * Metrics.gradientSize
@@ -476,7 +470,7 @@ private extension ZenThemeColorPicker {
 
         let source = sourcePoint(from: visiblePoint ?? CGPoint(x: Metrics.gradientSize / 2, y: Metrics.gradientSize / 2))
         value.dots.append(
-            ZenThemeColorDot(
+            ThemeColorDot(
                 color: color(at: source),
                 x: source.x,
                 y: source.y
@@ -510,31 +504,31 @@ private extension ZenThemeColorPicker {
         }
     }
 
-    func apply(_ swatch: ZenPaletteSwatch) {
+    func apply(_ swatch: ThemePaletteSwatch) {
         value.dots = swatch.dots
     }
 
     func addCustomColor() {
-        let color = ZenThemeColor(
+        let color = ThemeColor(
             red: customColor.red,
             green: customColor.green,
             blue: customColor.blue,
             alpha: min(1, max(0, customOpacity))
         )
         value.customColors.append(color)
-        value.dots = [ZenThemeColorDot(color: color, x: 180, y: 180)]
+        value.dots = [ThemeColorDot(color: color, x: 180, y: 180)]
     }
 
     /// Produces a soft browser-theme color from a source-space point for user-added or dragged dots.
-    func color(at point: CGPoint) -> ZenThemeColor {
+    func color(at point: CGPoint) -> ThemeColor {
         let hue = max(0, min(1, Double(point.x / Metrics.sourceSize)))
         let saturation = max(0.18, min(0.82, Double(point.y / Metrics.sourceSize)))
         let lightness = value.scheme == .dark ? 0.42 : 0.68
-        return ZenThemeColor(hue: hue, saturation: saturation, lightness: lightness)
+        return ThemeColor(hue: hue, saturation: saturation, lightness: lightness)
     }
 }
 
-private extension ZenThemeColor {
+private extension ThemeColor {
     init(nsColor: NSColor) {
         let rgb = nsColor.usingColorSpace(.sRGB) ?? nsColor
         self.init(
@@ -564,7 +558,7 @@ private extension ZenThemeColor {
     }
 }
 
-private struct ZenDottedWell: View {
+private struct ThemeDottedWell: View {
     var body: some View {
         Canvas { context, size in
             context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.primary.opacity(0.045)))
@@ -579,7 +573,7 @@ private struct ZenDottedWell: View {
     }
 }
 
-private struct ZenOpacityWaveSlider: View {
+private struct ThemeOpacityWaveSlider: View {
     @Binding var value: Double
 
     var body: some View {
@@ -631,15 +625,15 @@ private struct WaveLine: Shape {
     }
 }
 
-private struct ZenPaletteSwatch: Identifiable {
+private struct ThemePaletteSwatch: Identifiable {
     var id = UUID()
     var label: String
-    var colors: [ZenThemeColor]
-    var dots: [ZenThemeColorDot]
+    var colors: [ThemeColor]
+    var dots: [ThemeColorDot]
 }
 
-private struct ZenPaletteSwatchView: View {
-    let swatch: ZenPaletteSwatch
+private struct ThemePaletteSwatchView: View {
+    let swatch: ThemePaletteSwatch
 
     var body: some View {
         Circle()
@@ -689,72 +683,72 @@ private struct ZenPaletteSwatchView: View {
     }
 }
 
-private extension ZenThemeColorPicker {
-    static let palettePages: [[ZenPaletteSwatch]] = [
+private extension ThemeColorPicker {
+    static let palettePages: [[ThemePaletteSwatch]] = [
         [
-            swatch("Porcelain", [0xF2E9D1], position: (226, 232)),
-            swatch("Blush", [0xEFA8BD], position: (218, 146)),
-            swatch("Orchid mist", [0xDDB1E4], position: (210, 102)),
-            swatch("Peony", [0xD86F89], position: (225, 166)),
-            swatch("Melon", [0xEF7B67], position: (205, 191)),
-            swatch("Hay", [0xD9CA68], position: (238, 227)),
-            swatch("Seafoam", [0x66E5A6], position: (138, 205)),
-            swatch("Periwinkle", [0x8897B8], position: (76, 92))
+            swatch("Linen", [0xF1E8D4], position: (224, 230)),
+            swatch("Rosewater", [0xEDACC2], position: (214, 148)),
+            swatch("Lilac haze", [0xD8B5E7], position: (208, 106)),
+            swatch("Raspberry", [0xD96C88], position: (226, 164)),
+            swatch("Coral", [0xEC7F68], position: (204, 190)),
+            swatch("Meadow", [0xD7C866], position: (236, 226)),
+            swatch("Mint", [0x63DEA5], position: (136, 206)),
+            swatch("Bluegray", [0x8493B4], position: (78, 94))
         ],
         [
-            swatch("Pearl blend", [0xF3E6C8, 0xD9EECF, 0xEFD4DD], position: (222, 232)),
-            swatch("Sorbet blend", [0xF1B1D0, 0xF6D4AE, 0xD5BAEA], position: (216, 149)),
-            swatch("Violet blend", [0xD9A9DF, 0xEB9FAE, 0xBEB5DD], position: (208, 105)),
-            swatch("Festival blend", [0xE77497, 0xE7E96C, 0xC879DA], position: (228, 164)),
-            swatch("Bloom blend", [0xEE6D76, 0xA8E86C, 0xDF76E6], position: (203, 188)),
-            swatch("Field blend", [0xD5C64A, 0x6DCA5F, 0xCF5677], position: (235, 228)),
-            swatch("Lagoon blend", [0x53DFC9, 0x5AA7D9, 0x54EA78], position: (139, 203)),
-            swatch("Cloud blend", [0x7280A1, 0x8970A9, 0x71A1A5], position: (78, 91))
+            swatch("Cream blend", [0xF2E2C4, 0xD7EBCB, 0xEACFDB], position: (222, 232)),
+            swatch("Sorbet blend", [0xEEB0CD, 0xF3D1AB, 0xD2B9E6], position: (216, 150)),
+            swatch("Violet blend", [0xD4A9DF, 0xEAA1AD, 0xBBB5DC], position: (208, 106)),
+            swatch("Candy blend", [0xE57196, 0xE2E968, 0xC978D7], position: (228, 166)),
+            swatch("Garden blend", [0xEC7078, 0xA5E36B, 0xDD76E1], position: (202, 188)),
+            swatch("Field blend", [0xD3C44D, 0x6AC762, 0xCD5577], position: (234, 226)),
+            swatch("Lagoon blend", [0x51DCC8, 0x5AA5D4, 0x55E779], position: (138, 204)),
+            swatch("Cloud blend", [0x7380A0, 0x8671A6, 0x72A0A3], position: (78, 92))
         ],
         [
-            swatch("Fig", [0x5F526D], position: (164, 76)),
-            swatch("Mulberry", [0x9A6A91], position: (252, 86)),
-            swatch("Merlot", [0x965963], position: (289, 168)),
-            swatch("Terracotta", [0xA6613C], position: (227, 205)),
-            swatch("Sage", [0x4E7966], position: (88, 218)),
-            swatch("Harbor", [0x506A72], position: (64, 151)),
-            swatch("Umber", [0x846655], position: (302, 226)),
-            swatch("Juniper", [0x3F705F], position: (114, 208))
+            swatch("Fig", [0x5C526B], position: (164, 78)),
+            swatch("Mulberry", [0x986A8E], position: (252, 88)),
+            swatch("Wine", [0x935B64], position: (288, 168)),
+            swatch("Clay", [0xA05F3D], position: (226, 204)),
+            swatch("Sage", [0x4D7664], position: (88, 218)),
+            swatch("Harbor", [0x506A70], position: (66, 152)),
+            swatch("Walnut", [0x806655], position: (300, 224)),
+            swatch("Juniper", [0x3F6F5E], position: (114, 208))
         ],
         [
-            swatch("Nightfall blend", [0x181323, 0x2B1730, 0x141A27], position: (162, 78)),
-            swatch("Plum blend", [0x7B4974, 0x88464C, 0x5D5778], position: (251, 86)),
-            swatch("Cask blend", [0x78353E, 0x777735, 0x6A416D], position: (286, 170)),
-            swatch("Ember blend", [0x81401D, 0x477928, 0x742855], position: (226, 206)),
-            swatch("Moss blend", [0x2D6652, 0x355966, 0x3F7132], position: (89, 218)),
-            swatch("Tide blend", [0x2F4851, 0x333756, 0x2E5D45], position: (65, 151)),
-            swatch("Bark blend", [0x423126, 0x3F452D, 0x46313A], position: (300, 224)),
-            swatch("Cedar blend", [0x1E563F, 0x20485C, 0x2B641F], position: (113, 207))
+            swatch("Night blend", [0x191524, 0x2C1830, 0x151B28], position: (162, 78)),
+            swatch("Plum blend", [0x784A72, 0x86484E, 0x5E5876], position: (250, 88)),
+            swatch("Cask blend", [0x783941, 0x747638, 0x68426B], position: (286, 170)),
+            swatch("Ember blend", [0x7F4220, 0x49772B, 0x722A55], position: (226, 206)),
+            swatch("Moss blend", [0x2E6552, 0x365864, 0x3F7034], position: (90, 218)),
+            swatch("Tide blend", [0x304851, 0x343856, 0x2F5C46], position: (66, 152)),
+            swatch("Bark blend", [0x443228, 0x3F442D, 0x45323B], position: (300, 224)),
+            swatch("Cedar blend", [0x205540, 0x22475A, 0x2C6221], position: (114, 208))
         ],
         [
-            swatch("Mist", [0xECECEC], position: (322, 168)),
-            swatch("Pale stone", [0xD4D4D4], position: (303, 170)),
-            swatch("Silver ash", [0xBABABA], position: (284, 172)),
-            swatch("Nickel", [0x9D9D9D], position: (265, 174)),
-            swatch("Smoke", [0x7D7D7D], position: (246, 176)),
-            swatch("Graphite", [0x5D5D5D], position: (227, 178)),
-            swatch("Charcoal", [0x3D3D3D], position: (208, 180)),
-            swatch("Ink", [0x1C1C1C], position: (189, 182))
+            swatch("Mist", [0xEAEAEA], position: (322, 168)),
+            swatch("Pale stone", [0xD1D1D1], position: (303, 170)),
+            swatch("Silver ash", [0xB8B8B8], position: (284, 172)),
+            swatch("Nickel", [0x9A9A9A], position: (265, 174)),
+            swatch("Smoke", [0x7A7A7A], position: (246, 176)),
+            swatch("Graphite", [0x5A5A5A], position: (227, 178)),
+            swatch("Charcoal", [0x3A3A3A], position: (208, 180)),
+            swatch("Ink", [0x1B1B1B], position: (189, 182))
         ]
     ]
 
-    static func swatch(_ label: String, _ hexes: [UInt32], position: (Double, Double)) -> ZenPaletteSwatch {
-        let colors = hexes.map { ZenThemeColor(hex: $0) }
+    static func swatch(_ label: String, _ hexes: [UInt32], position: (Double, Double)) -> ThemePaletteSwatch {
+        let colors = hexes.map { ThemeColor(hex: $0) }
         let dots = colors.enumerated().map { index, color in
             let angle = Double(index) * 2.1
             let radius = Double(index) * 21
-            return ZenThemeColorDot(
+            return ThemeColorDot(
                 color: color,
                 x: position.0 + cos(angle) * radius,
                 y: position.1 + sin(angle) * radius
             )
         }
 
-        return ZenPaletteSwatch(label: label, colors: colors, dots: dots)
+        return ThemePaletteSwatch(label: label, colors: colors, dots: dots)
     }
 }
