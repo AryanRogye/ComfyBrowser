@@ -13,26 +13,96 @@ struct AnimatedFolderIcon: View {
     let isHovered: Bool
     /// Stroke thickness as a fraction of the icon width.
     var lineWidthRatio: CGFloat = 0.09357
+    /// Color used for the folder outline and crease.
+    var outlineColor: Color = Color(red: 0.20, green: 0.18, blue: 0.95)
+    /// Color used for the visible inside of the folder.
+    var innerFillColor: Color = Color(red: 0.20, green: 0.18, blue: 0.95)
+    /// Color used for the front face of the folder.
+    var frontFillColor: Color = Color.white.opacity(0.96)
 
     private var openAmount: CGFloat {
         isOpen ? 1 : 0
     }
 
-    private var tint: Color {
-        Color(red: 0.20, green: 0.18, blue: 0.95)
-            .opacity(isHovered ? 1 : 0.88)
+    private var outlineTint: Color {
+        outlineColor.opacity(isHovered ? 1 : 0.88)
+    }
+
+    private var innerFillTint: Color {
+        innerFillColor.opacity(isHovered ? 1 : 0.88)
+    }
+
+    private var innerFillGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                innerFillTint.opacity(0.45),
+                innerFillTint.opacity(0.22)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     var body: some View {
-        MorphingFolderShape(
-            openAmount: openAmount,
-            lineWidthRatio: lineWidthRatio
+        ZStack {
+            MorphingFolderFillShape(openAmount: openAmount)
+                .fill(innerFillGradient)
+
+            MorphingFolderFrontFillShape(openAmount: openAmount)
+                .fill(frontFillColor)
+
+            MorphingFolderShape(
+                openAmount: openAmount,
+                lineWidthRatio: lineWidthRatio
+            )
+            .fill(outlineTint)
+        }
+            .scaleEffect(0.95)
+            .drawingGroup()
+            .animation(.interpolatingSpring(stiffness: 520, damping: 34), value: isOpen)
+            .animation(.easeOut(duration: 0.12), value: isHovered)
+    }
+}
+
+private struct MorphingFolderFillShape: Shape {
+
+    var openAmount: CGFloat
+
+    nonisolated var animatableData: CGFloat {
+        get { openAmount }
+        set { openAmount = newValue }
+    }
+
+    nonisolated func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addMorphingCommands(
+            closed: FolderIconCommands.closedFill,
+            open: FolderIconCommands.openFill,
+            in: rect,
+            openAmount: openAmount
         )
-        .fill(tint)
-        .scaleEffect(0.95)
-        .drawingGroup()
-        .animation(.interpolatingSpring(stiffness: 520, damping: 34), value: isOpen)
-        .animation(.easeOut(duration: 0.12), value: isHovered)
+        return path
+    }
+}
+
+private struct MorphingFolderFrontFillShape: Shape {
+
+    var openAmount: CGFloat
+
+    nonisolated var animatableData: CGFloat {
+        get { openAmount }
+        set { openAmount = newValue }
+    }
+
+    nonisolated func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addMorphingCommands(
+            closed: FolderIconCommands.closedFrontFill,
+            open: FolderIconCommands.openFrontFill,
+            in: rect,
+            openAmount: openAmount
+        )
+        return path
     }
 }
 
@@ -53,8 +123,8 @@ private struct MorphingFolderShape: Shape {
         var path = Path()
         var strokePath = Path()
         strokePath.addMorphingCommands(
-            closed: closedCommands,
-            open: openCommands,
+            closed: FolderIconCommands.closed,
+            open: FolderIconCommands.open,
             in: rect,
             openAmount: openAmount
         )
@@ -70,8 +140,11 @@ private struct MorphingFolderShape: Shape {
 
         return path
     }
+}
 
-    nonisolated private var closedCommands: [FolderPathCommand] {
+private enum FolderIconCommands {
+
+    nonisolated static let closed: [FolderPathCommand] = {
         [
             .move(.init(x: 0.96667, y: 0.35377)),
             .curve(
@@ -112,8 +185,7 @@ private struct MorphingFolderShape: Shape {
             ),
             .line(.init(x: 0.96667, y: 0.35377)),
             .close,
-
-                .move(.init(x: 0.02857, y: 0.35377)),
+            .move(.init(x: 0.02857, y: 0.35377)),
             .line(.init(x: 0.35000, y: 0.35377)),
             .curve(
                 to: .init(x: 0.65000, y: 0.35377),
@@ -122,9 +194,9 @@ private struct MorphingFolderShape: Shape {
             ),
             .line(.init(x: 0.96667, y: 0.35377))
         ]
-    }
+    }()
 
-    nonisolated private var openCommands: [FolderPathCommand] {
+    nonisolated static let open: [FolderPathCommand] = {
         [
             .move(.init(x: 0.64399, y: 0.26238)),
             .curve(
@@ -174,6 +246,120 @@ private struct MorphingFolderShape: Shape {
             ),
             .line(.init(x: 0.64399, y: 0.26238))
         ]
+    }()
+
+    /// Returns only the outer closed contour so the fill does not include the folder crease line.
+    nonisolated static var closedFill: [FolderPathCommand] {
+        commandsThroughFirstClose(closed)
+    }
+
+    /// Returns only the outer closed contour so the fill does not include the folder crease line.
+    nonisolated static var openFill: [FolderPathCommand] {
+        commandsThroughFirstClose(open)
+    }
+
+    /// Covers only the lower closed folder body so the blue interior stays visible above the crease.
+    nonisolated static var closedFrontFill: [FolderPathCommand] {
+        [
+            .move(.init(x: 0.02857, y: 0.35377)),
+            .curve(
+                to: .init(x: 0.02857, y: 0.86792),
+                control1: .init(x: 0.02857, y: 0.50000),
+                control2: .init(x: 0.02857, y: 0.70000)
+            ),
+            .line(.init(x: 0.13333, y: 0.97170)),
+            .curve(
+                to: .init(x: 0.86190, y: 0.97170),
+                control1: .init(x: 0.30000, y: 0.97170),
+                control2: .init(x: 0.70000, y: 0.97170)
+            ),
+            .line(.init(x: 0.96667, y: 0.86792)),
+            .curve(
+                to: .init(x: 0.96667, y: 0.35377),
+                control1: .init(x: 0.96667, y: 0.70000),
+                control2: .init(x: 0.96667, y: 0.50000)
+            ),
+            .line(.init(x: 0.96667, y: 0.35377)),
+            .curve(
+                to: .init(x: 0.02857, y: 0.35377),
+                control1: .init(x: 0.65000, y: 0.35377),
+                control2: .init(x: 0.35000, y: 0.35377)
+            ),
+            .line(.init(x: 0.02857, y: 0.35377)),
+            .line(.init(x: 0.02857, y: 0.35377)),
+            .curve(
+                to: .init(x: 0.02857, y: 0.35377),
+                control1: .init(x: 0.02857, y: 0.35377),
+                control2: .init(x: 0.02857, y: 0.35377)
+            ),
+            .line(.init(x: 0.02857, y: 0.35377)),
+            .curve(
+                to: .init(x: 0.02857, y: 0.35377),
+                control1: .init(x: 0.02857, y: 0.35377),
+                control2: .init(x: 0.02857, y: 0.35377)
+            ),
+            .line(.init(x: 0.02857, y: 0.35377)),
+            .close
+        ]
+    }
+
+    /// Uses the same command signature as `closedFill` so the front flap can morph smoothly.
+    nonisolated static var openFrontFill: [FolderPathCommand] {
+        [
+            .move(.init(x: 0.38050, y: 0.33926)),
+            .curve(
+                to: .init(x: 0.45560, y: 0.26238),
+                control1: .init(x: 0.39064, y: 0.29356),
+                control2: .init(x: 0.42110, y: 0.26238)
+            ),
+            .line(.init(x: 0.64399, y: 0.26238)),
+            .curve(
+                to: .init(x: 0.89903, y: 0.26238),
+                control1: .init(x: 0.72500, y: 0.26238),
+                control2: .init(x: 0.84000, y: 0.26238)
+            ),
+            .line(.init(x: 0.97351, y: 0.40594)),
+            .curve(
+                to: .init(x: 0.85484, y: 0.89604),
+                control1: .init(x: 0.95600, y: 0.52500),
+                control2: .init(x: 0.89500, y: 0.78000)
+            ),
+            .line(.init(x: 0.78034, y: 0.97030)),
+            .curve(
+                to: .init(x: 0.24042, y: 0.97030),
+                control1: .init(x: 0.65000, y: 0.97030),
+                control2: .init(x: 0.38000, y: 0.97030)
+            ),
+            .line(.init(x: 0.24042, y: 0.97030)),
+            .line(.init(x: 0.38050, y: 0.33926)),
+            .curve(
+                to: .init(x: 0.38050, y: 0.33926),
+                control1: .init(x: 0.38050, y: 0.33926),
+                control2: .init(x: 0.38050, y: 0.33926)
+            ),
+            .line(.init(x: 0.38050, y: 0.33926)),
+            .curve(
+                to: .init(x: 0.38050, y: 0.33926),
+                control1: .init(x: 0.38050, y: 0.33926),
+                control2: .init(x: 0.38050, y: 0.33926)
+            ),
+            .line(.init(x: 0.38050, y: 0.33926)),
+            .close
+        ]
+    }
+
+    nonisolated private static func commandsThroughFirstClose(_ commands: [FolderPathCommand]) -> [FolderPathCommand] {
+        var fillCommands: [FolderPathCommand] = []
+
+        for command in commands {
+            fillCommands.append(command)
+
+            if case .close = command {
+                break
+            }
+        }
+
+        return fillCommands
     }
 }
 
