@@ -16,6 +16,20 @@ final class BrowserCoordinator {
     static let dataStore: WKWebsiteDataStore = .default()
 
     var tabs : [Tab] = []
+    private var regularTabs: [Tab] {
+        let pinnedIDs = SidebarNode.pinnedTabIDs(in: pinnedNodes)
+        return tabs.filter { !pinnedIDs.contains($0.id) }
+    }
+
+    var pinnedNodes: [SidebarNode] = []
+
+    private var pinnedTabCount: Int {
+        pinnedNodes.reduce(0) { count, node in
+            guard case .tab = node else { return count }
+            return count + 1
+        }
+    }
+
     var selectedTab : Tab?
     var searchEngine: SearchEngine = .duckDuckGo
     var canNavigateBack: Bool = false
@@ -30,6 +44,118 @@ final class BrowserCoordinator {
         webView = Self.getDefaultWebkitView()
         refreshNavigationAvailability()
         observeTabs()
+    }
+}
+
+// MARK: - Pinned Tabs
+extension BrowserCoordinator {
+    
+    /// Pins an existing tab into the pinned sidebar zone without changing WebKit ownership.
+    public func pinTab(id: UUID, atPinnedIndex pinnedIndex: Int? = nil) {
+        guard let tab = tabs.first(where: { $0.id == id }) else { return }
+        guard SidebarNode.pinnedTabIDs(in: pinnedNodes).contains(id) else { return }
+
+        insertPinnedTab(tab, atPinnedIndex: pinnedIndex)
+    }
+    
+    /// Removes a tab from the pinned sidebar zone while keeping the tab open.
+    public func unpinTab(id: UUID) {
+        removePinnedTab(id: id, from: &pinnedNodes)
+    }
+    
+    /// Expands or collapses a pinned folder row.
+    public func togglePinnedFolder(id: UUID) {
+        toggleFolder(id: id, in: &pinnedNodes)
+    }
+    
+    /// Moves a tab into the pinned tabs section.
+    public func movePinnedTab(id: UUID, toPinnedIndex pinnedIndex: Int) {
+        guard let tab = tabs.first(where: { $0.id == id }) else { return }
+        
+        removePinnedTab(id: id, from: &pinnedNodes)
+        insertPinnedTab(tab, atPinnedIndex: pinnedIndex)
+    }
+    
+    /// Moves a top-level pinned folder within the folders section.
+    public func movePinnedFolder(id: UUID, toFolderIndex folderIndex: Int) {
+        guard let folder = removePinnedFolder(id: id, from: &pinnedNodes) else { return }
+        insertPinnedFolder(folder, atFolderIndex: folderIndex)
+    }
+    
+    /// Moves a regular tab within the regular tab section.
+    public func moveRegularTab(id: UUID, toRegularIndex regularIndex: Int) {
+        guard let sourceIndex = tabs.firstIndex(where: { $0.id == id }) else { return }
+        
+        let tab = tabs.remove(at: sourceIndex)
+        let regularIDs = regularTabs.map(\.id)
+        let destinationID = regularIDs.indices.contains(regularIndex)
+            ? regularIDs[regularIndex]
+            : nil
+        
+        if let destinationID, let destinationIndex = tabs.firstIndex(where: { $0.id == destinationID }) {
+            tabs.insert(tab, at: destinationIndex)
+        } else {
+            tabs.append(tab)
+        }
+    }
+    
+    /// Moves a tab under a pinned folder, pinning it if needed.
+    public func movePinnedTab(id: UUID, intoFolder folderID: UUID) {
+        guard let tab = tabs.first(where: { $0.id == id }) else { return }
+        
+        removePinnedTab(id: id, from: &pinnedNodes)
+        insertPinnedTab(tab, intoFolder: folderID, in: &pinnedNodes)
+    }
+
+    private func insertPinnedTab(_ tab: Tab, atPinnedIndex pinnedIndex: Int?) {
+        let index = topLevelInsertionIndex(
+            forNodeKind: .tab,
+            sectionIndex: pinnedIndex ?? pinnedTabCount
+        )
+        
+        pinnedNodes.insert(
+            .tab(tab),
+            at: min(index, pinnedNodes.count)
+        )
+    }
+    
+    private func insertPinnedFolder(_ folder: TabFolder, atFolderIndex folderIndex: Int) {
+        let index = topLevelInsertionIndex(
+            forNodeKind: .folder,
+            sectionIndex: folderIndex
+        )
+        
+        pinnedNodes.insert(
+            .folder(folder),
+            at: min(index, pinnedNodes.count)
+        )
+    }
+
+    private enum PinnedNodeKind {
+        case tab
+        case folder
+    }
+    
+    private func topLevelInsertionIndex(
+        forNodeKind nodeKind: PinnedNodeKind,
+        sectionIndex: Int
+    ) -> Int {
+        var matchingNodeCount = 0
+        
+        for index in pinnedNodes.indices {
+            switch (nodeKind, pinnedNodes[index]) {
+            case (.tab, .tab), (.folder, .folder):
+                if matchingNodeCount == sectionIndex {
+                    return index
+                }
+                
+                matchingNodeCount += 1
+            case (.tab, .folder), (.folder, .tab):
+                continue
+            }
+        }
+        
+        return pinnedNodes.count
     }
 }
 
@@ -179,7 +305,6 @@ extension BrowserCoordinator {
         refreshNavigationAvailability()
     }
 }
-
 
 // MARK: - Tab Management
 extension BrowserCoordinator {
@@ -387,6 +512,97 @@ extension BrowserCoordinator {
         
         guard !tabs[index].history.isEmpty else { return }
         tabs[index].history[tabs[index].historyIndex].title = title
+    }
+
+    /// =============================================================================================
+    /// Pinned Tabs Mutation
+    /// =============================================================================================
+
+    /// Removes Pinned Tabs and Folders
+    /// this is recursive and will keep going till children in folder are gone
+    @discardableResult
+    internal func removePinnedTab(id: UUID, from nodes: inout [SidebarNode]) -> Bool {
+        for index in nodes.indices {
+            switch nodes[index] {
+            case .tab(let tab):
+                if tab.id == id {
+                    nodes.remove(at: index)
+                    return true
+                }
+            case .folder(var folder):
+                if removePinnedTab(id: id, from: &folder.children) {
+                    nodes[index] = .folder(folder)
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    /// Removes a pinned folder
+    internal func removePinnedFolder(id: UUID, from nodes: inout [SidebarNode]) -> TabFolder? {
+        for index in nodes.indices {
+            guard case .folder(let folder) = nodes[index] else { continue }
+
+            if folder.id == id {
+                nodes.remove(at: index)
+                return folder
+            }
+        }
+
+        return nil
+    }
+
+    @discardableResult
+    internal func insertPinnedTab(
+        _ tab: Tab,
+        intoFolder folderID: UUID,
+        in nodes: inout [SidebarNode]
+    ) -> Bool {
+        for index in nodes.indices {
+            switch nodes[index] {
+            case .tab:
+                continue
+            case .folder(var folder):
+                if folder.id == folderID {
+                    folder.children.append(.tab(tab))
+                    folder.isExpanded = true
+                    nodes[index] = .folder(folder)
+                    return true
+                }
+
+                if insertPinnedTab(tab, intoFolder: folderID, in: &folder.children) {
+                    nodes[index] = .folder(folder)
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    @discardableResult
+    internal func toggleFolder(id: UUID, in nodes: inout [SidebarNode]) -> Bool {
+        for index in nodes.indices {
+            switch nodes[index] {
+            case .tab:
+                continue
+            case .folder(var folder):
+                if folder.id == id {
+                    folder.isExpanded.toggle()
+                    nodes[index] = .folder(folder)
+                    return true
+                }
+
+                if toggleFolder(id: id, in: &folder.children) {
+                    nodes[index] = .folder(folder)
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 }
 

@@ -8,7 +8,6 @@
 import AppKit
 import SwiftUI
 
-// MARK: - SidebarTabItem
 /// This shows the actual content for each `Tab`
 final class SidebarTabItem: NSCollectionViewItem {
     static let identifier = NSUserInterfaceItemIdentifier("SidebarTabItem")
@@ -17,7 +16,13 @@ final class SidebarTabItem: NSCollectionViewItem {
     private var hostingView: NSHostingView<SidebarRow>?
     
     private var vm: SidebarRowViewModel?
-    
+
+    override var isSelected: Bool {
+        didSet {
+            vm?.isSelected = isSelected
+        }
+    }
+
     override func loadView() {
         let v = SidebarItemView()
         v.onTap = { [weak self] in
@@ -26,14 +31,11 @@ final class SidebarTabItem: NSCollectionViewItem {
         }
         view = v
     }
-    
-    override var isSelected: Bool {
-        didSet {
-            vm?.isSelected = isSelected
-        }
-    }
-    
-    func configure(
+}
+
+// MARK: - Entry
+extension SidebarTabItem {
+    public func configure(
         faviconService: FaviconService,
         with tab: Tab,
         closeTab: @escaping (Tab) -> Void,
@@ -51,13 +53,15 @@ final class SidebarTabItem: NSCollectionViewItem {
             setup(with: vm)
         }
     }
-    
+}
+
+extension SidebarTabItem {
     private func setup(with vm: SidebarRowViewModel) {
         let row = SidebarRow(
             vm: vm,
         )
-        
-        /// Update
+
+        /// Update if exists
         if let hostingView {
             hostingView.rootView = row
         }
@@ -70,16 +74,16 @@ final class SidebarTabItem: NSCollectionViewItem {
             /// for minimum, intrinsic, and maximum size
             hosting.sizingOptions = []
             hosting.translatesAutoresizingMaskIntoConstraints = false
-            
+
             view.addSubview(hosting)
-            
+
             NSLayoutConstraint.activate([
                 hosting.topAnchor.constraint(equalTo: view.topAnchor),
                 hosting.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 hosting.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 hosting.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             ])
-            
+
             hostingView = hosting
         }
     }
