@@ -29,7 +29,7 @@ final class BrowserCoordinator {
     init() {
         webView = Self.getDefaultWebkitView()
         refreshNavigationAvailability()
-        observeFolders()
+        observeSaved()
         observePinned()
         observeRegularTabs()
     }
@@ -410,15 +410,15 @@ extension BrowserCoordinator {
 // MARK: - Observations
 extension BrowserCoordinator {
     /// Function Observes all tabs (for no reason right now)
-    func observeFolders() {
+    func observeSaved() {
         withObservationTracking {
-            _ = sidebar.folders
+            _ = sidebar.saved
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 print("""
                 Folders Changed:
-                \(self.sidebar.folders.map { node in
+                \(self.sidebar.saved.map { node in
                     switch node {
                 case .tab(let tab):
                         "• \(tab.title)"
@@ -427,7 +427,7 @@ extension BrowserCoordinator {
                 }
                 }.joined(separator: "\n") )
                 """)
-                self.observeFolders()
+                self.observeSaved()
             }
         }
     }
@@ -439,13 +439,8 @@ extension BrowserCoordinator {
                 guard let self = self else { return }
                 print("""
                 Pinned Changed:
-                \(self.sidebar.pinned.map { node in
-                    switch node {
-                case .tab(let tab):
-                        "• \(tab.title)"
-                case .folder(let folder):
-                        "• \(folder.title)"
-                }
+                \(self.sidebar.pinned.map { tab in
+                    "• \(tab.title)"
                 }.joined(separator: "\n") )
                 """)
                 self.observePinned()
@@ -461,13 +456,8 @@ extension BrowserCoordinator {
                 guard let self = self else { return }
                 print("""
                 Tabs Changed:
-                \(self.sidebar.regular.map { node in
-                    switch node {
-                case .tab(let tab):
-                        "• \(tab.title)"
-                case .folder(let folder):
-                        "• \(folder.title)"
-                }
+                \(self.sidebar.regular.map { tab in
+                    "• \(tab.title)"
                 }.joined(separator: "\n") )
                 """)
                 self.observeRegularTabs()

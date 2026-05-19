@@ -49,14 +49,7 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
             for: indexPath
         ) as! SidebarTabItem
 
-        let tabs : [Tab] = sidebar.regular.compactMap { node in
-            switch node {
-            case .tab(let tab):
-                return tab
-            case .folder(_):
-                return nil
-            }
-        }
+        let tabs : [Tab] = sidebar.regular
 
         item.configure(
             faviconService: faviconService,

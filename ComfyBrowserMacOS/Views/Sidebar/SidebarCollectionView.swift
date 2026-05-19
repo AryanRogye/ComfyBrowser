@@ -50,10 +50,18 @@ class SidebarCollectionView: NSCollectionView {
         )
         
         collectionViewLayout = layout
-        
+
+        /// Registering For Regular Tab
         register(
             SidebarTabItem.self,
             forItemWithIdentifier: SidebarTabItem.identifier
+        )
+
+        /// Register Section Views
+        register(
+            SidebarSectionHeaderView.self,
+            forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
+            withIdentifier: SidebarSectionHeaderView.identifier
         )
     }
     

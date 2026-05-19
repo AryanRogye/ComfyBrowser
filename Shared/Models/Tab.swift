@@ -10,12 +10,12 @@ import WebKit
 
 
 struct SidebarModel: Codable, Hashable, Sendable {
-    var pinned: [SidebarNode] = []
-    var folders: [SidebarNode] = []
-    var regular: [SidebarNode] = []
+    var pinned: [Tab] = []
+    var saved: [SidebarNode] = []
+    var regular: [Tab] = []
 
     var tabs: [Tab] {
-        pinned.allTabs() + folders.allTabs() + regular.allTabs()
+        pinned + saved.allTabs() + regular
     }
 
     var isRegularTabsEmpty: Bool {
@@ -24,7 +24,7 @@ struct SidebarModel: Codable, Hashable, Sendable {
 
     func findTab(id: UUID) -> Tab? {
         pinned.findTab(id: id)
-        ?? folders.findTab(id: id)
+        ?? saved.findTab(id: id)
         ?? regular.findTab(id: id)
     }
 
@@ -44,11 +44,21 @@ struct SidebarModel: Codable, Hashable, Sendable {
     ) {
         switch sectionKind {
         case .pinned:
-            pinned.insertClamped(node, at: index)
-        case .folders:
-            folders.insertClamped(node, at: index)
+            switch node {
+            case .tab(let tab):
+                pinned.insertClamped(tab, at: index)
+            case .folder(_):
+                return
+            }
+        case .saved:
+            saved.insertClamped(node, at: index)
         case .regular:
-            regular.insertClamped(node, at: index)
+            switch node {
+            case .tab(let tab):
+                regular.insertClamped(tab, at: index)
+            case .folder(_):
+                return
+            }
         }
     }
 
@@ -76,26 +86,24 @@ struct SidebarModel: Codable, Hashable, Sendable {
         _ update: (inout Tab) -> Void
     ) {
         if pinned.updateTab(id: id, update) { return }
-        if folders.updateTab(id: id, update) { return }
+        if saved.updateTab(id: id, update) { return }
         if regular.updateTab(id: id, update) { return }
     }
 
     mutating func removeTab(id: UUID) -> Tab? {
         pinned.removeTab(id: id)
-        ?? folders.removeTab(id: id)
+        ?? saved.removeTab(id: id)
         ?? regular.removeTab(id: id)
     }
 
     mutating func removeFolder(id: UUID) -> Folder? {
-        pinned.removeFolder(id: id)
-        ?? folders.removeFolder(id: id)
-        ?? regular.removeFolder(id: id)
+        saved.removeFolder(id: id)
     }
 }
 
 enum SidebarSectionKind: Codable, Hashable, Sendable {
     case pinned
-    case folders
+    case saved
     case regular
 }
 
@@ -242,6 +250,19 @@ struct Folder: Codable, Hashable, Identifiable, Equatable, Sendable {
 }
 
 
+extension Array where Element == Tab {
+    mutating func removeTab(id: UUID) -> Tab? {
+        for index in indices {
+            let tab = self[index]
+            if tab.id == id {
+                _ = remove(at: index)
+                return tab
+            }
+        }
+
+        return nil
+    }
+}
 /// recursion removal
 /// Pinned
 /// ├── Tab A
@@ -266,8 +287,6 @@ extension Array where Element == SidebarNode {
         for index in indices {
             switch self[index] {
             case .tab(let tab) where tab.id == id:
-//                tab.retainedWebView?.stopLoading()
-//                tab.retainedWebView = nil
                 remove(at: index)
                 return tab
 
@@ -307,6 +326,15 @@ extension Array where Element == SidebarNode {
     }
 }
 
+extension Array where Element == Tab {
+    func findTab(id: UUID) -> Tab? {
+        for node in self {
+            if node.id == id { return node }
+        }
+
+        return nil
+    }
+}
 extension Array where Element == SidebarNode {
     /// Recursively searches the sidebar tree for a tab matching the provided ID.
     ///
@@ -371,10 +399,35 @@ extension Array where Element == SidebarNode {
     }
 }
 
+extension Array where Element == Tab {
+    mutating func insertClamped(_ tab: Tab, at index: Int) {
+        let safeIndex = Swift.min(Swift.max(index, 0), count)
+        insert(tab, at: safeIndex)
+    }
+}
+
 extension Array where Element == SidebarNode {
     mutating func insertClamped(_ node: SidebarNode, at index: Int) {
         let safeIndex = Swift.min(Swift.max(index, 0), count)
         insert(node, at: safeIndex)
+    }
+}
+
+extension Array where Element == Tab {
+    mutating func updateTab(
+        id: UUID,
+        _ update: (inout Tab) -> Void
+    ) -> Bool {
+        for index in indices {
+            var tab = self[index]
+            if tab.id == id {
+                update(&tab)
+                self[index] = tab
+                return true
+            }
+        }
+
+        return false
     }
 }
 
