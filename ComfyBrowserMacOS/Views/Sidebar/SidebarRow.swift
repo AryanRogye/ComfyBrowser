@@ -44,9 +44,15 @@ struct SidebarRow: View {
                 Button {
                     vm.closeTab(vm.tab)
                 } label: {
-                    Image(systemName: "xmark")
+                    HoverBackground(
+                        innerColor: .black.opacity(0.1),
+                        outerColor: .white.opacity(0.18)
+                    ) {
+                        Image(systemName: "xmark")
+                            .padding(4)
+                    }
                 }
-                .buttonStyle(SidebarRowMinusButtonStyle())
+                .buttonStyle(.plain)
             }
         }
         .lineLimit(1)
@@ -62,22 +68,5 @@ struct SidebarRow: View {
                 .animation(.snappy(duration: 0.18), value: vm.isSelected)
         }
 
-    }
-}
-
-struct SidebarRowMinusButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(2)
-            .background {
-                if configuration.isPressed {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(.white.opacity(0.2))
-                } else {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(.white.opacity(0.4))
-                }
-            }
-            .animation(.snappy, value: configuration.isPressed)
     }
 }

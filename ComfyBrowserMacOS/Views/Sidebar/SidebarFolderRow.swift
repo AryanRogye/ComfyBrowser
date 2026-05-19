@@ -11,19 +11,37 @@ struct SidebarFolderRow: View {
 
     @Bindable var vm: SidebarFolderRowViewModel
 
+    var color: Color {
+        vm.isHovered
+        ? .white.opacity(0.66)
+        : .white.opacity(0.18)
+    }
+
+    var strokeColor: Color {
+        .white.opacity(vm.isHovered ? 0.28 : 0)
+    }
+
     var body: some View {
-        Rectangle()
-            .fill(.clear)
-            .stroke(.red)
-            .padding()
-            .overlay(alignment: .leading) {
-                HStack {
-                    Image(systemName: vm.folder.isExpanded ? "chevron.down" : "chevron.right")
-                        .foregroundStyle(.secondary)
-                    Image(systemName: "folder.fill")
-                    Text(vm.folder.title)
+        HStack(spacing: 8) {
+            AnimatedFolderIcon(
+                isOpen: $vm.folder.isExpanded,
+                isHovered: vm.isHovered
+            )
+            .frame(width: 16, height: 15)
+
+            Text(vm.folder.title)
+            Spacer()
+        }
+        .lineLimit(1)
+        .padding(.leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(color)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(strokeColor)
                 }
-                .padding(.leading)
-            }
+        }
     }
 }
