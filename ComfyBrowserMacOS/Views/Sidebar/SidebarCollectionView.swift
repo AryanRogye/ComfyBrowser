@@ -38,14 +38,19 @@ class SidebarCollectionView: NSCollectionView {
             width: cellWidth,
             height: cellHeight
         )
+        layout.headerReferenceSize = NSSize(
+            width: cellWidth,
+            height: 20
+        )
         layout.minimumLineSpacing = 6
+        layout.minimumInteritemSpacing = 0
         
         /// Padding For Container
         layout.sectionInset = NSEdgeInsets(
             
-            top: distanceFromTop,
+            top: 8,
             left: paddingAround,
-            bottom: paddingAround,
+            bottom: 14,
             right: paddingAround
         )
         
@@ -54,6 +59,15 @@ class SidebarCollectionView: NSCollectionView {
         register(
             SidebarTabItem.self,
             forItemWithIdentifier: SidebarTabItem.identifier
+        )
+        register(
+            SidebarFolderItem.self,
+            forItemWithIdentifier: SidebarFolderItem.identifier
+        )
+        register(
+            SidebarSectionHeaderView.self,
+            forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
+            withIdentifier: SidebarSectionHeaderView.identifier
         )
     }
     

@@ -24,4 +24,16 @@ enum SidebarNode: Hashable, Equatable {
             tabFolder.id
         }
     }
+
+    /// Collects every pinned tab ID, including tabs inside folders.
+    public static func pinnedTabIDs(in nodes: [SidebarNode]) -> Set<UUID> {
+        nodes.reduce(into: Set<UUID>()) { ids, node in
+            switch node {
+            case .tab(let tab):
+                ids.insert(tab.id)
+            case .folder(let folder):
+                ids.formUnion(pinnedTabIDs(in: folder.children))
+            }
+        }
+    }
 }

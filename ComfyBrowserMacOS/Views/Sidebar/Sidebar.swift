@@ -19,6 +19,7 @@ struct Sidebar: View {
         if comfyBrowserVM.sidebarState == .open {
             SidebarView(
                 faviconService: browserCoordinator.faviconService,
+                pinnedNodes: $browserCoordinator.pinnedNodes,
                 tabs: $browserCoordinator.tabs,
                 clickedTab: { tab in
                     /// if same just exit early
@@ -27,6 +28,27 @@ struct Sidebar: View {
                 },
                 closeTab: { tab in
                     browserCoordinator.closeTab(id: tab.id)
+                },
+                toggleFolder: { folderID in
+                    browserCoordinator.togglePinnedFolder(id: folderID)
+                },
+                movePinnedTab: { tabID, index in
+                    browserCoordinator.movePinnedTab(id: tabID, toPinnedIndex: index)
+                },
+                movePinnedFolder: { folderID, index in
+                    browserCoordinator.movePinnedFolder(id: folderID, toFolderIndex: index)
+                },
+                moveRegularTab: { tabID, index in
+                    browserCoordinator.moveRegularTab(id: tabID, toRegularIndex: index)
+                },
+                moveTabIntoFolder: { tabID, folderID in
+                    browserCoordinator.movePinnedTab(
+                        id: tabID,
+                        intoFolder: folderID
+                    )
+                },
+                unpinTab: { tabID in
+                    browserCoordinator.unpinTab(id: tabID)
                 }
             )
             .frame(maxWidth: 200, maxHeight: .infinity, alignment: .top)
@@ -39,6 +61,29 @@ struct Sidebar: View {
         SidebarView(
             //        SidebarContent(
             faviconService: FaviconService(),
+            pinnedNodes: .constant([
+                .tab(
+                    .init(
+                        title: "Pinned GitHub",
+                        url: URL(string: "https://github.com")!,
+                        isActive: false
+                    )
+                ),
+                .folder(
+                    TabFolder(
+                        title: "Work",
+                        children: [
+                            .tab(
+                                .init(
+                                    title: "Linear",
+                                    url: URL(string: "https://linear.app")!,
+                                    isActive: false
+                                )
+                            )
+                        ]
+                    )
+                )
+            ]),
             tabs: .constant([
                 .init(
                     title: "DuckDuckGo",
@@ -56,7 +101,15 @@ struct Sidebar: View {
                     isActive: false
                 )
             ])
-        ) { tab in } closeTab: { tab in }
+        ) { tab in
+        } closeTab: { tab in
+        } toggleFolder: { folderID in
+        } movePinnedTab: { tabID, index in
+        } movePinnedFolder: { folderID, index in
+        } moveRegularTab: { tabID, index in
+        } moveTabIntoFolder: { tabID, folderID in
+        } unpinTab: { tabID in
+        }
             .padding()
     }
     .frame(width: 200, height: 510)
