@@ -25,6 +25,7 @@ extension SidebarView {
     ///
     /// 1. close a tab
     /// 2. click a tab
+    /// 3. click a folder
     ///
     /// Set only once at creation
     func makeCoordinator() -> SidebarCollectionCoordinator {
