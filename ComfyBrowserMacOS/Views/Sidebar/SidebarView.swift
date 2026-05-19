@@ -12,14 +12,14 @@ import SwiftUI
 struct SidebarView: NSViewRepresentable {
     
     @Bindable var faviconService: FaviconService
-    @Binding var tabs : [Tab]
+    @Binding var sidebar : SidebarModel
     var clickedTab: (Tab) -> Void
     var closeTab: (Tab) -> Void
     
     func makeCoordinator() -> SidebarCollectionCoordinator {
         SidebarCollectionCoordinator(
             faviconService: faviconService,
-            tabs: tabs,
+            sidebar: sidebar,
             closeTab: closeTab,
             clickedTab: clickedTab
         )
@@ -27,8 +27,8 @@ struct SidebarView: NSViewRepresentable {
     
     func makeNSView(context: Context) -> SidebarScrollView {
         /// set tabs very start
-        context.coordinator.tabs = tabs
-        
+        context.coordinator.sidebar = sidebar
+
         let v = SidebarScrollView()
         
         /// set delegates
@@ -39,7 +39,7 @@ struct SidebarView: NSViewRepresentable {
     }
     
     func updateNSView(_ nsView: SidebarScrollView, context: Context) {
-        context.coordinator.tabs = tabs
+        context.coordinator.sidebar = sidebar
         nsView.collectionView.reloadData()
     }
 }

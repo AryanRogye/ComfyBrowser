@@ -10,21 +10,22 @@ import WebKit
 
 
 struct SidebarModel: Codable, Hashable {
-    var sections: [SidebarSection] = [
-        .init(kind: .pinned, nodes: []),
-        .init(kind: .folders, nodes: []),
-        .init(kind: .regular, nodes: [])
-    ]
+    var pinned: [SidebarNode] = []
+    var folders: [SidebarNode] = []
+    var regular: [SidebarNode] = []
 
-    func findTab(id: UUID) -> Tab? {
-        for section in sections {
-            if let tab = section.nodes.findTab(id: id) { return tab }
-        }
-        return nil
+    var tabs: [Tab] {
+        pinned.allTabs() + folders.allTabs() + regular.allTabs()
     }
 
-    var allTabs: [Tab] {
-        sections.flatMap { $0.nodes.allTabs() }
+    var isRegularTabsEmpty: Bool {
+        regular.isEmpty
+    }
+
+    func findTab(id: UUID) -> Tab? {
+        pinned.findTab(id: id)
+        ?? folders.findTab(id: id)
+        ?? regular.findTab(id: id)
     }
 
     mutating func moveTab(
@@ -33,12 +34,7 @@ struct SidebarModel: Codable, Hashable {
         index: Int
     ) {
         guard let tab = removeTab(id: id) else { return }
-
-        insert(
-            .tab(tab),
-            into: sectionKind,
-            at: index
-        )
+        insert(.tab(tab), into: sectionKind, at: index)
     }
 
     mutating func insert(
@@ -46,38 +42,55 @@ struct SidebarModel: Codable, Hashable {
         into sectionKind: SidebarSectionKind,
         at index: Int
     ) {
-        guard let sectionIndex = sections.firstIndex(where: { $0.kind == sectionKind }) else { return }
+        switch sectionKind {
+        case .pinned:
+            pinned.insertClamped(node, at: index)
+        case .folders:
+            folders.insertClamped(node, at: index)
+        case .regular:
+            regular.insertClamped(node, at: index)
+        }
+    }
 
-        let safeIndex = min(max(index, 0), sections[sectionIndex].nodes.count)
-        sections[sectionIndex].nodes.insert(node, at: safeIndex)
+    mutating func insert(
+        _ node: SidebarNode,
+        into sectionKind: SidebarSectionKind
+    ) {
+        /// clamps nicely
+        insert(node, into: sectionKind, at: Int.max)
+    }
+
+
+    @discardableResult
+    mutating func closeTab(id: UUID) -> Tab? {
+        guard var tab = removeTab(id: id) else { return nil }
+
+        tab.retainedWebView?.stopLoading()
+        tab.retainedWebView = nil
+
+        return tab
+    }
+
+    mutating func updateTab(
+        id: UUID,
+        _ update: (inout Tab) -> Void
+    ) {
+        if pinned.updateTab(id: id, update) { return }
+        if folders.updateTab(id: id, update) { return }
+        if regular.updateTab(id: id, update) { return }
     }
 
     mutating func removeTab(id: UUID) -> Tab? {
-        for sectionIndex in sections.indices {
-            if let tab = sections[sectionIndex].nodes.removeTab(id: id) {
-                return tab
-            }
-        }
-
-        return nil
+        pinned.removeTab(id: id)
+        ?? folders.removeTab(id: id)
+        ?? regular.removeTab(id: id)
     }
 
     mutating func removeFolder(id: UUID) -> Folder? {
-        for sectionIndex in sections.indices {
-            if let folder = sections[sectionIndex].nodes.removeFolder(id: id) {
-                return folder
-            }
-        }
-
-        return nil
+        pinned.removeFolder(id: id)
+        ?? folders.removeFolder(id: id)
+        ?? regular.removeFolder(id: id)
     }
-}
-
-struct SidebarSection: Codable, Hashable, Identifiable {
-    var id: SidebarSectionKind { kind }
-    var kind: SidebarSectionKind
-    var nodes: [SidebarNode]
-
 }
 
 enum SidebarSectionKind: Codable, Hashable {
@@ -253,6 +266,8 @@ extension Array where Element == SidebarNode {
         for index in indices {
             switch self[index] {
             case .tab(let tab) where tab.id == id:
+//                tab.retainedWebView?.stopLoading()
+//                tab.retainedWebView = nil
                 remove(at: index)
                 return tab
 
@@ -353,5 +368,39 @@ extension Array where Element == SidebarNode {
             case .folder(let folder): return folder.children.allTabs()
             }
         }
+    }
+}
+
+extension Array where Element == SidebarNode {
+    mutating func insertClamped(_ node: SidebarNode, at index: Int) {
+        let safeIndex = Swift.min(Swift.max(index, 0), count)
+        insert(node, at: safeIndex)
+    }
+}
+
+extension Array where Element == SidebarNode {
+    mutating func updateTab(
+        id: UUID,
+        _ update: (inout Tab) -> Void
+    ) -> Bool {
+        for index in indices {
+            switch self[index] {
+            case .tab(var tab) where tab.id == id:
+                update(&tab)
+                self[index] = .tab(tab)
+                return true
+
+            case .folder(var folder):
+                if folder.children.updateTab(id: id, update) {
+                    self[index] = .folder(folder)
+                    return true
+                }
+
+            default:
+                continue
+            }
+        }
+
+        return false
     }
 }

@@ -19,7 +19,7 @@ struct Sidebar: View {
         if comfyBrowserVM.sidebarState == .open {
             SidebarView(
                 faviconService: browserCoordinator.faviconService,
-                tabs: $browserCoordinator.tabs,
+                sidebar: $browserCoordinator.sidebar,
                 clickedTab: { tab in
                     /// if same just exit early
                     if browserCoordinator.selectedTab?.id == tab.id { return }
@@ -34,30 +34,30 @@ struct Sidebar: View {
     }
 }
 
-#Preview {
-    VStack {
-        SidebarView(
-            //        SidebarContent(
-            faviconService: FaviconService(),
-            tabs: .constant([
-                .init(
-                    title: "DuckDuckGo",
-                    url: URL(string: "https://duckduckgo.com")!,
-                    isActive: true
-                ),
-                .init(
-                    title: "GitHub",
-                    url: URL(string: "https://github.com")!,
-                    isActive: false
-                ),
-                .init(
-                    title: "UIC Blackboard",
-                    url: URL(string: "https://uic.blackboard.com")!,
-                    isActive: false
-                )
-            ])
-        ) { tab in } closeTab: { tab in }
-            .padding()
-    }
-    .frame(width: 200, height: 510)
-}
+//#Preview {
+//    VStack {
+//        SidebarView(
+//            //        SidebarContent(
+//            faviconService: FaviconService(),
+//            tabs: .constant([
+//                .init(
+//                    title: "DuckDuckGo",
+//                    url: URL(string: "https://duckduckgo.com")!,
+//                    isActive: true
+//                ),
+//                .init(
+//                    title: "GitHub",
+//                    url: URL(string: "https://github.com")!,
+//                    isActive: false
+//                ),
+//                .init(
+//                    title: "UIC Blackboard",
+//                    url: URL(string: "https://uic.blackboard.com")!,
+//                    isActive: false
+//                )
+//            ])
+//        ) { tab in } closeTab: { tab in }
+//            .padding()
+//    }
+//    .frame(width: 200, height: 510)
+//}

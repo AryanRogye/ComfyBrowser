@@ -11,19 +11,19 @@ import AppKit
 /// Class is responsible for coordinating with the NSCollectionView to display
 /// tabs
 final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, NSCollectionViewDelegate {
-    var tabs: [Tab] = []
+    var sidebar = SidebarModel()
     var faviconService: FaviconService
     let closeTab: (Tab) -> Void
     let clickedTab: (Tab) -> Void
     
     init(
         faviconService: FaviconService,
-        tabs: [Tab],
+        sidebar: SidebarModel,
         closeTab: @escaping (Tab) -> Void,
         clickedTab: @escaping (Tab) -> Void
     ) {
         self.faviconService = faviconService
-        self.tabs = tabs
+        self.sidebar = sidebar
         self.closeTab = closeTab
         self.clickedTab = clickedTab
     }
@@ -33,7 +33,7 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
         _ collectionView: NSCollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        tabs.count
+        sidebar.tabs.count
     }
     
     /// Asks the data source to provide an `NSCollectionViewItem` for the specified represented object.
@@ -48,7 +48,16 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
             withIdentifier: SidebarTabItem.identifier,
             for: indexPath
         ) as! SidebarTabItem
-        
+
+        let tabs : [Tab] = sidebar.regular.compactMap { node in
+            switch node {
+            case .tab(let tab):
+                return tab
+            case .folder(let folder):
+                return nil
+            }
+        }
+
         item.configure(
             faviconService: faviconService,
             with: tabs[indexPath.item],

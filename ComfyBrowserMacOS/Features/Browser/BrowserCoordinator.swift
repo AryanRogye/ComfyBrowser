@@ -15,7 +15,7 @@ final class BrowserCoordinator {
 
     static let dataStore: WKWebsiteDataStore = .default()
 
-    var tabs : [Tab] = []
+    var sidebar = SidebarModel()
     var selectedTab : Tab?
     var searchEngine: SearchEngine = .duckDuckGo
     var canNavigateBack: Bool = false
@@ -29,7 +29,9 @@ final class BrowserCoordinator {
     init() {
         webView = Self.getDefaultWebkitView()
         refreshNavigationAvailability()
-        observeTabs()
+        observeFolders()
+        observePinned()
+        observeRegularTabs()
     }
 }
 
@@ -39,8 +41,8 @@ extension BrowserCoordinator {
     /// Search "String"
     public func search(_ value: String, inPlace: Bool = false) {
         
-        let openInPlace = inPlace && !tabs.isEmpty
-        
+        let openInPlace = inPlace && !sidebar.tabs.isEmpty
+
         switch searchCoordinator.resolve(value, with: searchEngine) {
         case .empty:
             return
@@ -79,7 +81,7 @@ extension BrowserCoordinator {
         searchCoordinator.suggestions(
             for: value,
             with: searchEngine,
-            tabs: tabs
+            tabs: sidebar.tabs
         )
     }
     
@@ -89,8 +91,8 @@ extension BrowserCoordinator {
         inPlace: Bool = false
     ) {
         
-        let openInPlace = inPlace && !tabs.isEmpty
-        
+        let openInPlace = inPlace && !sidebar.tabs.isEmpty
+
         switch suggestion.kind {
         case .openTab:
             guard let tabID = suggestion.tabID else { return }
@@ -126,14 +128,14 @@ extension BrowserCoordinator {
     }
     
     /// Internal Function Creates a tab and adds it to the
-    /// tabs array
+    /// sidebar model
     internal func createTab(
         url: URL,
         title: String
     ) {
         let (tab, newWebView) = createTabConfig(url: url, title: title)
         
-        tabs.append(tab)
+        sidebar.insert(.tab(tab), into: .regular)
         selectedTab = tab
         webView = newWebView
         refreshNavigationAvailability()
@@ -149,7 +151,6 @@ extension BrowserCoordinator {
         )
         return newTab
     }
-
 }
 
 // MARK: - Navigation Actions
@@ -180,7 +181,6 @@ extension BrowserCoordinator {
     }
 }
 
-
 // MARK: - Tab Management
 extension BrowserCoordinator {
     
@@ -199,18 +199,17 @@ extension BrowserCoordinator {
         title: String
     ) {
         guard let selectedTab else { return }
-        guard let index = tabs.firstIndex(where: { $0.id == selectedTab.id }) else { return }
-        
-        let didURLChange = tabs[index].url != url
-        
+
+        let didURLChange = selectedTab.url != url
+
         /// Ony Update and add to history if url is not the same
         if didURLChange {
-            updateURL(at: index, url: url, title: title)
+            updateURL(tabID: selectedTab.id, url: url, title: title)
             searchCoordinator.recordHistoryVisit(url: url, title: title)
         }
         
-        updateTitle(at: index, title: title)
-        self.selectedTab = tabs[index]
+        updateTitle(tabID: selectedTab.id, title: title)
+        self.selectedTab = sidebar.findTab(id: selectedTab.id)
     }
     
     /// Closes a tab and releases its retained `WKWebView`.
@@ -223,19 +222,16 @@ extension BrowserCoordinator {
     public func closeTab(
         id: UUID
     ) {
-        guard let index = tabs.firstIndex(where: { $0.id == id }) else {
+        let tabsBeforeClose = sidebar.tabs
+        guard let closingIndex = tabsBeforeClose.firstIndex(where: { $0.id == id }) else {
             return
         }
-        
+
         let closingSelected = selectedTab?.id == id
-        
-        /// release the WebView before removing (Stops Leak)
-        tabs[index].retainedWebView?.stopLoading()
-        tabs[index].retainedWebView = nil
-        
-        tabs.remove(at: index)
-        
-        guard !tabs.isEmpty else {
+
+        _ = sidebar.closeTab(id: id)
+
+        guard !sidebar.tabs.isEmpty else {
             selectedTab = nil
             webView.stopLoading()
             webView = Self.getDefaultWebkitView()
@@ -243,10 +239,10 @@ extension BrowserCoordinator {
             refreshNavigationAvailability()
             return
         }
-        
+
         if closingSelected {
-            let newIndex = min(index, tabs.count - 1)
-            select(id: tabs[newIndex].id)
+            let newIndex = min(closingIndex, sidebar.tabs.count - 1)
+            select(id: sidebar.tabs[newIndex].id)
         } else {
             refreshNavigationAvailability()
         }
@@ -258,16 +254,15 @@ extension BrowserCoordinator {
     /// the previously selected tab. If the destination tab does not already retain
     /// a `WKWebView`, a new one is created and loaded with the tab's current URL.
     ///
+    /// if its a folder will just ignore for now
+    ///
     /// Example:
     ///     select(id: tab.id)
     public func select(id: UUID) {
         
         saveCurrentTab()
-        
-        guard let index = tabs.firstIndex(where: { $0.id == id }) else { return }
-        let storedTab = tabs[index]
-        
-        self.selectedTab = storedTab
+
+        guard let storedTab = sidebar.findTab(id: id) else { return }
 
         if let webview = storedTab.retainedWebView {
             self.webView = webview
@@ -275,10 +270,13 @@ extension BrowserCoordinator {
             let newWebView = Self.getDefaultWebkitView()
             newWebView.load(URLRequest(url: storedTab.url))
             
-            tabs[index].retainedWebView = newWebView
+            sidebar.updateTab(id: id) { tab in
+                tab.retainedWebView = newWebView
+            }
             self.webView = newWebView
         }
-        
+
+        self.selectedTab = sidebar.findTab(id: id) ?? storedTab
         refreshNavigationAvailability()
     }
 }
@@ -287,106 +285,104 @@ extension BrowserCoordinator {
 extension BrowserCoordinator {
     
     /// Updates a tab's current URL and keeps its metadata history valid.
-    internal func updateURL(at index: Int, url: URL, title: String?) {
-        guard tabs.indices.contains(index) else { return }
-        
-        clampHistoryIndex(at: index)
-        
-        guard !tabs[index].history.isEmpty else {
-            tabs[index].history = [
+    internal func updateURL(tabID: UUID, url: URL, title: String?) {
+        sidebar.updateTab(id: tabID) { tab in
+
+            clampHistoryIndex(for: &tab)
+
+            guard !tab.history.isEmpty else {
+                tab.history = [
+                    .init(
+                        url: url,
+                        title: title,
+                        visitedAt: .now
+                    )
+                ]
+                tab.url = url
+                tab.historyIndex = 0
+                return
+            }
+
+            let currentIndex = tab.historyIndex
+
+            if tab.history[currentIndex].url == url {
+                tab.url = url
+                tab.history[currentIndex].title = title
+                return
+            }
+
+            if currentIndex > 0 && tab.history[currentIndex - 1].url == url {
+                tab.historyIndex = currentIndex - 1
+                tab.url = url
+                updateCurrentHistoryTitle(for: &tab, title: title)
+                return
+            }
+
+            let nextIndex = currentIndex + 1
+            if tab.history.indices.contains(nextIndex),
+               tab.history[nextIndex].url == url {
+                tab.historyIndex = nextIndex
+                tab.url = url
+                updateCurrentHistoryTitle(for: &tab, title: title)
+                return
+            }
+
+            if currentIndex < tab.history.count - 1 {
+                tab.history.removeSubrange((currentIndex + 1)...)
+            }
+
+            tab.history.append(
                 .init(
                     url: url,
                     title: title,
                     visitedAt: .now
                 )
-            ]
-            tabs[index].url = url
-            tabs[index].historyIndex = 0
-            return
-        }
-        
-        let currentIndex = tabs[index].historyIndex
-        
-        if tabs[index].history[currentIndex].url == url {
-            tabs[index].url = url
-            tabs[index].history[currentIndex].title = title
-            return
-        }
-        
-        if currentIndex > 0 && tabs[index].history[currentIndex - 1].url == url {
-            tabs[index].historyIndex = currentIndex - 1
-            tabs[index].url = url
-            updateCurrentHistoryTitle(at: index, title: title)
-            return
-        }
-        
-        let nextIndex = currentIndex + 1
-        if tabs[index].history.indices.contains(nextIndex),
-           tabs[index].history[nextIndex].url == url {
-            tabs[index].historyIndex = nextIndex
-            tabs[index].url = url
-            updateCurrentHistoryTitle(at: index, title: title)
-            return
-        }
-        
-        if currentIndex < tabs[index].history.count - 1 {
-            tabs[index].history.removeSubrange((currentIndex + 1)...)
-        }
-        
-        tabs[index].history.append(
-            .init(
-                url: url,
-                title: title,
-                visitedAt: .now
             )
-        )
-        tabs[index].url = url
-        tabs[index].historyIndex = tabs[index].history.count - 1
+            tab.url = url
+            tab.historyIndex = tab.history.count - 1
+        }
     }
     
     /// Updates a tab's display title.
-    internal func updateTitle(at index: Int, title: String) {
-        guard tabs.indices.contains(index) else { return }
-        tabs[index].title = title
-        updateCurrentHistoryTitle(at: index, title: title)
+    internal func updateTitle(tabID: UUID, title: String) {
+        sidebar.updateTab(id: tabID) { tab in
+            tab.title = title
+            updateCurrentHistoryTitle(for: &tab, title: title)
+        }
     }
     
     /// Stores the active `WKWebView` instance back into the matching tab.
     internal func saveRetainedWebView(for tab: Tab, webview: WKWebView) {
-        guard let index = tabs.firstIndex(where: { $0.id == tab.id }) else { return }
-        guard tabs.indices.contains(index) else { return }
-        tabs[index].retainedWebView = webview
+        sidebar.updateTab(id: tab.id) { tab in
+            tab.retainedWebView = webview
+        }
     }
     
     /// Persists the currently displayed `WKWebView` into the selected tab.
     internal func saveCurrentTab() {
-        if let currentTab = self.selectedTab {
-            self.saveRetainedWebView(for: currentTab, webview: webView)
-        }
+        guard let currentTab = selectedTab else { return }
+        self.saveRetainedWebView(for: currentTab, webview: webView)
     }
     
     /// Keeps `historyIndex` inside the available per-tab history range.
-    internal func clampHistoryIndex(at index: Int) {
-        guard tabs.indices.contains(index) else { return }
-        
-        if tabs[index].history.isEmpty {
-            tabs[index].historyIndex = 0
+    internal func clampHistoryIndex(for tab: inout Tab) {
+        guard !tab.history.isEmpty else {
+            tab.historyIndex = 0
             return
         }
-        
-        tabs[index].historyIndex = min(
-            max(tabs[index].historyIndex, 0),
-            tabs[index].history.count - 1
+
+        tab.historyIndex = min(
+            max(tab.historyIndex, 0),
+            tab.history.count - 1
         )
     }
-    
+
     /// Updates the title on the current per-tab history entry.
-    internal func updateCurrentHistoryTitle(at index: Int, title: String?) {
-        guard tabs.indices.contains(index) else { return }
-        clampHistoryIndex(at: index)
-        
-        guard !tabs[index].history.isEmpty else { return }
-        tabs[index].history[tabs[index].historyIndex].title = title
+    internal func updateCurrentHistoryTitle(for tab: inout Tab, title: String?) {
+        clampHistoryIndex(for: &tab)
+
+        guard !tab.history.isEmpty else { return }
+        tab.history[tab.historyIndex].title = title
     }
 }
 
@@ -414,17 +410,67 @@ extension BrowserCoordinator {
 // MARK: - Observations
 extension BrowserCoordinator {
     /// Function Observes all tabs (for no reason right now)
-    func observeTabs() {
+    func observeFolders() {
         withObservationTracking {
-            _ = tabs
+            _ = sidebar.folders
+        } onChange: { [weak self] in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                print("""
+                Folders Changed:
+                \(self.sidebar.folders.map { node in
+                    switch node {
+                case .tab(let tab):
+                        "• \(tab.title)"
+                case .folder(let folder):
+                        "• \(folder.title)"
+                }
+                }.joined(separator: "\n") )
+                """)
+                self.observeFolders()
+            }
+        }
+    }
+    func observePinned() {
+        withObservationTracking {
+            _ = sidebar.pinned
+        } onChange: { [weak self] in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                print("""
+                Pinned Changed:
+                \(self.sidebar.pinned.map { node in
+                    switch node {
+                case .tab(let tab):
+                        "• \(tab.title)"
+                case .folder(let folder):
+                        "• \(folder.title)"
+                }
+                }.joined(separator: "\n") )
+                """)
+                self.observePinned()
+            }
+        }
+    }
+
+    func observeRegularTabs() {
+        withObservationTracking {
+            _ = sidebar.regular
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 print("""
                 Tabs Changed:
-                \(self.tabs.map { "• \($0.title)" }.joined(separator: "\n") )
+                \(self.sidebar.regular.map { node in
+                    switch node {
+                case .tab(let tab):
+                        "• \(tab.title)"
+                case .folder(let folder):
+                        "• \(folder.title)"
+                }
+                }.joined(separator: "\n") )
                 """)
-                self.observeTabs()
+                self.observeRegularTabs()
             }
         }
     }
