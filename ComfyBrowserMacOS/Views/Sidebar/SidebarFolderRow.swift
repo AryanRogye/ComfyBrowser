@@ -14,7 +14,7 @@ struct SidebarFolderRow: View {
     var color: Color {
         vm.isHovered
         ? .white.opacity(0.66)
-        : .white.opacity(0.18)
+        : .clear
     }
 
     var strokeColor: Color {

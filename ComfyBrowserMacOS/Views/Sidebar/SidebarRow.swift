@@ -19,7 +19,7 @@ struct SidebarRow: View {
             ? .white.opacity(0.66)
             : (vm.isSelected
                ? .white.opacity(0.45)
-               : .white.opacity(0.18)
+               : .clear
             )
         )
     }

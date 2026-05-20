@@ -61,7 +61,9 @@ struct Sidebar: View {
                 faviconService: browserCoordinator.faviconService,
                 sidebar: $browserCoordinator.sidebar,
                 selectedTab: $browserCoordinator.selectedTab,
-            ) { tab in } closeTab: { tab in } clickedFolder: { folder in }
+            ) { tab in } closeTab: { tab in } clickedFolder: { folder in
+                browserCoordinator.toggleFolder(id: folder.id)
+            }
                 .padding()
         }
     }
