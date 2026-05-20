@@ -119,9 +119,9 @@ extension SidebarCollectionCoordinator {
         tab: Tab
     ) -> NSCollectionViewItem {
         let item = collectionView.makeItem(
-            withIdentifier: SidebarTabItem.identifier,
+            withIdentifier: SidebarPinnedTabItem.identifier,
             for: indexPath
-        ) as! SidebarTabItem
+        ) as! SidebarPinnedTabItem
 
         item.configure(
             faviconService: faviconService,

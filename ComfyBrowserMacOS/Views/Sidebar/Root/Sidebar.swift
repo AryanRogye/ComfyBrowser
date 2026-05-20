@@ -60,7 +60,6 @@ struct Sidebar: View {
             ) { tab in } closeTab: { tab in } clickedFolder: { folder in
                 browserCoordinator.toggleFolder(id: folder.id)
             }
-                .padding()
         }
     }
     .frame(width: 200, height: 510)
