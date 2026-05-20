@@ -19,7 +19,9 @@ class SidebarCollectionView: NSCollectionView {
 
     let cellWidth: CGFloat = 200
     let cellHeight: CGFloat = 36
-    
+
+    let headerHeight: CGFloat = 28
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setup()
@@ -34,24 +36,7 @@ class SidebarCollectionView: NSCollectionView {
         isSelectable = true
         backgroundColors = [.clear]
         
-        let layout = NSCollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        /// set cell width/height
-        layout.itemSize = NSSize(
-            width: cellWidth,
-            height: cellHeight
-        )
-        layout.minimumLineSpacing = 6
-        
-        /// Padding For Container
-        layout.sectionInset = NSEdgeInsets(
-            
-            top: distanceFromTop,
-            left: leftInset,
-            bottom: bottomInset,
-            right: rightInset
-        )
-        
+        let layout = makeLayout()
         collectionViewLayout = layout
 
         /// Registering For Regular Tab
@@ -71,14 +56,73 @@ class SidebarCollectionView: NSCollectionView {
             withIdentifier: SidebarSectionHeaderView.identifier
         )
     }
-    
+
+    private func makeLayout() -> NSCollectionViewCompositionalLayout {
+        NSCollectionViewCompositionalLayout { sectionIndex, environment in
+
+            /// let items take up full width with cell height
+            /// represents ONE rendered item/cell
+            let itemSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .absolute(self.cellHeight)
+            )
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            /// Group Height, this is cuz NSCollectionView is used for multiple
+            /// rows and cols, but we only have 1 col
+            let groupSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .absolute(self.cellHeight)
+            )
+            let group = NSCollectionLayoutGroup.horizontal(
+                layoutSize: groupSize,
+                subitems: [item]
+            )
+
+
+            /// our sidebar has multiple sections
+            ///
+            /// pinned
+            /// saved
+            /// regular
+
+            let pinnedHeader = sectionIndex == 0
+
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 6
+            section.contentInsets = NSDirectionalEdgeInsets(
+                top: pinnedHeader ? 10 : 0,
+                leading: 0,
+                bottom: 0,
+                trailing: 0
+            )
+
+            if !pinnedHeader {
+                let headerSize = NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .absolute(self.headerHeight)
+                )
+
+                let header = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: headerSize,
+                    elementKind: NSCollectionView.elementKindSectionHeader,
+                    alignment: .top
+                )
+
+                section.boundarySupplementaryItems = [header]
+            }
+
+            return section
+        }
+    }
+
     override func layout() {
         super.layout()
         
         guard let flowLayout = collectionViewLayout as? NSCollectionViewFlowLayout else { return }
         
         let inset = flowLayout.sectionInset.left + flowLayout.sectionInset.right
-        
+
         flowLayout.itemSize.width = max(0, bounds.width - inset)
     }
 }
