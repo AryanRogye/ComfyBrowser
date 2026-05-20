@@ -42,6 +42,8 @@ final class SidebarPinnedTabItem: NSCollectionViewItem {
         closeTab: @escaping (Tab) -> Void,
         clickedRow: @escaping (NSEvent) -> Void,
     ) {
+        (view as? SidebarItemView)?.onTap = clickedRow
+
         if let vm {
             vm.tab = tab
             vm.isSelected = isSelected
