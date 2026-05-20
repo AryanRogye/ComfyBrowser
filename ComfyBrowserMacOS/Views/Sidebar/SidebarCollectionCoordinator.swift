@@ -10,7 +10,7 @@ import AppKit
 // MARK: - SidebarCollectionCoordinator
 /// Class is responsible for coordinating with the NSCollectionView to display
 /// tabs
-final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, NSCollectionViewDelegate {
+final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout {
 
     static let dragType = NSPasteboard.PasteboardType("com.comfybrowser.sidebar-item")
 
@@ -26,6 +26,8 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
     var savedDisplayRows: [SidebarDisplayNode] {
         flattenedSavedNodes(sidebar.saved)
     }
+
+    var hiddenSections: Set<Int> = [0]
 
     private lazy var clickCoordinator = SidebarClickCoordinator(
         itemLookup: { [weak self] indexPath in
@@ -90,6 +92,36 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
             guard case .tab(let tab) = node else { fatalError() }
             return regularItem(in: collectionView, at: indexPath, tab: tab)
         }
+    }
+}
+
+// MARK: - Header Creation
+extension SidebarCollectionCoordinator {
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
+        at indexPath: IndexPath
+    ) -> NSView {
+        let header = collectionView.makeSupplementaryView(
+            ofKind: kind,
+            withIdentifier: SidebarSectionHeaderView.identifier,
+            for: indexPath
+        ) as! SidebarSectionHeaderView
+
+        return header
+    }
+
+    func collectionView(
+        _ collectionView: NSCollectionView,
+        layout collectionViewLayout: NSCollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> NSSize {
+        hiddenSections.contains(section) ? .zero : NSSize(width: collectionView.bounds.width, height: 28)
+    }
+
+    func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, insetForSectionAt section: Int) -> NSEdgeInsets {
+        // Set left and right insets to 0
+        return NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }
 
