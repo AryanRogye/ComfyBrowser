@@ -27,8 +27,6 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
         flattenedSavedNodes(sidebar.saved)
     }
 
-    var hiddenSections: Set<Int> = [0]
-
     private lazy var clickCoordinator = SidebarClickCoordinator(
         itemLookup: { [weak self] indexPath in
             self?.item(at: indexPath)?.1
@@ -109,19 +107,6 @@ extension SidebarCollectionCoordinator {
         ) as! SidebarSectionHeaderView
 
         return header
-    }
-
-    func collectionView(
-        _ collectionView: NSCollectionView,
-        layout collectionViewLayout: NSCollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int
-    ) -> NSSize {
-        hiddenSections.contains(section) ? .zero : NSSize(width: collectionView.bounds.width, height: 28)
-    }
-
-    func collectionView(_ collectionView: NSCollectionView, layout collectionViewLayout: NSCollectionViewLayout, insetForSectionAt section: Int) -> NSEdgeInsets {
-        // Set left and right insets to 0
-        return NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
 }
 

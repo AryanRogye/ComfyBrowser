@@ -86,18 +86,18 @@ class SidebarCollectionView: NSCollectionView {
             /// saved
             /// regular
 
-            let pinnedHeader = sectionIndex == 0
+            let hiddenSections  = sectionIndex == 0 || sectionIndex == 1
 
             let section = NSCollectionLayoutSection(group: group)
             section.interGroupSpacing = 6
             section.contentInsets = NSDirectionalEdgeInsets(
-                top: pinnedHeader ? 10 : 0,
+                top: hiddenSections ? 10 : 0,
                 leading: 0,
                 bottom: 0,
                 trailing: 0
             )
 
-            if !pinnedHeader {
+            if !hiddenSections {
                 let headerSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
                     heightDimension: .absolute(self.headerHeight)
