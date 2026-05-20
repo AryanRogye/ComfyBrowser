@@ -105,7 +105,10 @@ extension SidebarCollectionCoordinator {
         at indexPath: IndexPath,
         node: SidebarNode
     ) -> NSCollectionViewItem {
-        switch node {
+
+        let displayNode = flattenedSavedNodes(sidebar.savedRows)[indexPath.item]
+
+        switch displayNode.node {
         case .tab(let tab):
             let item = collectionView.makeItem(
                 withIdentifier: SidebarTabItem.identifier,
@@ -117,7 +120,8 @@ extension SidebarCollectionCoordinator {
                 with: tab,
                 selectedTab: selectedTab,
                 closeTab: closeTab,
-                clickedTab: clickedTab
+                clickedTab: clickedTab,
+                indentationLevel: displayNode.depth
             )
 
             return item
@@ -130,8 +134,10 @@ extension SidebarCollectionCoordinator {
 
             item.configure(
                 with: folder,
-                clickedFolder: clickedFolder
+                clickedFolder: clickedFolder,
+                indentationLevel: displayNode.depth
             )
+
             return item
         }
     }
@@ -155,5 +161,28 @@ extension SidebarCollectionCoordinator {
             clickedTab: clickedTab
         )
         return item
+    }
+
+    struct SidebarDisplayNode {
+        let node: SidebarNode
+        let depth: Int
+    }
+
+    func flattenedSavedNodes(_ nodes: [SidebarNode], depth: Int = 0) -> [SidebarDisplayNode] {
+        nodes.flatMap { node in
+            switch node {
+            case .tab:
+                return [SidebarDisplayNode(node: node, depth: depth)]
+
+            case .folder(let folder):
+                var rows = [SidebarDisplayNode(node: node, depth: depth)]
+
+                if folder.isExpanded {
+                    rows += flattenedSavedNodes(folder.children, depth: depth + 1)
+                }
+
+                return rows
+            }
+        }
     }
 }

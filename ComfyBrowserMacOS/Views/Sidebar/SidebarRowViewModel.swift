@@ -16,6 +16,9 @@ final class SidebarRowViewModel {
     var selectedTab: Tab?
     var isSelected = false
     var isHovered: Bool = false
+
+    var indentationLevel: Int?
+
     var closeTab: (Tab) -> Void
     var clickedTab: (Tab) -> Void
 

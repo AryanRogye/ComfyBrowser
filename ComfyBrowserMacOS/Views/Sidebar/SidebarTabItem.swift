@@ -36,25 +36,33 @@ final class SidebarTabItem: NSCollectionViewItem {
             vm?.isSelected = isSelected
         }
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        vm?.isHovered = false
+    }
     
     func configure(
         faviconService: FaviconService,
         with tab: Tab,
         selectedTab: Tab?,
         closeTab: @escaping (Tab) -> Void,
-        clickedTab: @escaping (Tab) -> Void
+        clickedTab: @escaping (Tab) -> Void,
+        indentationLevel: Int? = nil
     ) {
         if let vm {
             vm.tab = tab
             vm.isSelected = isSelected
             vm.faviconService = faviconService
-            vm.isHovered = false
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
             vm.selectedTab = selectedTab
+            vm.indentationLevel = indentationLevel
             setup(with: vm)
         } else {
             let vm = SidebarRowViewModel(faviconService: faviconService, tab: tab, selectedTab: selectedTab, closeTab: closeTab, clickedTab: clickedTab)
+            vm.indentationLevel = indentationLevel
             vm.isSelected = isSelected
-            vm.isHovered = false
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
             vm.selectedTab = selectedTab
             self.vm = vm
             setup(with: vm)

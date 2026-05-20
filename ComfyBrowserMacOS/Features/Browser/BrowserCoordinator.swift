@@ -424,17 +424,17 @@ extension BrowserCoordinator {
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                print("""
-                Folders Changed:
-                \(self.sidebar.saved.map { node in
-                    switch node {
-                case .tab(let tab):
-                        "• \(tab.title)"
-                case .folder(let folder):
-                        "• \(folder.title)"
-                }
-                }.joined(separator: "\n") )
-                """)
+//                print("""
+//                Folders Changed:
+//                \(self.sidebar.saved.map { node in
+//                    switch node {
+//                case .tab(let tab):
+//                        "• \(tab.title)"
+//                case .folder(let folder):
+//                        "• \(folder.title)"
+//                }
+//                }.joined(separator: "\n") )
+//                """)
                 self.observeSaved()
             }
         }
@@ -445,12 +445,12 @@ extension BrowserCoordinator {
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                print("""
-                Pinned Changed:
-                \(self.sidebar.pinned.map { tab in
-                    "• \(tab.title)"
-                }.joined(separator: "\n") )
-                """)
+//                print("""
+//                Pinned Changed:
+//                \(self.sidebar.pinned.map { tab in
+//                    "• \(tab.title)"
+//                }.joined(separator: "\n") )
+//                """)
                 self.observePinned()
             }
         }
@@ -462,12 +462,12 @@ extension BrowserCoordinator {
         } onChange: { [weak self] in
             DispatchQueue.main.async {
                 guard let self = self else { return }
-                print("""
-                Tabs Changed:
-                \(self.sidebar.regular.map { tab in
-                    "• \(tab.title)"
-                }.joined(separator: "\n") )
-                """)
+//                print("""
+//                Tabs Changed:
+//                \(self.sidebar.regular.map { tab in
+//                    "• \(tab.title)"
+//                }.joined(separator: "\n") )
+//                """)
                 self.observeRegularTabs()
             }
         }

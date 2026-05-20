@@ -35,17 +35,30 @@ final class SidebarFolderItem: NSCollectionViewItem {
         }
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        vm?.isHovered = false
+    }
+
     private var vm: SidebarFolderRowViewModel?
 
     func configure(
         with folder: Folder,
-        clickedFolder: @escaping (Folder) -> Void
+        clickedFolder: @escaping (Folder) -> Void,
+        indentationLevel: Int
     ) {
         if let vm {
             vm.folder = folder
+            vm.indentationLevel = indentationLevel
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
             setup(with: vm)
         } else {
-            let vm = SidebarFolderRowViewModel(folder: folder, clickedFolder: clickedFolder)
+            let vm = SidebarFolderRowViewModel(
+                folder: folder,
+                indentationLevel: indentationLevel,
+                clickedFolder: clickedFolder,
+            )
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
             self.vm = vm
             setup(with: vm)
         }

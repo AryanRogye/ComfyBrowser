@@ -30,6 +30,10 @@ struct Sidebar: View {
                     browserCoordinator.closeTab(id: tab.id)
                 },
                 clickedFolder: { folder in
+                    print("""
+                    Clicked Folder: \(folder.title) (\(folder.id))
+                    Expanded: \(folder.isExpanded)
+                    """)
                     browserCoordinator.toggleFolder(id: folder.id)
                 }
             )

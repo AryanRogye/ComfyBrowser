@@ -21,6 +21,10 @@ struct SidebarFolderRow: View {
         .white.opacity(vm.isHovered ? 0.28 : 0)
     }
 
+    var indentationLevel: CGFloat {
+        return CGFloat(vm.indentationLevel) * 14
+    }
+
     var body: some View {
         HStack(spacing: 8) {
             AnimatedFolderIcon(
@@ -43,5 +47,6 @@ struct SidebarFolderRow: View {
                         .stroke(strokeColor)
                 }
         }
+        .offset(x: indentationLevel)
     }
 }

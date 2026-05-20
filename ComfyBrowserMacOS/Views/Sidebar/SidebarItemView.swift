@@ -11,6 +11,12 @@ class SidebarItemView: NSView {
     var onTap: (() -> Void)?
     var onHover: ((Bool) -> Void)?
 
+    var isMouseInside: Bool {
+        guard let window else { return false }
+        let point = convert(window.mouseLocationOutsideOfEventStream, from: nil)
+        return bounds.contains(point)
+    }
+
     override func mouseDown(with event: NSEvent) {
         onTap?()
     }

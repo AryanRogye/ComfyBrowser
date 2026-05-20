@@ -27,7 +27,11 @@ struct SidebarRow: View {
     var strokeColor: Color {
         Color.white.opacity(vm.isHovered ? 2 : ( vm.isSelected ? 0.25 : 0))
     }
-    
+
+    var indentationLevel: CGFloat {
+        return CGFloat(vm.indentationLevel ?? 0) * 14
+    }
+
     var body: some View {
         HStack {
             if let icon = vm.faviconService.favicon(for: vm.tab.url) {
@@ -67,6 +71,6 @@ struct SidebarRow: View {
                 }
                 .animation(.snappy(duration: 0.18), value: vm.isSelected)
         }
-
+        .offset(x: indentationLevel)
     }
 }
