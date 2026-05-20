@@ -47,6 +47,9 @@ struct SidebarFolderRow: View {
                         .stroke(strokeColor)
                 }
         }
+        /// this will push things to the left
         .offset(x: indentationLevel)
+        /// this will bring the container to the left
+        .padding(.trailing, indentationLevel)
     }
 }

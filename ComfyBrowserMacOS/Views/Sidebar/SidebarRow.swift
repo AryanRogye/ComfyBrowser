@@ -71,6 +71,9 @@ struct SidebarRow: View {
                 }
                 .animation(.snappy(duration: 0.18), value: vm.isSelected)
         }
+        /// this will push things to the left
         .offset(x: indentationLevel)
+        /// this will bring the container to the left
+        .padding(.trailing, indentationLevel)
     }
 }
