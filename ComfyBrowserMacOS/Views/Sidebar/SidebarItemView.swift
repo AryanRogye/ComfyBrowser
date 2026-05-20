@@ -8,7 +8,7 @@
 import AppKit
 
 class SidebarItemView: NSView {
-    var onTap: (() -> Void)?
+    var onTap: ((NSEvent) -> Void)?
     var onHover: ((Bool) -> Void)?
 
     var isMouseInside: Bool {
@@ -18,7 +18,7 @@ class SidebarItemView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
-        onTap?()
+        onTap?(event)
     }
 
     override func mouseEntered(with event: NSEvent) {

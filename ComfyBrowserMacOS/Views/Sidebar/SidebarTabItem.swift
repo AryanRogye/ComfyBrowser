@@ -20,10 +20,6 @@ final class SidebarTabItem: NSCollectionViewItem {
     
     override func loadView() {
         let v = SidebarItemView()
-        v.onTap = { [weak self] in
-            guard let self, let vm else { return }
-            vm.clickedTab(vm.tab)
-        }
         v.onHover = { [weak self] hovering in
             guard let self, let vm else { return }
             vm.isHovered = hovering
@@ -47,9 +43,11 @@ final class SidebarTabItem: NSCollectionViewItem {
         with tab: Tab,
         selectedTab: Tab?,
         closeTab: @escaping (Tab) -> Void,
-        clickedTab: @escaping (Tab) -> Void,
+        clickedRow: @escaping (NSEvent) -> Void,
         indentationLevel: Int? = nil
     ) {
+        (view as? SidebarItemView)?.onTap = clickedRow
+
         if let vm {
             vm.tab = tab
             vm.isSelected = isSelected
@@ -59,7 +57,12 @@ final class SidebarTabItem: NSCollectionViewItem {
             vm.indentationLevel = indentationLevel
             setup(with: vm)
         } else {
-            let vm = SidebarRowViewModel(faviconService: faviconService, tab: tab, selectedTab: selectedTab, closeTab: closeTab, clickedTab: clickedTab)
+            let vm = SidebarRowViewModel(
+                faviconService: faviconService,
+                tab: tab,
+                selectedTab: selectedTab,
+                closeTab: closeTab
+            )
             vm.indentationLevel = indentationLevel
             vm.isSelected = isSelected
             vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false

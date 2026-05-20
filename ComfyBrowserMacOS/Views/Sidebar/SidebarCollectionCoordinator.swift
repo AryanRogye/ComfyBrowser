@@ -21,6 +21,20 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
     let clickedTab: (Tab) -> Void
     var clickedFolder: (Folder) -> Void
 
+    /// saved section can be filled with
+    /// folders + tabs so this helps us manage it
+    var savedDisplayRows: [SidebarDisplayNode] {
+        flattenedSavedNodes(sidebar.saved)
+    }
+
+    private lazy var clickCoordinator = SidebarClickCoordinator(
+        itemLookup: { [weak self] indexPath in
+            self?.item(at: indexPath)?.1
+        },
+        clickedTab: clickedTab,
+        clickedFolder: clickedFolder
+    )
+
     init(
         faviconService: FaviconService,
         sidebar: SidebarModel,
@@ -48,7 +62,7 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
     ) -> Int {
         switch section {
         case 0: return sidebar.pinned.count
-        case 1: return sidebar.savedRows.count
+        case 1: return savedDisplayRows.count
         case 2: return sidebar.regular.count
         default: return 0
         }
@@ -62,14 +76,16 @@ final class SidebarCollectionCoordinator: NSObject, NSCollectionViewDataSource, 
         _ collectionView: NSCollectionView,
         itemForRepresentedObjectAt indexPath: IndexPath
     ) -> NSCollectionViewItem {
-        let (kind, node) = sidebar.item(at: indexPath)
+        guard let (kind, node) = item(at: indexPath) else {
+            fatalError("Missing sidebar item at \(indexPath)")
+        }
 
         switch kind {
         case .pinned:
             guard case .tab(let tab) = node else { fatalError() }
             return pinnedItem(in: collectionView, at: indexPath, tab: tab)
         case .saved:
-            return savedItem(in: collectionView, at: indexPath, node: node)
+            return savedItem(in: collectionView, at: indexPath)
         case .regular:
             guard case .tab(let tab) = node else { fatalError() }
             return regularItem(in: collectionView, at: indexPath, tab: tab)
@@ -95,18 +111,17 @@ extension SidebarCollectionCoordinator {
             with: tab,
             selectedTab: selectedTab,
             closeTab: closeTab,
-            clickedTab: clickedTab
+            clickedRow: clickCoordinator.clickHandler(for: collectionView)
         )
         return item
     }
 
     func savedItem(
         in collectionView: NSCollectionView,
-        at indexPath: IndexPath,
-        node: SidebarNode
+        at indexPath: IndexPath
     ) -> NSCollectionViewItem {
 
-        let displayNode = flattenedSavedNodes(sidebar.savedRows)[indexPath.item]
+        let displayNode = savedDisplayRows[indexPath.item]
 
         switch displayNode.node {
         case .tab(let tab):
@@ -120,7 +135,7 @@ extension SidebarCollectionCoordinator {
                 with: tab,
                 selectedTab: selectedTab,
                 closeTab: closeTab,
-                clickedTab: clickedTab,
+                clickedRow: clickCoordinator.clickHandler(for: collectionView),
                 indentationLevel: displayNode.depth
             )
 
@@ -134,7 +149,7 @@ extension SidebarCollectionCoordinator {
 
             item.configure(
                 with: folder,
-                clickedFolder: clickedFolder,
+                clickedRow: clickCoordinator.clickHandler(for: collectionView),
                 indentationLevel: displayNode.depth
             )
 
@@ -158,16 +173,38 @@ extension SidebarCollectionCoordinator {
             with: tab,
             selectedTab: selectedTab,
             closeTab: closeTab,
-            clickedTab: clickedTab
+            clickedRow: clickCoordinator.clickHandler(for: collectionView)
         )
         return item
     }
+}
+
+// MARK: - Item Getters
+extension SidebarCollectionCoordinator {
 
     struct SidebarDisplayNode {
         let node: SidebarNode
         let depth: Int
     }
 
+    internal func item(at indexPath: IndexPath) -> (SidebarSectionKind, SidebarNode)? {
+        switch indexPath.section {
+        case 0:
+            guard sidebar.pinned.indices.contains(indexPath.item) else { return nil }
+            return (.pinned, .tab(sidebar.pinned[indexPath.item]))
+        case 1:
+            let rows = savedDisplayRows
+            guard rows.indices.contains(indexPath.item) else { return nil }
+            return (.saved, rows[indexPath.item].node)
+        case 2:
+            guard sidebar.regular.indices.contains(indexPath.item) else { return nil }
+            return (.regular, .tab(sidebar.regular[indexPath.item]))
+        default:
+            return nil
+        }
+    }
+
+    /// Recursive function to generate flattened nodes
     func flattenedSavedNodes(_ nodes: [SidebarNode], depth: Int = 0) -> [SidebarDisplayNode] {
         nodes.flatMap { node in
             switch node {

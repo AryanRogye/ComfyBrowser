@@ -18,10 +18,6 @@ final class SidebarFolderItem: NSCollectionViewItem {
 
     override func loadView() {
         let v = SidebarItemView()
-        v.onTap = { [weak self] in
-            guard let self, let vm else { return }
-            vm.clickedFolder(vm.folder)
-        }
         v.onHover = { [weak self] hovering in
             guard let self, let vm else { return }
             vm.isHovered = hovering
@@ -31,7 +27,6 @@ final class SidebarFolderItem: NSCollectionViewItem {
 
     override var isSelected: Bool {
         didSet {
-            vm?.folder.isExpanded = isSelected
         }
     }
 
@@ -44,9 +39,11 @@ final class SidebarFolderItem: NSCollectionViewItem {
 
     func configure(
         with folder: Folder,
-        clickedFolder: @escaping (Folder) -> Void,
+        clickedRow: @escaping (NSEvent) -> Void,
         indentationLevel: Int
     ) {
+        (view as? SidebarItemView)?.onTap = clickedRow
+
         if let vm {
             vm.folder = folder
             vm.indentationLevel = indentationLevel
@@ -55,8 +52,7 @@ final class SidebarFolderItem: NSCollectionViewItem {
         } else {
             let vm = SidebarFolderRowViewModel(
                 folder: folder,
-                indentationLevel: indentationLevel,
-                clickedFolder: clickedFolder,
+                indentationLevel: indentationLevel
             )
             vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
             self.vm = vm

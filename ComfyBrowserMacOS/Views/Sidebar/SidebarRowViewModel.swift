@@ -20,19 +20,16 @@ final class SidebarRowViewModel {
     var indentationLevel: Int?
 
     var closeTab: (Tab) -> Void
-    var clickedTab: (Tab) -> Void
 
     init(
         faviconService: FaviconService,
         tab: Tab,
         selectedTab: Tab?,
-        closeTab: @escaping (Tab) -> Void,
-        clickedTab: @escaping (Tab) -> Void
+        closeTab: @escaping (Tab) -> Void
     ) {
         self.faviconService = faviconService
         self.tab = tab
         self.selectedTab = selectedTab
         self.closeTab = closeTab
-        self.clickedTab = clickedTab
     }
 }
