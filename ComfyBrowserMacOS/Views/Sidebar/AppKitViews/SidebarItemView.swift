@@ -12,7 +12,7 @@ class SidebarItemView: NSView {
     var onHover: ((Bool) -> Void)?
 
     var isMouseInside: Bool {
-        guard let window else { return false }
+        guard let window = unsafe window else { return false }
         let point = convert(window.mouseLocationOutsideOfEventStream, from: nil)
         return bounds.contains(point)
     }

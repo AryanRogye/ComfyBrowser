@@ -267,21 +267,13 @@
 		9B1A534B2FB85C2D009138E1 /* Sidebar */ = {
 			isa = PBXGroup;
 			children = (
-				9B1A53422FB85C2D009138E1 /* Sidebar.swift */,
-				9B1A534A2FB85C2D009138E1 /* SidebarView.swift */,
-				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
-				9BC101002FCE123400E89B86 /* SidebarClickCoordinator.swift */,
-				9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */,
-				9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */,
-				9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */,
-				9B75582C2FBC27E300E89B86 /* SidebarFolderItem.swift */,
-				9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */,
-				9B7558292FBC1C7500E89B86 /* SidebarSectionHeaderView.swift */,
-				9B75590C2FBE30E400E89B86 /* SidebarHeaderRow.swift */,
-				9B1A53462FB85C2D009138E1 /* SidebarRow.swift */,
-				9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */,
-				9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */,
-				9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */,
+				9B7559122FBE3D9D00E89B86 /* Root */,
+				9B7559102FBE3D4D00E89B86 /* Collection */,
+				9B7559112FBE3D7400E89B86 /* Items */,
+				9B7559132FBE3DB500E89B86 /* Coordinators */,
+				9B7559142FBE3DF500E89B86 /* AppKitViews */,
+				9B7559152FBE3E1400E89B86 /* Views */,
+				9B75590F2FBE3D0000E89B86 /* ViewModels */,
 				9B1A53412FB85C2D009138E1 /* README.md */,
 			);
 			path = Sidebar;
@@ -397,6 +389,70 @@
 				9B7558CC2FBD295B00E89B86 /* SidebarSectionKind.swift */,
 			);
 			path = Tabs;
+			sourceTree = "<group>";
+		};
+		9B75590F2FBE3D0000E89B86 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53472FB85C2D009138E1 /* SidebarRowViewModel.swift */,
+				9B7558302FBC286800E89B86 /* SidebarFolderRowViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9B7559102FBE3D4D00E89B86 /* Collection */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53482FB85C2D009138E1 /* SidebarScrollView.swift */,
+				9B1A53442FB85C2D009138E1 /* SidebarCollectionView.swift */,
+			);
+			path = Collection;
+			sourceTree = "<group>";
+		};
+		9B7559112FBE3D7400E89B86 /* Items */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53492FB85C2D009138E1 /* SidebarTabItem.swift */,
+				9B75582C2FBC27E300E89B86 /* SidebarFolderItem.swift */,
+			);
+			path = Items;
+			sourceTree = "<group>";
+		};
+		9B7559122FBE3D9D00E89B86 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53422FB85C2D009138E1 /* Sidebar.swift */,
+				9B1A534A2FB85C2D009138E1 /* SidebarView.swift */,
+			);
+			path = Root;
+			sourceTree = "<group>";
+		};
+		9B7559132FBE3DB500E89B86 /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
+				9BC101002FCE123400E89B86 /* SidebarClickCoordinator.swift */,
+			);
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		9B7559142FBE3DF500E89B86 /* AppKitViews */ = {
+			isa = PBXGroup;
+			children = (
+				9B1A53452FB85C2D009138E1 /* SidebarItemView.swift */,
+				9B7558292FBC1C7500E89B86 /* SidebarSectionHeaderView.swift */,
+			);
+			path = AppKitViews;
+			sourceTree = "<group>";
+		};
+		9B7559152FBE3E1400E89B86 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9B75590C2FBE30E400E89B86 /* SidebarHeaderRow.swift */,
+				9B1A53462FB85C2D009138E1 /* SidebarRow.swift */,
+				9B75582E2FBC281400E89B86 /* SidebarFolderRow.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		9BC0000F2FB94D11009138E1 /* Search */ = {
