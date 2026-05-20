@@ -12,8 +12,8 @@ import SwiftUI
 final class SidebarSectionHeaderView: NSView {
     static let identifier = NSUserInterfaceItemIdentifier("SidebarSectionHeaderView")
     
-    private let label = NSTextField(labelWithString: "")
-    
+    private var hostingView: NSHostingView<SidebarHeaderRow>?
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setup()
@@ -24,22 +24,31 @@ final class SidebarSectionHeaderView: NSView {
         setup()
     }
     
-    func configure(title: String) {
-        label.stringValue = title
-    }
-    
     private func setup() {
-        wantsLayer = true
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 11, weight: .semibold)
-        label.textColor = .secondaryLabelColor
-        
-        addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
-            label.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -6),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2),
-        ])
+
+        let row = SidebarHeaderRow()
+
+        /// Update
+        if let hostingView {
+            hostingView.rootView = row
+        }
+        /// Doesnt Exist
+        else {
+            let hosting = NSHostingView(rootView: row)
+
+            hosting.sizingOptions = []
+            hosting.translatesAutoresizingMaskIntoConstraints = false
+
+            addSubview(hosting)
+
+            NSLayoutConstraint.activate([
+                hosting.topAnchor.constraint(equalTo: topAnchor),
+                hosting.bottomAnchor.constraint(equalTo: bottomAnchor),
+                hosting.leadingAnchor.constraint(equalTo: leadingAnchor),
+                hosting.trailingAnchor.constraint(equalTo: trailingAnchor),
+            ])
+
+            hostingView = hosting
+        }
     }
 }
