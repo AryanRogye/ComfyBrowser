@@ -66,6 +66,7 @@
 		9B75590D2FBE30ED00E89B86 /* SidebarHeaderRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B75590C2FBE30E400E89B86 /* SidebarHeaderRow.swift */; };
 		9B7559172FBE524900E89B86 /* SidebarPinnedTabItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7559162FBE524200E89B86 /* SidebarPinnedTabItem.swift */; };
 		9B7559192FBE56EC00E89B86 /* SidebarPinnedRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B7559182FBE56EC00E89B86 /* SidebarPinnedRow.swift */; };
+		9B75594E2FBE634100E89B86 /* SidebarDragDropCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B75594D2FBE633A00E89B86 /* SidebarDragDropCoordinator.swift */; };
 		9BC000152FB94D11009138E1 /* SearchSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000052FB94D11009138E1 /* SearchSuggestion.swift */; };
 		9BC000162FB94D11009138E1 /* SearchSuggestionKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */; };
 		9BC000172FB94D11009138E1 /* SearchQueryIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */; };
@@ -153,6 +154,7 @@
 		9B75590C2FBE30E400E89B86 /* SidebarHeaderRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarHeaderRow.swift; sourceTree = "<group>"; };
 		9B7559162FBE524200E89B86 /* SidebarPinnedTabItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarPinnedTabItem.swift; sourceTree = "<group>"; };
 		9B7559182FBE56EC00E89B86 /* SidebarPinnedRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarPinnedRow.swift; sourceTree = "<group>"; };
+		9B75594D2FBE633A00E89B86 /* SidebarDragDropCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDragDropCoordinator.swift; sourceTree = "<group>"; };
 		9BC000052FB94D11009138E1 /* SearchSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestion.swift; sourceTree = "<group>"; };
 		9BC000062FB94D11009138E1 /* SearchSuggestionKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSuggestionKind.swift; sourceTree = "<group>"; };
 		9BC000072FB94D11009138E1 /* SearchQueryIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQueryIntent.swift; sourceTree = "<group>"; };
@@ -436,6 +438,7 @@
 			isa = PBXGroup;
 			children = (
 				9B1A53432FB85C2D009138E1 /* SidebarCollectionCoordinator.swift */,
+				9B75594D2FBE633A00E89B86 /* SidebarDragDropCoordinator.swift */,
 				9BC101002FCE123400E89B86 /* SidebarClickCoordinator.swift */,
 			);
 			path = Coordinators;
@@ -737,6 +740,7 @@
 				9B75582D2FBC27E400E89B86 /* SidebarFolderItem.swift in Sources */,
 				9B1A53672FB85C2D009138E1 /* SidebarIcon.swift in Sources */,
 				9B1A53682FB85C2D009138E1 /* TopBar.swift in Sources */,
+				9B75594E2FBE634100E89B86 /* SidebarDragDropCoordinator.swift in Sources */,
 				9B1A53692FB85C2D009138E1 /* WebView.swift in Sources */,
 				9B1A53A62FB865F6009138E1 /* TextField+SelectAll.swift in Sources */,
 				9BC0002C2FB96965009138E1 /* ComfyTextField.swift in Sources */,

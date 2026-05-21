@@ -31,6 +31,9 @@ struct Sidebar: View {
                 },
                 clickedFolder: { folder in
                     browserCoordinator.toggleFolder(id: folder.id)
+                },
+                moveTab: { id, kind, toIndex in
+                    browserCoordinator.sidebar.moveTab(id: id, to: kind, index: toIndex)
                 }
             )
             .frame(maxWidth: 200, maxHeight: .infinity, alignment: .top)
@@ -57,9 +60,14 @@ struct Sidebar: View {
                 faviconService: browserCoordinator.faviconService,
                 sidebar: $browserCoordinator.sidebar,
                 selectedTab: $browserCoordinator.selectedTab,
-            ) { tab in } closeTab: { tab in } clickedFolder: { folder in
+            ) { tab in
+            } closeTab: { tab in
+            } clickedFolder: { folder in
                 browserCoordinator.toggleFolder(id: folder.id)
+            } moveTab: { id, kind, toIndex in
+                browserCoordinator.sidebar.moveTab(id: id, to: kind, index: toIndex)
             }
+
         }
     }
     .frame(width: 200, height: 510)

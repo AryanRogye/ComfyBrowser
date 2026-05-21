@@ -17,7 +17,7 @@ class SidebarItemView: NSView {
         return bounds.contains(point)
     }
 
-    override func mouseDown(with event: NSEvent) {
+    override func mouseUp(with event: NSEvent) {
         onTap?(event)
     }
 

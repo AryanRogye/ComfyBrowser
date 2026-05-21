@@ -17,6 +17,7 @@ struct SidebarView: NSViewRepresentable {
     var clickedTab: (Tab) -> Void
     var closeTab: (Tab) -> Void
     var clickedFolder: (Folder) -> Void
+    var moveTab: (UUID, SidebarSectionKind, Int) -> Void
 }
 
 // MARK: - Make Coordinator
@@ -35,7 +36,8 @@ extension SidebarView {
             selectedTab: selectedTab,
             closeTab: closeTab,
             clickedTab: clickedTab,
-            clickedFolder: clickedFolder
+            clickedFolder: clickedFolder,
+            moveTab: moveTab
         )
     }
 }
@@ -53,7 +55,7 @@ extension SidebarView {
         v.collectionView.dataSource = context.coordinator
         v.collectionView.delegate = context.coordinator
         v.collectionView.registerForDraggedTypes([
-            SidebarCollectionCoordinator.dragType
+            SidebarDragDropCoordinator.dragType
         ])
         v.collectionView.setDraggingSourceOperationMask(
             .move,

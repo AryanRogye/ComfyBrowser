@@ -11,12 +11,6 @@ import SwiftUI
 /// Collection "Container" for the items
 class SidebarCollectionView: NSCollectionView {
 
-    internal enum SidebarSection: Int {
-        case pinned = 0
-        case saved = 1
-        case regular = 2
-    }
-
     let distanceFromTop: CGFloat = 40
     let leftInset: CGFloat = 0
     let rightInset: CGFloat = 0
@@ -65,7 +59,7 @@ extension SidebarCollectionView {
 
             let itemLayout = self.determineLayoutForItems(with: sectionIndex)
 
-            let sectionValue = SidebarSection(rawValue: sectionIndex)
+            let sectionValue = SidebarSectionKind(rawValue: sectionIndex)
             let hidesHeader  = sectionValue == .pinned || sectionValue == .saved
 
             /// let items take up full width with cell height
@@ -159,7 +153,7 @@ extension SidebarCollectionView {
 
     internal func determineLayoutForItems(with sectionIndex: Int) -> Layout {
 
-        let sectionValue = SidebarSection(rawValue: sectionIndex)
+        let sectionValue = SidebarSectionKind(rawValue: sectionIndex)
         let isPinnedSection = sectionValue == .pinned
 
         if isPinnedSection {
@@ -175,7 +169,7 @@ extension SidebarCollectionView {
         size: NSCollectionLayoutSize,
     ) -> NSCollectionLayoutGroup {
 
-        let sectionValue = SidebarSection(rawValue: sectionIndex)
+        let sectionValue = SidebarSectionKind(rawValue: sectionIndex)
         let isPinnedSection = sectionValue == .pinned
 
         if isPinnedSection {
