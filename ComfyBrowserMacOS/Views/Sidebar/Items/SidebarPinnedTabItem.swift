@@ -1,62 +1,74 @@
 //
-//  SidebarTabItem.swift
+//  SidebarPinnedTabItem.swift
 //  ComfyBrowser
 //
-//  Created by Aryan Rogye on 5/16/26.
+//  Created by Aryan Rogye on 5/20/26.
 //
 
 import AppKit
 import SwiftUI
 
-// MARK: - SidebarTabItem
-/// This shows the actual content for each `Tab`
-final class SidebarTabItem: NSCollectionViewItem {
-    static let identifier = NSUserInterfaceItemIdentifier("SidebarTabItem")
-    
-    /// swiftui content in here
-    private var hostingView: NSHostingView<SidebarRow>?
-    
+final class SidebarPinnedTabItem: NSCollectionViewItem {
+    static let identifier = NSUserInterfaceItemIdentifier("SidebarPinnedTabItem")
+
+    private var hostingView: NSHostingView<SidebarPinnedRow>?
+
     private var vm: SidebarRowViewModel?
-    
+
     override func loadView() {
         let v = SidebarItemView()
-        v.onTap = { [weak self] in
+        v.onHover = { [weak self] hovering in
             guard let self, let vm else { return }
-            vm.clickedTab(vm.tab)
+            vm.isHovered = hovering
         }
         view = v
     }
-    
+
     override var isSelected: Bool {
         didSet {
             vm?.isSelected = isSelected
         }
     }
-    
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        vm?.isHovered = false
+    }
+
     func configure(
         faviconService: FaviconService,
         with tab: Tab,
+        selectedTab: Tab?,
         closeTab: @escaping (Tab) -> Void,
-        clickedTab: @escaping (Tab) -> Void
+        clickedRow: @escaping (NSEvent) -> Void,
     ) {
+        (view as? SidebarItemView)?.onTap = clickedRow
+
         if let vm {
             vm.tab = tab
             vm.isSelected = isSelected
             vm.faviconService = faviconService
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
+            vm.selectedTab = selectedTab
             setup(with: vm)
         } else {
-            let vm = SidebarRowViewModel(faviconService: faviconService, tab: tab, closeTab: closeTab, clickedTab: clickedTab)
+            let vm = SidebarRowViewModel(
+                faviconService: faviconService,
+                tab: tab,
+                selectedTab: selectedTab,
+                closeTab: closeTab
+            )
             vm.isSelected = isSelected
+            vm.isHovered = (view as? SidebarItemView)?.isMouseInside ?? false
+            vm.selectedTab = selectedTab
             self.vm = vm
             setup(with: vm)
         }
     }
-    
+
     private func setup(with vm: SidebarRowViewModel) {
-        let row = SidebarRow(
-            vm: vm,
-        )
-        
+        let row = SidebarPinnedRow(vm: vm)
+
         /// Update
         if let hostingView {
             hostingView.rootView = row
@@ -70,16 +82,16 @@ final class SidebarTabItem: NSCollectionViewItem {
             /// for minimum, intrinsic, and maximum size
             hosting.sizingOptions = []
             hosting.translatesAutoresizingMaskIntoConstraints = false
-            
+
             view.addSubview(hosting)
-            
+
             NSLayoutConstraint.activate([
                 hosting.topAnchor.constraint(equalTo: view.topAnchor),
                 hosting.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 hosting.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 hosting.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             ])
-            
+
             hostingView = hosting
         }
     }

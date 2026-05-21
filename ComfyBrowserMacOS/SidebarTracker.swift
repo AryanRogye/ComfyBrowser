@@ -72,13 +72,14 @@ private final class TrackingStrip: NSView {
         if newWindow == nil { hoverTracker?.stop() }
         super.viewWillMove(toWindow: newWindow)
     }
-    
+
+    @MainActor
     deinit {
         hoverTracker?.stop()
     }
     
     override func viewDidMoveToWindow() {
-        if window == nil {
+        if unsafe window == nil {
             hoverTracker?.stop()
         } else {
             hoverTracker?.startTracking { [weak self] inside in
@@ -117,7 +118,7 @@ private final class TrackingStrip: NSView {
             handler = { [weak self] _ in
                 guard let self else { return }
                 guard let view = self.view else { return }
-                guard let window = view.window else { return }
+                guard let window = unsafe view.window else { return }
                 
                 /// Global Screen Coordinates
                 let mouse = NSEvent.mouseLocation

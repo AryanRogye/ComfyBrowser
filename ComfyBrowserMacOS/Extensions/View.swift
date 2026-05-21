@@ -23,7 +23,7 @@ class WindowAccessorView: NSView {
         guard !didClose else { return }
         didClose = true
         /// Close it
-        window?.performClose(nil)
+        unsafe window?.performClose(nil)
     }
 }
 

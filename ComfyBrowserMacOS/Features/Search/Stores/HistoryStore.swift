@@ -150,7 +150,7 @@ extension HistoryStore {
     ) async -> HistoryStore {
         let store = HistoryStore(
             fileURL: fileURL,
-            fileManager: fileManager
+            fileManager: FileManager.default
         )
         await store.load()
         return store

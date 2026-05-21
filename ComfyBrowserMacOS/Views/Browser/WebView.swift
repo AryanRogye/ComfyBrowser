@@ -126,19 +126,27 @@ class WebViewCoordinator: NSObject, WKUIDelegate, WKNavigationDelegate {
         canGoForwardObservation?.invalidate()
         
         urlObservation = webView.observe(\.url, options: [.new]) { [weak self] view, _ in
-            self?.notifyStateChange(from: view)
+            DispatchQueue.main.async {
+                self?.notifyStateChange(from: view)
+            }
         }
         
         titleObservation = webView.observe(\.title, options: [.new]) { [weak self] view, _ in
-            self?.notifyStateChange(from: view)
+            DispatchQueue.main.async {
+                self?.notifyStateChange(from: view)
+            }
         }
         
         canGoBackObservation = webView.observe(\.canGoBack, options: [.initial, .new]) { [weak self] view, _ in
-            self?.notifyNavigationAvailability(from: view)
+            DispatchQueue.main.async {
+                self?.notifyNavigationAvailability(from: view)
+            }
         }
         
         canGoForwardObservation = webView.observe(\.canGoForward, options: [.initial, .new]) { [weak self] view, _ in
-            self?.notifyNavigationAvailability(from: view)
+            DispatchQueue.main.async {
+                self?.notifyNavigationAvailability(from: view)
+            }
         }
     }
     

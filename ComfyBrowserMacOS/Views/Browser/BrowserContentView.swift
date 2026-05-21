@@ -76,10 +76,10 @@ struct BrowserContentView<SidebarIcon: View>: View {
         RoundedRectangle(cornerRadius: 8)
             .fill(.white)
             .shadow(
-                color: .black.opacity(0.6),
-                radius: 20,
-                x: -3,
-                y: 3
+                color: .black.opacity(0.15),
+                radius: 8,
+                x: -2,
+                y: 2
             )
             .allowsHitTesting(false)
     }

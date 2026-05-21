@@ -27,13 +27,11 @@ class SidebarScrollView: NSScrollView {
     private func setup() {
         documentView = collectionView
         
-        hasVerticalScroller = true
+        hasVerticalScroller = false
         hasHorizontalScroller = false
         
         drawsBackground = false
         backgroundColor = .clear
-        
-        autohidesScrollers = true
     }
 }
 

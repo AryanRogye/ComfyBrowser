@@ -109,15 +109,17 @@ private class WindowTitlebarAreaView: NSView {
     
     /// Observe the Window
     private func observeWindow() {
-        guard let window, frameObs == nil else { return }
-        
+        guard let window = unsafe window, frameObs == nil else { return }
+
         /// Did Resize
         frameObs = NotificationCenter.default.addObserver(
             forName: NSWindow.didResizeNotification,
             object: window,
             queue: .main
         ) { [weak self] _ in
-            self?.attachIfNeededAndRefresh()
+            DispatchQueue.main.async {
+                self?.attachIfNeededAndRefresh()
+            }
         }
         
         /// Entered Fullscreen
@@ -126,7 +128,9 @@ private class WindowTitlebarAreaView: NSView {
             object: window,
             queue: .main
         ) { [weak self] _ in
-            self?.attachIfNeededAndRefresh()
+            DispatchQueue.main.async {
+                self?.attachIfNeededAndRefresh()
+            }
         }
         
         /// Exited Fullscreen
@@ -135,16 +139,18 @@ private class WindowTitlebarAreaView: NSView {
             object: window,
             queue: .main
         ) { [weak self] _ in
-            self?.attachIfNeededAndRefresh()
+            DispatchQueue.main.async {
+                self?.attachIfNeededAndRefresh()
+            }
         }
     }
     
     /// Attach SwiftUI Button, And Move Traffic Lights
-    private func attachIfNeededAndRefresh(completion: @escaping () -> Void = { }) {
-        guard let window else { return }
+    private func attachIfNeededAndRefresh(completion: @Sendable @escaping () -> Void = { }) {
+        guard let window = unsafe window else { return }
         guard let zoom = window.standardWindowButton(.zoomButton),
-              let container = zoom.superview else { return }
-        
+              let container = unsafe zoom.superview else { return }
+
         /// 🔴 🟡 🟢 |<- 8px ->| [your icon]
         let left_spacing : CGFloat = 8
         let height       : CGFloat = 24
@@ -183,18 +189,19 @@ private class WindowTitlebarAreaView: NSView {
     public func toggleTrafficLights(_ val: Bool) {
         guard lastHidden != val else { return }
         lastHidden = val
-        
-        window?.standardWindowButton(.closeButton)?.alphaValue = val ? 0 : 1
-        window?.standardWindowButton(.miniaturizeButton)?.alphaValue = val ? 0 : 1
-        window?.standardWindowButton(.zoomButton)?.alphaValue = val ? 0 : 1
-        
-        if let window {
+
+
+        unsafe window?.standardWindowButton(.closeButton)?.alphaValue = val ? 0 : 1
+        unsafe window?.standardWindowButton(.miniaturizeButton)?.alphaValue = val ? 0 : 1
+        unsafe window?.standardWindowButton(.zoomButton)?.alphaValue = val ? 0 : 1
+
+        if let window = unsafe window {
             moveTrafficLights(in: window)
         }
     }
     
     /// Adjust Traffic Light Positions, based on constant values and NSWindow
-    private func moveTrafficLights(in window: NSWindow, animated: Bool = true, completion: (() -> Void)? = nil) {
+    private func moveTrafficLights(in window: NSWindow, animated: Bool = true, completion: (@Sendable () -> Void)? = nil) {
         func move(_ type: NSWindow.ButtonType) {
             guard let btn = window.standardWindowButton(type) else { return }
             
@@ -231,7 +238,7 @@ private class WindowTitlebarAreaView: NSView {
         duration: TimeInterval = 0.18,
         timing: CAMediaTimingFunctionName = .easeInEaseOut,
         _ changes: @escaping () -> Void,
-        completion: (() -> Void)? = nil
+        completion: (@Sendable () -> Void)? = nil
     ) {
         NSAnimationContext.runAnimationGroup { ctx in
             ctx.duration = duration
